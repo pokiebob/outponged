@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Route, NavLink, Switch, Redirect } from "react-router-dom";
 
 import "./Home.css";
+import Posts from "../../Blog/Posts/Posts";
 
 class Home extends Component {
   render() {
@@ -50,9 +51,21 @@ class Home extends Component {
                   Clubs
                 </NavLink>
               </li>
+              <li>
+                <NavLink
+                  to={{
+                    pathname: "/tournaments/",
+                  }}
+                >
+                  Tournaments
+                </NavLink>
+              </li>
             </ul>
           </nav>
         </header>
+        <Switch>
+          <Route path="/players" component={Posts} />
+        </Switch>
       </div>
     );
   }

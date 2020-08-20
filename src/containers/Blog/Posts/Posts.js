@@ -5,6 +5,7 @@ import { Route } from "react-router-dom";
 import Post from "../../../components/Post/Post";
 import "./Posts.css";
 import FullPost from "../FullPost/FullPost";
+import { PlayerData } from "../../Layout/Players/PlayerData";
 
 class Posts extends Component {
   state = {
@@ -13,23 +14,28 @@ class Posts extends Component {
 
   componentDidMount() {
     console.log(this.props);
-    axios
-      .get("/posts")
-      .then((response) => {
-        const posts = response.data.slice(0, 4);
-        const updatedPosts = posts.map((post) => {
-          return {
-            ...post,
-            author: "Mishu",
-          };
-        });
-        this.setState({ posts: updatedPosts });
-        // console.log( response );
-      })
-      .catch((error) => {
-        console.log(error);
-        // this.setState({error: true});
-      });
+    const players = PlayerData.map((player) => {
+      return { author: `${player.firstName} ${player.lastName}` };
+    });
+
+    this.setState({ posts: players });
+    // axios
+    //   .get("/posts")
+    //   .then((response) => {
+    //     const posts = response.data.slice(0, 4);
+    //     const updatedPosts = posts.map((post) => {
+    //       return {
+    //         ...post,
+    //         author: "Mishu",
+    //       };
+    //     });
+    //     this.setState({ posts: updatedPosts });
+    //     // console.log( response );
+    //   })
+    //   .catch((error) => {
+    //     console.log(error);
+    //     // this.setState({error: true});
+    //   });
   }
 
   postSelectedHandler = (id) => {
