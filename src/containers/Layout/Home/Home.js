@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Route, NavLink, Switch, Redirect } from "react-router-dom";
 
 import "./Home.css";
-import Posts from "../../Blog/Posts/Posts";
+import Players from "../Players/Players";
 
 class Home extends Component {
   render() {
@@ -64,7 +64,7 @@ class Home extends Component {
           </nav>
         </header>
         <Switch>
-          <Route path="/players" component={Posts} />
+          <Route path="/players" component={Players} />
         </Switch>
       </div>
     );
