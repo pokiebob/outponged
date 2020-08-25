@@ -15,10 +15,11 @@ class Posts extends Component {
 
   componentDidMount() {
     console.log(this.props);
-    const players = PlayerData.map((player) => {
+    const players = PlayerData.map((player, idx) => {
       return {
         ...player,
         id: player.personId,
+        pic: `https://randomuser.me/api/portraits/women/${idx}.jpg`,
         author: `${player.firstName} ${player.lastName}`,
       };
     });
@@ -61,6 +62,7 @@ class Posts extends Component {
             key={card.id}
             title={card.title}
             author={card.author}
+            pic={card.pic}
             clicked={() => this.postSelectedHandler(card.id)}
           />
           // </Link>
