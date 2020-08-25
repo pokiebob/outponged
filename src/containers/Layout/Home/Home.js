@@ -1,5 +1,5 @@
 import React from "react";
-import { Route, NavLink, Switch, Redirect } from "react-router-dom";
+import { Route, Link, NavLink, Switch, Redirect } from "react-router-dom";
 
 //Material UI
 import { makeStyles } from "@material-ui/core/styles";
@@ -16,6 +16,9 @@ import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import InboxIcon from "@material-ui/icons/MoveToInbox";
 import MailIcon from "@material-ui/icons/Mail";
+
+// Icons
+import TableTennis from "mdi-material-ui/TableTennis";
 
 import "./Home.css";
 import Players from "../Players/Players";
@@ -38,7 +41,6 @@ const home = () => {
   return (
     <div>
       {renderAppBar(classes)}
-      {renderNavBar(classes)}
       <Switch>
         <Route path="/players" component={Players} />
       </Switch>
@@ -94,84 +96,37 @@ const renderAppBar = (classes) => {
 //   </React.Fragment>;
 // };
 
+// {index % 2 === 0 ? <mdiTableTennis /> : <MailIcon />}
+
 const renderNavList = () => {
   return (
     <List>
-      {["Home", "Players", "Coaches", "Clubs", "Tournaments"].map(
-        (text, index) => (
-          <ListItem button key={text}>
-            <ListItemIcon>
-              {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-            </ListItemIcon>
-            <ListItemText primary={text} />
-          </ListItem>
-        )
-      )}
+      <ListItem button key={"Home"}>
+        <TableTennis />
+        {/* <ListItemText primary={"Home"} href="/home/" /> */}
+        <Link to="/home/">Home</Link>
+      </ListItem>
+
+      <ListItem button key={"Players"} href="/players/">
+        <TableTennis />
+        <Link to="/players/">Players</Link>
+      </ListItem>
+
+      <ListItem button key={"Coaches"}>
+        <TableTennis />
+        <Link to="/coaches/">Coaches</Link>
+      </ListItem>
+
+      <ListItem button key={"Clubs"}>
+        <TableTennis />
+        <Link to="/clubs/">Clubs</Link>
+      </ListItem>
+
+      <ListItem button key={"Tournaments"}>
+        <TableTennis />
+        <Link to="/tournaments/">Tournaments</Link>
+      </ListItem>
     </List>
-  );
-};
-
-const renderNavBar = () => {
-  return (
-    <div className="Home">
-      <nav>
-        <ul>
-          <li>{navHome()}</li>
-          <li>
-            <NavLink
-              to={{
-                pathname: "/players/",
-              }}
-            >
-              Players
-            </NavLink>
-          </li>
-          <li>
-            <NavLink
-              to={{
-                pathname: "/coaches/",
-              }}
-            >
-              Coaches
-            </NavLink>
-          </li>
-          <li>
-            <NavLink
-              to={{
-                pathname: "/clubs/",
-              }}
-            >
-              Clubs
-            </NavLink>
-          </li>
-          <li>
-            <NavLink
-              to={{
-                pathname: "/tournaments/",
-              }}
-            >
-              Tournaments
-            </NavLink>
-          </li>
-        </ul>
-      </nav>
-    </div>
-  );
-};
-
-const navHome = () => {
-  return (
-    <NavLink
-      to="/home/"
-      exact
-      activeClassName="my-active"
-      activeStyle={{
-        color: "#fa923f",
-        textDecoration: "underline",
-      }}
-    >
-      Home
-    </NavLink>
   );
 };
 
