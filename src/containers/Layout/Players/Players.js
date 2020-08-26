@@ -14,13 +14,11 @@ class Posts extends Component {
   };
 
   componentDidMount() {
-    console.log(this.props);
     const players = PlayerData.map((player, idx) => {
       return {
         ...player,
-        id: player.personId,
         pic: `https://randomuser.me/api/portraits/women/${idx}.jpg`,
-        author: `${player.firstName} ${player.lastName}`,
+        fullName: `${player.firstName} ${player.lastName}`,
       };
     });
 
@@ -46,7 +44,6 @@ class Posts extends Component {
 
   postSelectedHandler = (id) => {
     this.props.history.push({ pathname: "/players/" + id });
-    console.log("this.props.history: ", this.props.history);
     //    console.log("this.props.history: " + this.props.history);
     // this.props.history.push("//" + id);
   };
@@ -55,15 +52,17 @@ class Posts extends Component {
     let posts = <p style={{ textAlign: "center" }}>Something went wrong!</p>;
     if (!this.state.error) {
       posts = this.state.posts.map((card) => {
-        console.log("Card", card);
+        console.log(card);
         return (
           // <Link to={'/posts/' + post.id} key={post.id}>
           <Card
-            key={card.id}
-            title={card.title}
-            author={card.author}
+            key={card.personId}
+            fullName={card.fullName}
+            homeClub={card.homeClub}
             pic={card.pic}
-            clicked={() => this.postSelectedHandler(card.id)}
+            usattNumber={card.usattNumber}
+            rating={card.rating}
+            clicked={() => this.postSelectedHandler(card.personId)}
           />
           // </Link>
         );
