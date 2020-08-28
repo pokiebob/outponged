@@ -1,10 +1,14 @@
-export const PlayerData = [
+export const PersonData = [
   {
     personId: 1,
     lastName: "Hiromitsu",
     firstName: "Kasahara",
     homeClub: "JP",
     usattNumber: 2796,
+    role: {
+      player: true,
+      coach: false,
+    },
   },
   {
     personId: 2,

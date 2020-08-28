@@ -6,18 +6,6 @@ import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import ButtonBase from "@material-ui/core/ButtonBase";
 
-import "./Card.css";
-
-const card2 = (props) => (
-  <article className="Card" onClick={props.clicked}>
-    <h1>{props.title}</h1>
-    <div className="Info">
-      <img src={props.pic} />
-      <div className="Author">{props.author}</div>
-    </div>
-  </article>
-);
-
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,

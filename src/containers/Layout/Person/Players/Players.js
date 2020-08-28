@@ -1,12 +1,11 @@
 import React, { Component } from "react";
-import axios from "../../../axios";
+import axios from "../../../../axios";
 import { Route } from "react-router-dom";
 
-import Card from "../../../components/Card/Card";
+import Card from "../../../../components/Card/Card";
 import "./Players.css";
 import PlayerPage from "./PlayerPage/PlayerPage";
-import { PlayerData } from "../../Layout/Players/PlayerData";
-import FullPost from "../../Blog/FullPost/FullPost";
+import { PersonData } from "../PersonData";
 
 class Posts extends Component {
   state = {
@@ -14,7 +13,7 @@ class Posts extends Component {
   };
 
   componentDidMount() {
-    const players = PlayerData.map((player, idx) => {
+    const players = PersonData.map((player, idx) => {
       return {
         ...player,
         pic: `https://randomuser.me/api/portraits/women/${idx}.jpg`,

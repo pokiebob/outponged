@@ -19,7 +19,9 @@ import ListItemText from "@material-ui/core/ListItemText";
 import TableTennis from "mdi-material-ui/TableTennis";
 
 import "./Home.css";
-import Players from "../Players/Players";
+
+// Components
+import Players from "../Person/Players/Players";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -99,30 +101,30 @@ const renderAppBar = (classes) => {
 const renderNavList = () => {
   return (
     <List>
-      <ListItem button key={"Home"}>
+      <ListItem button component={Link} to="/home/">
         <TableTennis />
         {/* <ListItemText primary={"Home"} href="/home/" /> */}
-        <Link to="/home/">Home</Link>
+        Home
       </ListItem>
 
-      <ListItem button key={"Players"} href="/players/">
+      <ListItem button component={Link} to="/players/">
         <TableTennis />
-        <Link to="/players/">Players</Link>
+        Players
       </ListItem>
 
-      <ListItem button key={"Coaches"}>
+      <ListItem button component={Link} to="/coaches/">
         <TableTennis />
-        <Link to="/coaches/">Coaches</Link>
+        Coaches
       </ListItem>
 
-      <ListItem button key={"Clubs"}>
+      <ListItem button component={Link} to="/clubs/">
         <TableTennis />
-        <Link to="/clubs/">Clubs</Link>
+        Clubs
       </ListItem>
 
-      <ListItem button key={"Tournaments"}>
+      <ListItem button component={Link} to="/tournaments/">
         <TableTennis />
-        <Link to="/tournaments/">Tournaments</Link>
+        Tournaments
       </ListItem>
     </List>
   );
