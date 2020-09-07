@@ -4,53 +4,60 @@ import { Route } from "react-router-dom";
 
 import Card from "../../../../components/Card/Card";
 import "./Players.css";
-import PlayerPage from "./PlayerPage/PlayerPage";
+import PersonProfile from "../PersonDetails/PersonProfile";
 import { PersonData } from "../PersonData";
 
-class Posts extends Component {
+class Players extends Component {
   state = {
-    posts: [],
+    players: [],
   };
 
-  componentDidMount() {
-    const players = PersonData.map((player, idx) => {
+  getMockPlayers() {
+    return PersonData.map((player, idx) => {
       return {
         ...player,
         pic: `https://randomuser.me/api/portraits/women/${idx}.jpg`,
         fullName: `${player.firstName} ${player.lastName}`,
       };
     });
-
-    this.setState({ posts: players });
-    // axios
-    //   .get("/posts")
-    //   .then((response) => {
-    //     const posts = response.data.slice(0, 4);
-    //     const updatedPosts = posts.map((post) => {
-    //       return {
-    //         ...post,
-    //         author: "Mishu",
-    //       };
-    //     });
-    //     this.setState({ posts: updatedPosts });
-    //     // console.log( response );
-    //   })
-    //   .catch((error) => {
-    //     console.log(error);
-    //     // this.setState({error: true});
-    //   });
   }
 
-  postSelectedHandler = (id) => {
+  componentDidMount() {
+    // For testing only
+    // const players = this.getMockPlayers();
+    // console.log(players);
+    // this.setState({ players: players });
+
+    axios
+      .get("http://localhost:8080/persons")
+      .then((response) => {
+        const players = response.data;
+        const updatedPlayers = players.map((player, idx) => {
+          return {
+            ...player,
+            pic: `https://randomuser.me/api/portraits/women/${idx}.jpg`,
+            fullName: `${player.firstName} ${player.lastName}`,
+          };
+        });
+        this.setState({ players: updatedPlayers });
+        // console.log( response );
+      })
+      .catch((error) => {
+        console.error("[players] componentDidMount has error", error);
+        // this.setState({error: true});
+      });
+  }
+
+  playerSelectedHandler = (id) => {
     this.props.history.push({ pathname: "/players/" + id });
     //    console.log("this.props.history: " + this.props.history);
     // this.props.history.push("//" + id);
   };
 
   render() {
-    let posts = <p style={{ textAlign: "center" }}>Something went wrong!</p>;
+    let players = <p style={{ textAlign: "center" }}>Something went wrong!</p>;
     if (!this.state.error) {
-      posts = this.state.posts.map((card) => {
+      players = this.state.players.map((card) => {
         console.log(card);
         return (
           // <Link to={'/posts/' + post.id} key={post.id}>
@@ -61,7 +68,7 @@ class Posts extends Component {
             pic={card.pic}
             usattNumber={card.usattNumber}
             rating={card.rating}
-            clicked={() => this.postSelectedHandler(card.personId)}
+            clicked={() => this.playerSelectedHandler(card.personId)}
           />
           // </Link>
         );
@@ -70,15 +77,15 @@ class Posts extends Component {
 
     return (
       <div>
-        <section className="Players">{posts}</section>
+        <section className="Players">{players}</section>
         <Route
           path={this.props.match.url + "/:id"}
           exact
-          component={PlayerPage}
+          component={PersonProfile}
         />
       </div>
     );
   }
 }
 
-export default Posts;
+export default Players;
