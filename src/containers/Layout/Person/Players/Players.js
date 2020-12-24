@@ -29,7 +29,7 @@ class Players extends Component {
     // this.setState({ players: players });
 
     axios
-      .get("http://localhost:8080/persons")
+      .get("http://localhost:8080/person")
       .then((response) => {
         const players = response.data;
         const updatedPlayers = players.map((player, idx) => {
