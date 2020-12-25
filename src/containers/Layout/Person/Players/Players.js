@@ -1,10 +1,10 @@
 import React, { Component } from "react";
 import axios from "../../../../axios";
-import { Route } from "react-router-dom";
+import { Route, Switch } from "react-router-dom";
 
 import Card from "../../../../components/Card/Card";
 import "./Players.css";
-import PersonProfile from "../PersonDetails/PersonProfile";
+import PersonProfile from "../Profile/PersonProfile";
 import { PersonData } from "../PersonData";
 
 class Players extends Component {
@@ -35,7 +35,7 @@ class Players extends Component {
         const updatedPlayers = players.map((player, idx) => {
           return {
             ...player,
-            pic: `https://randomuser.me/api/portraits/women/${idx}.jpg`,
+            pic: `https://randomuser.me/api/portraits/men/${idx}.jpg`,
             fullName: `${player.firstName} ${player.lastName}`,
           };
         });
@@ -49,7 +49,7 @@ class Players extends Component {
   }
 
   playerSelectedHandler = (id) => {
-    this.props.history.push({ pathname: "/players/" + id });
+    this.props.history.push({ pathname: "/profile/" + id });
     //    console.log("this.props.history: " + this.props.history);
     // this.props.history.push("//" + id);
   };
@@ -78,11 +78,12 @@ class Players extends Component {
     return (
       <div>
         <section className="Players">{players}</section>
-        <Route
-          path={this.props.match.url + "/:id"}
-          exact
-          component={PersonProfile}
-        />
+        <Switch>
+          <Route
+            path={this.props.match.url + "/:id"}
+            component={PersonProfile}
+          />
+        </Switch>
       </div>
     );
   }
