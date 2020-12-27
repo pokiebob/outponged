@@ -1,34 +1,54 @@
-import React, { Component } from "react";
-import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
+import React from "react";
+import { makeStyles } from "@material-ui/core/styles";
+import Paper from "@material-ui/core/Paper";
+import Grid from "@material-ui/core/Grid";
+import Avatar from "@material-ui/core/Avatar";
 
-import "./PersonProfile.css";
+const useStyles = makeStyles((theme) => ({
+  root: {
+    flexGrow: 1,
+  },
+  paper: {
+    padding: theme.spacing(5),
+    textAlign: "center",
+    color: theme.palette.text.secondary,
+  },
+  large: {
+    width: theme.spacing(15),
+    height: theme.spacing(15),
+  },
+}));
 
-class PlayerPage extends Component {
+const getPlayerId = () => {
+  var location = window.location.pathname;
+  return location.substring(9, location.length);
+};
 
-  getPlayerId() {
-    var location = this.props.location.pathname;
-    return location.substring(9, location.length);
-  }
+const playerPage = () => {
+  const classes = useStyles();
 
-  render() {
-    console.log("player details");
+  const imgSource = `https://randomuser.me/api/portraits/men/${getPlayerId()}.jpg`;
 
-    const imgSource = `https://randomuser.me/api/portraits/men/${this.getPlayerId()}.jpg`;
+  return (
+    <div className={classes.root}>
+      <Paper className={classes.paper}>
+        <Grid container spacing={1}>
+          <Grid item xs={6} sm={3}>
+            <Avatar src={imgSource} className={classes.large} />
+          </Grid>
+          <Grid item xs={6} sm={3}>
+            col 1
+          </Grid>
+          <Grid item xs={6} sm={3}>
+            col 2
+          </Grid>
+          <Grid item xs={6} sm={3}>
+            col 3
+          </Grid>
+        </Grid>
+      </Paper>
+    </div>
+  );
+};
 
-    return (
-      <div>
-        <Container>
-          <Row>
-            <Col xs={6} md={4}>
-              <img src={imgSource} style={{"border-radius": "50%"}}/>
-            </Col>
-          </Row>
-        </Container>
-      </div>
-    );
-  }
-}
-
-export default PlayerPage;
+export default playerPage;
