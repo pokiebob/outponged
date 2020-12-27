@@ -33,8 +33,8 @@ const card = (props) => {
   console.log(props);
 
   return (
-    <div className={classes.root}>
-      <Paper className={classes.paper}>
+    <div className={classes.root} onClick={props.clicked}>
+      <Paper className={classes.paper} >
         <Grid container spacing={2}>
           <Grid item>
             <ButtonBase className={classes.image}>
@@ -55,11 +55,6 @@ const card = (props) => {
                 </Typography>
                 <Typography variant="body2" color="textSecondary">
                   Home Club: {props.homeClub}
-                </Typography>
-              </Grid>
-              <Grid item onClick={props.clicked}>
-                <Typography variant="body2" style={{ cursor: "pointer" }}>
-                  View Page
                 </Typography>
               </Grid>
             </Grid>

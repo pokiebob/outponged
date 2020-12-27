@@ -78,12 +78,6 @@ class Players extends Component {
     return (
       <div>
         <section className="Players">{players}</section>
-        <Switch>
-          <Route
-            path={this.props.match.url + "/:id"}
-            component={PersonProfile}
-          />
-        </Switch>
       </div>
     );
   }
