@@ -11,11 +11,17 @@ const useStyles = makeStyles((theme) => ({
   },
   paper: {
     padding: theme.spacing(10),
+    width: 650
   },
   heading: {
     color: theme.palette.text.primary,
     textAlign: "center",
     "font-size": "30px",
+  },
+  subheading: {
+    color: theme.palette.text.primary,
+    textAlign: "center",
+    "font-size": "15px",
   },
   subtext: {
     color: theme.palette.text.secondary,
@@ -29,6 +35,8 @@ const useStyles = makeStyles((theme) => ({
   },
   name: {
     "margin-top": "20px",
+    "font-size": "20px",
+    textAlign: "center",
   }
 }));
 
@@ -42,7 +50,7 @@ const playerPage = () => {
   const [playerState, setPlayerState] = useState(undefined);
 
   useEffect(() => {
-    fetch("http://localhost:8080/person/1")
+    fetch("http://localhost:8080/person/" + getPlayerId())
       .then(resp => resp.json())
       .then((x) => {
         console.log('within then x:', x);
@@ -60,28 +68,33 @@ const playerPage = () => {
   const renderProfile = () => {
     return (
       <div className={classes.root}>
-        <Paper className={classes.paper}>
-          <Grid container spacing={3}>
-            <Grid item xs={8} sm={4} className={classes.heading}>
-              <Avatar src={imgSource} className={classes.large} />
-              <div className={classes.name}> {playerState.firstName} </div>
+        <Grid container justify="center" >
+          <Paper className={classes.paper}>
+            <Grid container spacing={3}>
+              <Grid item xs={4} sm={3} >
+                <Avatar src={imgSource} className={classes.large} />
+                <div className={classes.name}> {`${playerState.firstName} ${playerState.lastName}`} </div>
+              </Grid>
+              <Grid container xs={9} item >
+                <Grid xs={4} item >
+                  <div className={classes.heading}>1782</div>
+                  <div className={classes.subtext}>Rating</div>
+                </Grid>
+                <Grid xs={4} item >
+                  <div className={classes.heading}>234</div>
+                  <div className={classes.subtext}>Followers</div>
+                </Grid>
+                <Grid xs={4} item >
+                  <div className={classes.heading}>400</div>
+                  <div className={classes.subtext}>Following</div>
+                </Grid>
+                <Grid xs={12} item >
+                  <div className={classes.subheading}>USATT Number: {playerState.usattNumber}</div>
+                </Grid>
+              </Grid>
             </Grid>
-            <Grid container xs={8} item >
-              <Grid xs={4} item >
-                <div className={classes.heading}>234</div>
-                <div className={classes.subtext}>Rating</div>
-              </Grid>
-              <Grid xs={4} item >
-                <div className={classes.heading}>343</div>
-                <div className={classes.subtext}>Followers</div>
-              </Grid>
-              <Grid xs={4} item >
-                <div className={classes.heading}>3456</div>
-                <div className={classes.subtext}>Following</div>
-              </Grid>
-            </Grid>
-          </Grid>
-        </Paper>
+          </Paper>
+        </Grid>
       </div>
     );
   }
