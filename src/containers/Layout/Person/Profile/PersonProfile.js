@@ -11,7 +11,6 @@ const useStyles = makeStyles((theme) => ({
   },
   paper: {
     marginTop: "30px",
-    marginBottom: "30px",
     width: 800
   },
   container: {
@@ -23,6 +22,8 @@ const useStyles = makeStyles((theme) => ({
     textAlign: "center",
     "font-size": "30px",
   },
+
+
   subheading: {
     color: theme.palette.text.primary,
     textAlign: "center",
@@ -81,7 +82,7 @@ const playerPage = () => {
       <div className={classes.root}>
         <Grid container justify="center" >
           <Paper className={classes.paper}>
-            <Grid container className={classes.container} spacing={2}>
+            <Grid container className={classes.container}>
               <Grid item xs={12} sm={4} >
                 <Avatar src={imgSource} className={classes.large} />
                 <div className={classes.name}> {`${playerState.firstName} ${playerState.lastName}`} </div>
@@ -101,6 +102,56 @@ const playerPage = () => {
                 <Grid xs={4} item >
                   <div className={classes.heading}>400</div>
                   <div className={classes.subtext}>Following</div>
+                </Grid>
+              </Grid>
+            </Grid>
+          </Paper>
+
+          <Paper className={classes.paper}>
+            <Grid container className={classes.container}>
+              <Grid item xs={12} sm={4} >
+                <div className={classes.heading} >Clubs</div>
+              </Grid>
+              <Grid container xs={8} item >
+                <Grid xs={3} item >
+                  <div className={classes.heading}>Image</div>
+                  <div className={classes.subtext}>Club 1</div>
+                </Grid>
+                <Grid xs={3} item >
+                  <div className={classes.heading}>Image</div>
+                  <div className={classes.subtext}>Club 2</div>
+                </Grid>
+                <Grid xs={3} item >
+                  <div className={classes.heading}>Image</div>
+                  <div className={classes.subtext}>Club 3</div>
+                </Grid>
+                <Grid xs={3} item >
+                  <div className={classes.heading}>Image</div>
+                  <div className={classes.subtext}>Club 4</div>
+                </Grid>
+              </Grid>
+            </Grid>
+
+            <Grid container className={classes.container}>
+              <Grid item xs={12} sm={4} >
+                <div className={classes.heading} >Coaches</div>
+              </Grid>
+              <Grid container xs={8} item >
+                <Grid xs={3} item >
+                  <div className={classes.heading}>Image</div>
+                  <div className={classes.subtext}>Coach 1</div>
+                </Grid>
+                <Grid xs={3} item >
+                  <div className={classes.heading}>Image</div>
+                  <div className={classes.subtext}>Coach 2</div>
+                </Grid>
+                <Grid xs={3} item >
+                  <div className={classes.heading}>Image</div>
+                  <div className={classes.subtext}>Coach 3</div>
+                </Grid>
+                <Grid xs={3} item >
+                  <div className={classes.heading}>Image</div>
+                  <div className={classes.subtext}>Coach 4</div>
                 </Grid>
               </Grid>
             </Grid>
