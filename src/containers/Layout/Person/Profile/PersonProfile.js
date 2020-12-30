@@ -10,8 +10,13 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
   },
   paper: {
-    padding: theme.spacing(10),
-    width: 650
+    marginTop: "30px",
+    marginBottom: "30px",
+    width: 800
+  },
+  container: {
+    marginTop: "20px",
+    marginBottom: "20px",
   },
   heading: {
     color: theme.palette.text.primary,
@@ -28,6 +33,12 @@ const useStyles = makeStyles((theme) => ({
     textAlign: "center",
     "font-size": "13px",
   },
+  usattLabel: {
+    color: theme.palette.text.secondary,
+    textAlign: "center",
+    "font-size": "13px",
+    marginTop: "30px",
+  },
   large: {
     width: theme.spacing(15),
     height: theme.spacing(15),
@@ -35,7 +46,7 @@ const useStyles = makeStyles((theme) => ({
   },
   name: {
     "margin-top": "20px",
-    "font-size": "20px",
+    "font-size": "18px",
     textAlign: "center",
   }
 }));
@@ -70,12 +81,15 @@ const playerPage = () => {
       <div className={classes.root}>
         <Grid container justify="center" >
           <Paper className={classes.paper}>
-            <Grid container spacing={3}>
-              <Grid item xs={4} sm={3} >
+            <Grid container className={classes.container} spacing={2}>
+              <Grid item xs={12} sm={4} >
                 <Avatar src={imgSource} className={classes.large} />
                 <div className={classes.name}> {`${playerState.firstName} ${playerState.lastName}`} </div>
+                <Grid xs={12} item >
+                  <div className={classes.usattLabel}>USATT #{playerState.usattNumber}</div>
+                </Grid>
               </Grid>
-              <Grid container xs={9} item >
+              <Grid container xs={8} item >
                 <Grid xs={4} item >
                   <div className={classes.heading}>1782</div>
                   <div className={classes.subtext}>Rating</div>
@@ -87,9 +101,6 @@ const playerPage = () => {
                 <Grid xs={4} item >
                   <div className={classes.heading}>400</div>
                   <div className={classes.subtext}>Following</div>
-                </Grid>
-                <Grid xs={12} item >
-                  <div className={classes.subheading}>USATT Number: {playerState.usattNumber}</div>
                 </Grid>
               </Grid>
             </Grid>
