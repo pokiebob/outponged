@@ -92,7 +92,7 @@ const playerPage = () => {
               </Grid>
               <Grid container xs={8} item >
                 <Grid xs={4} item >
-                  <div className={classes.heading}>1782</div>
+                  <div className={classes.heading}>{playerState.rating}</div>
                   <div className={classes.subtext}>Rating</div>
                 </Grid>
                 <Grid xs={4} item >

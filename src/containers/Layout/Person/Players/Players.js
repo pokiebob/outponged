@@ -1,26 +1,23 @@
 import React, { Component } from "react";
 import axios from "../../../../axios";
-import { Route, Switch } from "react-router-dom";
 
 import Card from "../../../../components/Card/Card";
 import "./Players.css";
-import PersonProfile from "../Profile/PersonProfile";
-import { PersonData } from "../PersonData";
 
 class Players extends Component {
   state = {
     players: [],
   };
 
-  getMockPlayers() {
-    return PersonData.map((player, idx) => {
-      return {
-        ...player,
-        pic: `https://randomuser.me/api/portraits/women/${idx}.jpg`,
-        fullName: `${player.firstName} ${player.lastName}`,
-      };
-    });
-  }
+  // getMockPlayers() {
+  //   return PersonData.map((player, idx) => {
+  //     return {
+  //       ...player,
+  //       pic: `https://randomuser.me/api/portraits/women/${idx}.jpg`,
+  //       fullName: `${player.firstName} ${player.lastName}`,
+  //     };
+  //   });
+  // }
 
   componentDidMount() {
     // For testing only
