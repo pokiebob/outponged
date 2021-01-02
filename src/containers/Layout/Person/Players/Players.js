@@ -32,7 +32,7 @@ class Players extends Component {
         const updatedPlayers = players.map((player, idx) => {
           return {
             ...player,
-            pic: `https://randomuser.me/api/portraits/men/${idx}.jpg`,
+            
             fullName: `${player.firstName} ${player.lastName}`,
           };
         });
@@ -62,7 +62,7 @@ class Players extends Component {
             key={card.personId}
             fullName={card.fullName}
             homeClub={card.homeClub}
-            pic={card.pic}
+            pic={card.pictureUrl}
             usattNumber={card.usattNumber}
             rating={card.rating}
             clicked={() => this.playerSelectedHandler(card.personId)}

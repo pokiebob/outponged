@@ -74,9 +74,6 @@ const playerPage = () => {
 
   const classes = useStyles();
 
-  const imgSource = `https://randomuser.me/api/portraits/men/${getPlayerId()}.jpg`;
-
-
   const renderProfile = () => {
     return (
       <div className={classes.root}>
@@ -84,7 +81,7 @@ const playerPage = () => {
           <Paper className={classes.paper}>
             <Grid container className={classes.container}>
               <Grid item xs={12} sm={4} >
-                <Avatar src={imgSource} className={classes.large} />
+                <Avatar src={playerState.pictureUrl} className={classes.large} />
                 <div className={classes.name}> {`${playerState.firstName} ${playerState.lastName}`} </div>
                 <Grid xs={12} item >
                   <div className={classes.usattLabel}>USATT #{playerState.usattNumber}</div>
