@@ -116,25 +116,34 @@ const personPage = () => {
     setValue(newValue);
   };
 
-  useEffect(() => {
+  const initialize = () => {
+    console.log('initializing');
     fetch("http://localhost:8080/person/" + getPersonId())
       .then(resp => resp.json())
       .then((personData) => {
-        console.log('personData:', personData);
         setPersonState(personData);
-        const linkedPersonIds = personData.links.persons.map(p=> p.personId);
+        const linkedPersonIds = personData.links.persons.map(p => p.personId);
         const linkedPersonIdsUniq = [...new Set(linkedPersonIds)];
-        
+
         const linkedPersonsFetches = linkedPersonIdsUniq.map(id => fetch("http://localhost:8080/person/" + id)
           .then(x => x.json()));
 
         forkJoin(linkedPersonsFetches)
           .subscribe((linkedPersonData) => {
-            console.log('linkedPersonData', linkedPersonData);
             setLinkedPersonsState(linkedPersonData.filter(x => x !== null));
           });
       });
-  }, []);
+  }
+
+  useEffect(() => {
+    console.log('useEffect');
+    initialize();
+    // Register a listener to trap url changes
+    return history.listen((location) => {
+      initialize();
+    })
+  }
+    , []);
 
   const classes = useStyles();
 
@@ -169,9 +178,9 @@ const personPage = () => {
   }
 
   const navigateToLinkedPerson = (personId) => {
-    history.push('/');
     history.push('/profile/' + personId);
-    
+    initialize();
+
   }
 
   const filterLinkedPersons = (role) => {
@@ -194,7 +203,7 @@ const personPage = () => {
                   setValue(idx);
                   navigateToLinkedPerson(linkedPerson.personId);
                 }
-                  }>
+                }>
                   <Button title={fullName} >
                     <Avatar src={linkedPersonsState[idx].pictureUrl} />
                   </Button>
