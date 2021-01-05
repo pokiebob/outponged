@@ -122,9 +122,12 @@ const personPage = () => {
       .then(resp => resp.json())
       .then((personData) => {
         setPersonState(personData);
-        const linkedPersonIds = personData.links.persons.map(p => p.personId);
+        const linkedPersonIds = personData.links.persons
+          .map(p => p.personId)
+          .filter(x => x !== undefined);
         const linkedPersonIdsUniq = [...new Set(linkedPersonIds)];
 
+        console.log('linkedPersonIds', linkedPersonIds);
         const linkedPersonsFetches = linkedPersonIdsUniq.map(id => fetch("http://localhost:8080/person/" + id)
           .then(x => x.json()));
 
@@ -140,7 +143,9 @@ const personPage = () => {
     initialize();
     // Register a listener to trap url changes
     return history.listen((location) => {
-      initialize();
+      if (location.pathname.includes('profile')) {
+        initialize();
+      }
     })
   }
     , []);

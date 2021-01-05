@@ -28,12 +28,15 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const card = (props) => {
+const clubCard = (props) => {
   const classes = useStyles();
   console.log(props);
 
+
   return (
-    <div className={classes.root} onClick={props.clicked}>
+    <div className={classes.root} 
+    onClick={props.clicked}
+    >
       <Paper className={classes.paper} >
         <Grid container spacing={2}>
           <Grid item>
@@ -44,23 +47,22 @@ const card = (props) => {
           <Grid item xs={12} sm container>
             <Grid item xs container direction="column" spacing={2}>
               <Grid item xs>
-                <Typography gutterBottom variant="subtitle1">
-                  {props.fullName}
+                <Typography gutterBottom variant="h6">
+                  {props.name}
                 </Typography>
-                <Typography variant="body2" gutterBottom>
-                  Rating: {props.rating}
-                </Typography>
-                <Typography variant="body2" color="textSecondary">
-                  USATT Number: {props.usattNumber}
+                <Typography variant="body2" gutterBottom >
+                   <a href={props.siteUrl} target="_blank">{props.siteUrl}</a>
                 </Typography>
                 <Typography variant="body2" color="textSecondary">
-                  Home Club: {props.homeClub}
+                  Address: {props.address}
+                </Typography>
+                <Typography variant="body2" color="textSecondary">
+                  Phone Number: {props.phoneNumber}
                 </Typography>
               </Grid>
             </Grid>
             <Grid item>
-              <Typography variant="subtitle1">Player</Typography>
-              <Typography variant="subtitle1">Coach</Typography>
+              <Typography variant="subtitle1">Club</Typography>
             </Grid>
           </Grid>
         </Grid>
@@ -69,4 +71,4 @@ const card = (props) => {
   );
 };
 
-export default card;
+export default clubCard;

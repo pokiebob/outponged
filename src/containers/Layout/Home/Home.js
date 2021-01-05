@@ -20,6 +20,7 @@ import "./Home.css";
 
 // Components
 import Players from "../Person/Players/Players";
+import Clubs from "../Club/Clubs/Clubs";
 import PersonProfile from "../Person/Profile/PersonProfile";
 
 const useStyles = makeStyles((theme) => ({
@@ -42,6 +43,7 @@ const home = () => {
       {renderAppBar(classes)}
       <Switch>
         <Route path="/players" component={Players} />
+        <Route path="/clubs" component={Clubs} />
         <Route path="/profile" component={PersonProfile} />
       </Switch>
 
