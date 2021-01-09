@@ -46,7 +46,7 @@ class Players extends Component {
   }
 
   playerSelectedHandler = (id) => {
-    this.props.history.push({ pathname: "/profile/" + id });
+    this.props.history.push({ pathname: "/person-profile/" + id });
     //    console.log("this.props.history: " + this.props.history);
     // this.props.history.push("//" + id);
   };

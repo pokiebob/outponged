@@ -99,17 +99,17 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const getPersonId = () => {
+const getClubId = () => {
   var location = window.location.pathname;
   return location.substring(16, location.length);
 };
 
-const personPage = () => {
+const clubPage = () => {
 
   const history = useHistory();
 
-  const [personState, setPersonState] = useState(undefined);
-  const [linkedPersonsState, setLinkedPersonsState] = useState(undefined);
+  const [clubState, setClubState] = useState(undefined);
+  const [linkedClubsState, setLinkedClubsState] = useState(undefined);
   const [value, setValue] = React.useState(0); //used by app bars
 
   const handleChange = (event, newValue) => {
@@ -118,23 +118,22 @@ const personPage = () => {
 
   const initialize = () => {
     console.log('initializing');
-    fetch("http://localhost:8080/person/" + getPersonId())
+    fetch("http://localhost:8080/club/" + getClubId())
       .then(resp => resp.json())
-      .then((personData) => {
-        setPersonState(personData);
-        console.log('personData', personData);
-        const linkedPersonIds = personData.links.persons
+      .then((clubData) => {
+        setClubState(clubData);
+        const linkedPersonIds = clubData.links.persons
           .map(p => p.personId)
           .filter(x => x !== undefined);
         const linkedPersonIdsUniq = [...new Set(linkedPersonIds)];
 
         console.log('linkedPersonIds', linkedPersonIds);
-        const linkedPersonsFetches = linkedPersonIdsUniq.map(id => fetch("http://localhost:8080/person/" + id)
+        const linkedPersonsFetches = linkedPersonIdsUniq.map(id => fetch("http://localhost:8080/club/" + id)
           .then(x => x.json()));
 
         forkJoin(linkedPersonsFetches)
           .subscribe((linkedPersonData) => {
-            setLinkedPersonsState(linkedPersonData.filter(x => x !== null));
+            setLinkedClubsState(linkedPersonData.filter(x => x !== null));
           });
       });
   }
@@ -158,15 +157,15 @@ const personPage = () => {
       <Paper className={classes.paper}>
         <Grid container className={classes.container}>
           <Grid item xs={12} sm={4} >
-            <Avatar src={personState.pictureUrl} className={classes.large} />
-            <div className={classes.name}> {`${personState.firstName} ${personState.lastName}`} </div>
+            <Avatar src={clubState.pictureUrl} className={classes.large} />
+            <div className={classes.name}> {`${clubState.firstName} ${clubState.lastName}`} </div>
             <Grid xs={12} item >
-              <div className={classes.usattLabel}>USATT #{personState.usattNumber}</div>
+              <div className={classes.usattLabel}>USATT #{clubState.usattNumber}</div>
             </Grid>
           </Grid>
           <Grid container xs={8} item >
             <Grid xs={4} item >
-              <div className={classes.heading}>{personState.rating}</div>
+              <div className={classes.heading}>{clubState.rating}</div>
               <div className={classes.subtext}>Rating</div>
             </Grid>
             <Grid xs={4} item >
@@ -184,23 +183,23 @@ const personPage = () => {
   }
 
   const navigateToLinkedPerson = (personId) => {
-    history.push('/person-profile/' + personId);
+    history.push('/profile/' + personId);
     initialize();
 
   }
 
   const filterLinkedPersons = (role) => {
-    const linkIds = personState.links.persons
+    const linkIds = clubState.links.persons
       .filter(p => p.role === role)
       .map(x => x.personId);
-    return linkedPersonsState.filter(lp => linkIds.includes(lp.personId));
+    return linkedClubsState.filter(lp => linkIds.includes(lp.personId));
   }
   const renderPersonList = (role) => {
-    console.log(linkedPersonsState);
-    return (linkedPersonsState?.length > 0 &&
+    console.log(linkedClubsState);
+    return (linkedClubsState?.length > 0 &&
       filterLinkedPersons(role)
         .map((linkedPerson, idx) => {
-          const fullName = `${linkedPersonsState[idx].firstName} ${linkedPersonsState[idx].lastName}`
+          const fullName = `${linkedClubsState[idx].firstName} ${linkedClubsState[idx].lastName}`
           return (
             <Tab
               {...a11yProps(idx)}
@@ -211,7 +210,7 @@ const personPage = () => {
                 }
                 }>
                   <Button title={fullName} >
-                    <Avatar src={linkedPersonsState[idx].pictureUrl} />
+                    <Avatar src={linkedClubsState[idx].pictureUrl} />
                   </Button>
                   <div className={classes.subtext}>{fullName}</div>
                 </div>
@@ -224,7 +223,7 @@ const personPage = () => {
   }
 
   const renderPersonsBar = (role) => {
-    return (personState && linkedPersonsState &&
+    return (clubState && linkedClubsState &&
       <AppBar position="static" color="white" className={classes.bar}>
         <Tabs
           value={value}
@@ -294,9 +293,9 @@ const personPage = () => {
   }
 
 
-  if (!personState) return false
+  if (!clubState) return false
   else return renderProfile();
 
 };
 
-export default personPage;
+export default clubPage;

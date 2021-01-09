@@ -31,7 +31,7 @@ class Clubs extends Component {
   }
 
   clubSelectedHandler = (id) => {
-    this.props.history.push({ pathname: "/profile/" + id });
+    this.props.history.push({ pathname: "/club-profile/" + id });
     //    console.log("this.props.history: " + this.props.history);
     // this.props.history.push("//" + id);
   };
@@ -50,7 +50,7 @@ class Clubs extends Component {
             pic={card.pictureUrl}
             siteUrl={card.siteUrl}
             phoneNumber={card.phoneNumber}
-            clicked={() => this.clubSelectedHandler(card.personId)}
+            clicked={() => this.clubSelectedHandler(card.clubId)}
           />
           // </Link>
         );

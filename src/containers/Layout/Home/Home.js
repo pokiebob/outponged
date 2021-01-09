@@ -22,6 +22,7 @@ import "./Home.css";
 import Players from "../Person/Players/Players";
 import Clubs from "../Club/Clubs/Clubs";
 import PersonProfile from "../Person/Profile/PersonProfile";
+import ClubProfile from "../Club/Profile/ClubProfile";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -44,7 +45,8 @@ const home = () => {
       <Switch>
         <Route path="/players" component={Players} />
         <Route path="/clubs" component={Clubs} />
-        <Route path="/profile" component={PersonProfile} />
+        <Route path="/person-profile" component={PersonProfile} />
+        <Route path="/club-profile" compononen={ClubProfile} />
       </Switch>
 
     </div>
@@ -65,6 +67,38 @@ const renderAppBar = (classes) => {
     }
 
     setState({ ...state, isDrawerOpen: open });
+  };
+
+  const renderNavList = () => {
+    return (
+      <List>
+        <ListItem button component={Link} to="/home/" onClick={toggleDrawer(false)}>
+          <TableTennis />
+          {/* <ListItemText primary={"Home"} href="/home/" /> */}
+          Home
+        </ListItem>
+  
+        <ListItem button component={Link} to="/players/" onClick={toggleDrawer(false)}>
+          <TableTennis />
+          Players
+        </ListItem>
+  
+        <ListItem button component={Link} to="/coaches/" onClick={toggleDrawer(false)}>
+          <TableTennis />
+          Coaches
+        </ListItem>
+  
+        <ListItem button component={Link} to="/clubs/" onClick={toggleDrawer(false)}>
+          <TableTennis />
+          Clubs
+        </ListItem>
+  
+        <ListItem button component={Link} to="/tournaments/" onClick={toggleDrawer(false)}>
+          <TableTennis />
+          Tournaments
+        </ListItem>
+      </List>
+    );
   };
 
   return (
@@ -100,37 +134,5 @@ const renderAppBar = (classes) => {
 // };
 
 // {index % 2 === 0 ? <mdiTableTennis /> : <MailIcon />}
-
-const renderNavList = () => {
-  return (
-    <List>
-      <ListItem button component={Link} to="/home/">
-        <TableTennis />
-        {/* <ListItemText primary={"Home"} href="/home/" /> */}
-        Home
-      </ListItem>
-
-      <ListItem button component={Link} to="/players/">
-        <TableTennis />
-        Players
-      </ListItem>
-
-      <ListItem button component={Link} to="/coaches/">
-        <TableTennis />
-        Coaches
-      </ListItem>
-
-      <ListItem button component={Link} to="/clubs/">
-        <TableTennis />
-        Clubs
-      </ListItem>
-
-      <ListItem button component={Link} to="/tournaments/">
-        <TableTennis />
-        Tournaments
-      </ListItem>
-    </List>
-  );
-};
 
 export default home;
