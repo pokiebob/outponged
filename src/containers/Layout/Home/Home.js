@@ -46,7 +46,7 @@ const home = () => {
         <Route path="/players" component={Players} />
         <Route path="/clubs" component={Clubs} />
         <Route path="/person-profile" component={PersonProfile} />
-        <Route path="/club-profile" compononen={ClubProfile} />
+        <Route path="/club-profile" component={ClubProfile} />
       </Switch>
 
     </div>

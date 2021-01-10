@@ -16,285 +16,282 @@ import { forkJoin } from 'rxjs';
 
 
 function TabPanel(props) {
-  const { children, value, index, ...other } = props;
+    const { children, value, index, ...other } = props;
 
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`scrollable-force-tabpanel-${index}`}
-      aria-labelledby={`scrollable-force-tab-${index}`}
-      {...other}
-    >
-      {value === index && (
-        <Box p={1}>
-          <Typography>{children}</Typography>
-        </Box>
-      )}
-    </div>
-  );
+    return (
+        <div
+            role="tabpanel"
+            hidden={value !== index}
+            id={`scrollable-force-tabpanel-${index}`}
+            aria-labelledby={`scrollable-force-tab-${index}`}
+            {...other}
+        >
+            {value === index && (
+                <Box p={1}>
+                    <Typography>{children}</Typography>
+                </Box>
+            )}
+        </div>
+    );
 }
 
 TabPanel.propTypes = {
-  children: PropTypes.node,
-  index: PropTypes.any.isRequired,
-  value: PropTypes.any.isRequired
+    children: PropTypes.node,
+    index: PropTypes.any.isRequired,
+    value: PropTypes.any.isRequired
 };
 
 function a11yProps(index) {
-  return {
-    id: `scrollable-force-tab-${index}`,
-    "aria-controls": `scrollable-force-tabpanel-${index}`
-  };
+    return {
+        id: `scrollable-force-tab-${index}`,
+        "aria-controls": `scrollable-force-tabpanel-${index}`
+    };
 }
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    flexGrow: 1,
-  },
-  paper: {
-    marginTop: "30px",
-    width: 800
-  },
-  bar: {
-    border: "none",
-    boxShadow: "none"
-  },
-  container: {
-    marginTop: "20px",
-    marginBottom: "20px",
-  },
-  heading: {
-    color: theme.palette.text.primary,
-    textAlign: "center",
-    "font-size": "30px",
-  },
+    root: {
+        flexGrow: 1,
+    },
+    paper: {
+        marginTop: "30px",
+        width: 800
+    },
+    bar: {
+        border: "none",
+        boxShadow: "none"
+    },
+    container: {
+        marginTop: "20px",
+        marginBottom: "20px",
+    },
+    heading: {
+        color: theme.palette.text.primary,
+        textAlign: "center",
+        "font-size": "30px",
+    },
 
 
-  subheading: {
-    color: theme.palette.text.primary,
-    textAlign: "center",
-    "font-size": "15px",
-  },
-  subtext: {
-    color: theme.palette.text.secondary,
-    textAlign: "center",
-    "font-size": "13px",
-  },
-  usattLabel: {
-    color: theme.palette.text.secondary,
-    textAlign: "center",
-    "font-size": "13px",
-    marginTop: "30px",
-  },
-  large: {
-    width: theme.spacing(15),
-    height: theme.spacing(15),
-    margin: "auto"
-  },
-  name: {
-    "margin-top": "20px",
-    "font-size": "18px",
-    textAlign: "center",
-  }
+    subheading: {
+        color: theme.palette.text.primary,
+        textAlign: "center",
+        "font-size": "15px",
+    },
+    subtext: {
+        color: theme.palette.text.secondary,
+        textAlign: "center",
+        "font-size": "13px",
+    },
+    address: {
+        color: theme.palette.text.secondary,
+        textAlign: "center",
+        "font-size": "13px",
+        marginTop: "30px",
+    },
+    large: {
+        width: theme.spacing(15),
+        height: theme.spacing(15),
+        margin: "auto"
+    },
+    name: {
+        "margin-top": "20px",
+        "font-size": "18px",
+        textAlign: "center",
+    }
 }));
 
 const getClubId = () => {
-  var location = window.location.pathname;
-  return location.substring(16, location.length);
+    var location = window.location.pathname;
+    return location.substring(14, location.length);
 };
 
 const clubPage = () => {
 
-  const history = useHistory();
+    const history = useHistory();
 
-  const [clubState, setClubState] = useState(undefined);
-  const [linkedClubsState, setLinkedClubsState] = useState(undefined);
-  const [value, setValue] = React.useState(0); //used by app bars
+    const [clubState, setClubState] = useState(undefined);
+    const [linkedClubsState, setLinkedClubsState] = useState(undefined);
+    const [value, setValue] = React.useState(0); //used by app bars
 
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
-  };
+    const handleChange = (event, newValue) => {
+        setValue(newValue);
+    };
 
-  const initialize = () => {
-    console.log('initializing');
-    fetch("http://localhost:8080/club/" + getClubId())
-      .then(resp => resp.json())
-      .then((clubData) => {
-        setClubState(clubData);
-        const linkedPersonIds = clubData.links.persons
-          .map(p => p.personId)
-          .filter(x => x !== undefined);
-        const linkedPersonIdsUniq = [...new Set(linkedPersonIds)];
+    const initialize = () => {
+        console.log('initializing');
+        fetch("http://localhost:8080/club/" + getClubId())
+            .then(resp => resp.json())
+            .then((clubData) => {
+                console.log('clubData', clubData);
+                setClubState(clubData);
+                // const linkedPersonIds = clubData.links.persons
+                //     .map(p => p.personId)
+                //     .filter(x => x !== undefined);
+                // const linkedPersonIdsUniq = [...new Set(linkedPersonIds)];
 
-        console.log('linkedPersonIds', linkedPersonIds);
-        const linkedPersonsFetches = linkedPersonIdsUniq.map(id => fetch("http://localhost:8080/club/" + id)
-          .then(x => x.json()));
+                // console.log('linkedPersonIds', linkedPersonIds);
+                // const linkedPersonsFetches = linkedPersonIdsUniq.map(id => fetch("http://localhost:8080/club/" + id)
+                //     .then(x => x.json()));
 
-        forkJoin(linkedPersonsFetches)
-          .subscribe((linkedPersonData) => {
-            setLinkedClubsState(linkedPersonData.filter(x => x !== null));
-          });
-      });
-  }
+                // forkJoin(linkedPersonsFetches)
+                //     .subscribe((linkedPersonData) => {
+                //         setLinkedClubsState(linkedPersonData.filter(x => x !== null));
+                //     });
+            });
+    }
 
-  useEffect(() => {
-    console.log('useEffect');
-    initialize();
-    // Register a listener to trap url changes
-    return history.listen((location) => {
-      if (location.pathname.includes('profile')) {
+    useEffect(() => {
+        console.log('useEffect');
         initialize();
-      }
-    })
-  }
-    , []);
+        // Register a listener to trap url changes
+        return history.listen((location) => {
+            if (location.pathname.includes('profile')) {
+                initialize();
+            }
+        })
+    }
+        , []);
 
-  const classes = useStyles();
+    const classes = useStyles();
 
-  const renderProfileCard = () => {
-    return (
-      <Paper className={classes.paper}>
-        <Grid container className={classes.container}>
-          <Grid item xs={12} sm={4} >
-            <Avatar src={clubState.pictureUrl} className={classes.large} />
-            <div className={classes.name}> {`${clubState.firstName} ${clubState.lastName}`} </div>
-            <Grid xs={12} item >
-              <div className={classes.usattLabel}>USATT #{clubState.usattNumber}</div>
-            </Grid>
-          </Grid>
-          <Grid container xs={8} item >
-            <Grid xs={4} item >
-              <div className={classes.heading}>{clubState.rating}</div>
-              <div className={classes.subtext}>Rating</div>
-            </Grid>
-            <Grid xs={4} item >
-              <div className={classes.heading}>234</div>
-              <div className={classes.subtext}>Followers</div>
-            </Grid>
-            <Grid xs={4} item >
-              <div className={classes.heading}>400</div>
-              <div className={classes.subtext}>Following</div>
-            </Grid>
-          </Grid>
-        </Grid>
-      </Paper>
-    );
-  }
+    const renderProfileCard = () => {
+        return (
+            <Paper className={classes.paper}>
+                <Grid container className={classes.container}>
+                    <Grid item xs={12} sm={6} >
+                        <Avatar src={clubState.pictureUrl} className={classes.large} />
+                        <div className={classes.name}> {clubState.name} </div>
+                        <Grid xs={12} item >
+                            <div className={classes.address}>{clubState.address}</div>
+                        </Grid>
+                    </Grid>
+                    <Grid container xs={6} item >
+                        <Grid xs={6} item >
+                            <div className={classes.heading}>234</div>
+                            <div className={classes.subtext}>Followers</div>
+                        </Grid>
+                        <Grid xs={6} item >
+                            <div className={classes.heading}>400</div>
+                            <div className={classes.subtext}>Following</div>
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </Paper>
+        );
+    }
 
-  const navigateToLinkedPerson = (personId) => {
-    history.push('/profile/' + personId);
-    initialize();
+    const navigateToLinkedPerson = (personId) => {
+        history.push('/person-profile/' + personId);
+        initialize();
 
-  }
+    }
 
-  const filterLinkedPersons = (role) => {
-    const linkIds = clubState.links.persons
-      .filter(p => p.role === role)
-      .map(x => x.personId);
-    return linkedClubsState.filter(lp => linkIds.includes(lp.personId));
-  }
-  const renderPersonList = (role) => {
-    console.log(linkedClubsState);
-    return (linkedClubsState?.length > 0 &&
-      filterLinkedPersons(role)
-        .map((linkedPerson, idx) => {
-          const fullName = `${linkedClubsState[idx].firstName} ${linkedClubsState[idx].lastName}`
-          return (
-            <Tab
-              {...a11yProps(idx)}
-              component={() => (
-                <div onClick={() => {
-                  setValue(idx);
-                  navigateToLinkedPerson(linkedPerson.personId);
+    const filterLinkedPersons = (role) => {
+        const linkIds = clubState.links.persons
+            .filter(p => p.role === role)
+            .map(x => x.personId);
+        return linkedClubsState.filter(lp => linkIds.includes(lp.personId));
+    }
+    const renderPersonList = (role) => {
+        console.log(linkedClubsState);
+        return (linkedClubsState?.length > 0 &&
+            filterLinkedPersons(role)
+                .map((linkedPerson, idx) => {
+                    const fullName = `${linkedClubsState[idx].firstName} ${linkedClubsState[idx].lastName}`
+                    return (
+                        <Tab
+                            {...a11yProps(idx)}
+                            component={() => (
+                                <div onClick={() => {
+                                    setValue(idx);
+                                    navigateToLinkedPerson(linkedPerson.personId);
+                                }
+                                }>
+                                    <Button title={fullName} >
+                                        <Avatar src={linkedClubsState[idx].pictureUrl} />
+                                    </Button>
+                                    <div className={classes.subtext}>{fullName}</div>
+                                </div>
+                            )}
+                        />
+                    )
                 }
-                }>
-                  <Button title={fullName} >
-                    <Avatar src={linkedClubsState[idx].pictureUrl} />
-                  </Button>
-                  <div className={classes.subtext}>{fullName}</div>
-                </div>
-              )}
-            />
-          )
-        }
-        )
-    );
-  }
+                )
+        );
+    }
 
-  const renderPersonsBar = (role) => {
-    return (clubState && linkedClubsState &&
-      <AppBar position="static" color="white" className={classes.bar}>
-        <Tabs
-          value={value}
-          onChange={handleChange}
-          variant="scrollable"
-          scrollButtons="on"
-          indicatorColor="primary"
-          textColor="primary"
-          aria-label="scrollable force tabs example"
-        >
-          {renderPersonList(role)}
-        </Tabs>
-      </AppBar>
-      //           {/* <TabPanel value={value} index={0}>
-      //             Item One
-      // </TabPanel>
-      //           <TabPanel value={value} index={1}>
-      //             Item Two
-      // </TabPanel>
-      //           <TabPanel value={value} index={2}>
-      //             Item Three
-      // </TabPanel>
-      //           <TabPanel value={value} index={3}>
-      //             Item Four
-      // </TabPanel>
-      //           <TabPanel value={value} index={4}>
-      //             Item Five
-      // </TabPanel>
-      //           <TabPanel value={value} index={5}>
-      //             Item Six
-      // </TabPanel>
-      //           <TabPanel value={value} index={6}>
-      //             Item Seven
-      // </TabPanel> */}
-    );
-  }
+    const renderPersonsBar = (role) => {
+        return (clubState && linkedClubsState &&
+            <AppBar position="static" color="white" className={classes.bar}>
+                <Tabs
+                    value={value}
+                    onChange={handleChange}
+                    variant="scrollable"
+                    scrollButtons="on"
+                    indicatorColor="primary"
+                    textColor="primary"
+                    aria-label="scrollable force tabs example"
+                >
+                    {renderPersonList(role)}
+                </Tabs>
+            </AppBar>
+            //           {/* <TabPanel value={value} index={0}>
+            //             Item One
+            // </TabPanel>
+            //           <TabPanel value={value} index={1}>
+            //             Item Two
+            // </TabPanel>
+            //           <TabPanel value={value} index={2}>
+            //             Item Three
+            // </TabPanel>
+            //           <TabPanel value={value} index={3}>
+            //             Item Four
+            // </TabPanel>
+            //           <TabPanel value={value} index={4}>
+            //             Item Five
+            // </TabPanel>
+            //           <TabPanel value={value} index={5}>
+            //             Item Six
+            // </TabPanel>
+            //           <TabPanel value={value} index={6}>
+            //             Item Seven
+            // </TabPanel> */}
+        );
+    }
 
-  const renderProfile = () => {
-    return (
-      <div className={classes.root}>
-        <Grid container justify="center" >
-          {renderProfileCard()}
+    const renderProfile = () => {
+        return (
+            <div className={classes.root}>
+                <Grid container justify="center" >
+                    {renderProfileCard()}
 
-          <Paper className={classes.paper}>
-            <Grid container className={classes.container}>
-              <Grid item xs={12} sm={4} >
-                <div className={classes.heading} >Clubs</div>
-              </Grid>
+                    <Paper className={classes.paper}>
+                        <Grid container className={classes.container}>
+                            <Grid item xs={12} sm={4} >
+                                <div className={classes.heading} >Owner</div>
+                            </Grid>
 
-              <Grid container xs={8} item >
-                {renderPersonsBar("coach")}
-              </Grid>
-            </Grid>
+                            <Grid container xs={8} item >
+                                {renderPersonsBar("coach")}
+                            </Grid>
+                        </Grid>
 
-            <Grid container className={classes.container}>
-              <Grid item xs={12} sm={4} >
-                <div className={classes.heading} >Coaches</div>
-              </Grid>
-              <Grid container xs={8} item >
-                {renderPersonsBar("coach")}
-              </Grid>
-            </Grid>
-          </Paper>
-        </Grid>
-      </div>
-    );
-  }
+                        <Grid container className={classes.container}>
+                            <Grid item xs={12} sm={4} >
+                                <div className={classes.heading} >Coaches</div>
+                            </Grid>
+                            <Grid container xs={8} item >
+                                {renderPersonsBar("coach")}
+                            </Grid>
+                        </Grid>
+                    </Paper>
+                </Grid>
+            </div>
+        );
+    }
 
 
-  if (!clubState) return false
-  else return renderProfile();
+    if (!clubState) return false
+    else return renderProfile();
 
 };
 
