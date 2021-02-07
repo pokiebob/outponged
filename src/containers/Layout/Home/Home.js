@@ -22,6 +22,7 @@ import "./Home.css";
 import Players from "../Person/Players/Players";
 import Clubs from "../Club/Clubs/Clubs";
 import PersonProfile from "../Person/Profile/PersonProfile";
+import EditPersonProfile from "../Person/Profile/EditProfile"
 import ClubProfile from "../Club/Profile/ClubProfile";
 
 const useStyles = makeStyles((theme) => ({
@@ -46,6 +47,7 @@ const home = () => {
         <Route path="/players" component={Players} />
         <Route path="/clubs" component={Clubs} />
         <Route path="/person-profile" component={PersonProfile} />
+        <Route path="/edit-person-profile" component={EditPersonProfile} />
         <Route path="/club-profile" component={ClubProfile} />
       </Switch>
 

@@ -159,7 +159,7 @@ const personPage = () => {
     initialize();
     // Register a listener to trap url changes
     return history.listen((location) => {
-      if (location.pathname.includes('profile')) {
+      if (location.pathname.includes('person-profile')) {
         initialize();
       }
     })
