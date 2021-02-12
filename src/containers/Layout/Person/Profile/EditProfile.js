@@ -130,6 +130,12 @@ const editProfile = () => {
     const classes = useStyles();
 
     const renderProfileCard = () => {
+
+        const [firstName, setFirstName] = useState('');
+        const handleSubmit = (event) => {
+            event.preventDefault();
+            console.log("firstName", firstName);
+        }
         return (
             <Paper className={classes.paper}>
                 <Grid container className={classes.container}>
@@ -145,17 +151,23 @@ const editProfile = () => {
                     <Grid container xs={8} item >
                         <form 
                         className={classes.root} 
-                        noValidate autoComplete="off" >
+                        noValidate 
+                        autoComplete="off" 
+                        onSubmit={handleSubmit}>
                             <TextField 
-                            id="standard-basic" 
+                            id="standard-full-width" 
                             label="First Name" 
                             defaultValue={personState.firstName}
-                            fullWidth/>
+                            value={firstName}
+                            onInput={ e => setFirstName(e.target.value)}
+                            fullWidth
+                            />
                             <TextField 
                             id="standard-basic" 
                             label="Last Name" 
                             defaultValue={personState.lastName}
-                            fullWidth/>
+                            fullWidth
+                            />
                             <TextField
                                 id="filled-multiline-flexible"
                                 label="Bio"
@@ -173,6 +185,12 @@ const editProfile = () => {
                                 label="Phone Number"
                                 fullWidth
                             />
+                            <Button 
+                                type="submit"
+                                onSubmit
+                            >
+                                Save
+                            </Button>
 
                         </form>
                     </Grid>
@@ -184,7 +202,7 @@ const editProfile = () => {
     const renderProfile = () => {
         return (
             <div className={classes.root}>
-                <Grid container >
+                <Grid container justify="center" >
                     {renderProfileCard()}
                 </Grid>
             </div>
