@@ -104,6 +104,7 @@ const editProfile = () => {
     const history = useHistory();
 
     const [personState, setPersonState] = useState(undefined);
+    const [firstName, setFirstName] = useState('');
 
     const initialize = () => {
         console.log('initializing');
@@ -111,8 +112,31 @@ const editProfile = () => {
             .then(resp => resp.json())
             .then((personData) => {
                 setPersonState(personData);
-                console.log('personState', personState);
+                setFirstName(personData.firstName);
             });
+    }
+
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        console.log("firstName", firstName);
+        const newPersonState = Object.assign({}, personState);
+        newPersonState.firstName = firstName;
+        setPersonState(newPersonState);
+        const patch = {
+            method : 'PATCH',
+            headers : { 
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': 'http://localhost:3000'
+            },
+            body: JSON.stringify({
+                personId: newPersonState.personId,
+                firstName: newPersonState.firstName
+            })
+        }
+
+        fetch("http://localhost:8080/person/" + getPersonId(), patch)
+            .then(resp => resp.json());
+        
     }
 
     useEffect(() => {
@@ -130,12 +154,8 @@ const editProfile = () => {
     const classes = useStyles();
 
     const renderProfileCard = () => {
+        console.log('[renderProfileCard] personState', personState);
 
-        const [firstName, setFirstName] = useState('');
-        const handleSubmit = (event) => {
-            event.preventDefault();
-            console.log("firstName", firstName);
-        }
         return (
             <Paper className={classes.paper}>
                 <Grid container className={classes.container}>

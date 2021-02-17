@@ -123,6 +123,7 @@ const clubPage = () => {
             .then((clubData) => {
                 console.log('clubData', clubData);
                 setClubState(clubData);
+                console.log('clubState', clubState);
                 // const linkedPersonIds = clubData.links.persons
                 //     .map(p => p.personId)
                 //     .filter(x => x !== undefined);

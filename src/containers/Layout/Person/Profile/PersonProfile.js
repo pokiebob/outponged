@@ -121,8 +121,8 @@ const personPage = () => {
     fetch("http://localhost:8080/person/" + getPersonId())
       .then(resp => resp.json())
       .then((personData) => {
+        console.log('personData', personData);
         setPersonState(personData);
-        console.log('personState', personState);
         const linkedPersonIds = personData.links.persons
           .map(p => p.personId)
           .filter(x => x !== undefined);
@@ -169,6 +169,7 @@ const personPage = () => {
   const classes = useStyles();
 
   const renderProfileCard = () => {
+    console.log('[renderProfileCard] personState', personState);
     return (
       <Paper className={classes.paper}>
         <Grid container className={classes.container}>
