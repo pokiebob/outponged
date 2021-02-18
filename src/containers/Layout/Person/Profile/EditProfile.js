@@ -103,39 +103,58 @@ const getPersonId = () => {
 const editProfile = () => {
     const history = useHistory();
 
-    const [personState, setPersonState] = useState(undefined);
-    const [firstName, setFirstName] = useState('');
+    const [origPersonState, setOrigPersonState] = useState(undefined);
+    const [newPersonState, setNewPersonState] = useState();
+    // const [firstName, setFirstName] = useState('');
+    // const [lastName, setLastName] = useState('');
+    // const [bio, setBio] = useState('');
+    // const [email, setEmail] = useState('');
+    // const [phoneNumber, setPhoneNumber] = useState('');
+
 
     const initialize = () => {
         console.log('initializing');
         fetch("http://localhost:8080/person/" + getPersonId())
             .then(resp => resp.json())
             .then((personData) => {
-                setPersonState(personData);
-                setFirstName(personData.firstName);
+                setOrigPersonState(personData);
+                setNewPersonState({...personData});
+                // setFirstName(personData.firstName);
+                // setLastName(personData.lastName);
+                // setBio(personData.bio);
+                // setEmail(personData.email);
+                // setPhoneNumber(personData.phoneNumber);
             });
     }
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        console.log("firstName", firstName);
-        const newPersonState = Object.assign({}, personState);
-        newPersonState.firstName = firstName;
-        setPersonState(newPersonState);
+        // newPersonState.firstName = firstName;
+        // newPersonState.lastName = lastName;
+        // newPersonState.bio = bio;
+        // newPersonState.email = email;
+        // newPersonState.phoneNumber = phoneNumber;
+        // setOrigPersonState(newPersonState);
+        const difKeys = Object.keys(newPersonState).filter(key => newPersonState[key] !== origPersonState[key]);
+
+        const diff = {}
+        difKeys.forEach(x=> diff[x] = newPersonState[x]);
+
         const patch = {
             method : 'PATCH',
             headers : { 
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': 'http://localhost:3000'
             },
-            body: JSON.stringify({
-                personId: newPersonState.personId,
-                firstName: newPersonState.firstName
-            })
+            body: JSON.stringify(diff)
         }
 
         fetch("http://localhost:8080/person/" + getPersonId(), patch)
-            .then(resp => resp.json());
+            .then(resp => resp.json())
+            .then((resp) => {
+                console.log(resp);
+                setOrigPersonState({...newPersonState});
+            });
         
     }
 
@@ -150,22 +169,23 @@ const editProfile = () => {
         })
     }
         , []);
-
     const classes = useStyles();
 
     const renderProfileCard = () => {
-        console.log('[renderProfileCard] personState', personState);
+        // console.log('[renderProfileCard] personState', personState);
+
+        const isSubmitEnabled = () => newPersonState?.firstName !== origPersonState?.firstName;
 
         return (
             <Paper className={classes.paper}>
                 <Grid container className={classes.container}>
                     <Grid item xs={12} sm={4} >
-                        <Avatar src={personState.pictureUrl} className={classes.large}> </Avatar>
+                        <Avatar src={origPersonState.pictureUrl} className={classes.large}> </Avatar>
                         <div className={classes.photoButton}>
                             <Button color="primary">Change Photo </Button>
                         </div>
                         <Grid xs={12} item >
-                            <div className={classes.usattLabel}>USATT #{personState.usattNumber}</div>
+                            <div className={classes.usattLabel}>USATT #{origPersonState.usattNumber}</div>
                         </Grid>
                     </Grid>
                     <Grid container xs={8} item >
@@ -177,15 +197,17 @@ const editProfile = () => {
                             <TextField 
                             id="standard-full-width" 
                             label="First Name" 
-                            defaultValue={personState.firstName}
-                            value={firstName}
-                            onInput={ e => setFirstName(e.target.value)}
+                            defaultValue={origPersonState.firstName}
+                            value={newPersonState?.firstName}
+                            onInput={ e => setNewPersonState({firstName: e.target.value}) }
                             fullWidth
                             />
                             <TextField 
                             id="standard-basic" 
                             label="Last Name" 
-                            defaultValue={personState.lastName}
+                            defaultValue={origPersonState.lastName}
+                            value={newPersonState?.lastName}
+                            onInput={ e => setNewPersonState({lastName: e.target.value}) }
                             fullWidth
                             />
                             <TextField
@@ -193,21 +215,31 @@ const editProfile = () => {
                                 label="Bio"
                                 multiline
                                 rowsMax={4}
+                                defaultValue={origPersonState.bio}
+                                value={newPersonState?.bio}
+                                onInput={ e => setNewPersonState({bio: e.target.value}) }
                                 fullWidth
                             />
                             <TextField
                                 id="standard-basic"
                                 label="Email"
+                                defaultValue={origPersonState.email}
+                                value={newPersonState?.email}
+                                onInput={ e => setNewPersonState({email: e.target.value}) }
                                 fullWidth
                             />
                             <TextField
                                 id="standard-basic"
                                 label="Phone Number"
+                                defaultValue={origPersonState.phoneNumber}
+                                value={newPersonState?.phoneNumber}
+                                onInput={ e => setNewPersonState({phoneNumber: e.target.value}) }
                                 fullWidth
                             />
                             <Button 
                                 type="submit"
-                                onSubmit
+                                variant="contained"
+                                disabled={! isSubmitEnabled() }
                             >
                                 Save
                             </Button>
@@ -230,7 +262,7 @@ const editProfile = () => {
     }
 
 
-    if (!personState) return false
+    if (!origPersonState) return false
     else return renderProfile();
 
 };
