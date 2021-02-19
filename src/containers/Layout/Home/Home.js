@@ -22,7 +22,7 @@ import "./Home.css";
 import Players from "../Person/Players/Players";
 import Clubs from "../Club/Clubs/Clubs";
 import PersonProfile from "../Person/Profile/PersonProfile";
-import EditPersonProfile from "../Person/Profile/EditProfile/EditProfile"
+import EditPersonProfile from "../Person/Profile/EditProfile";
 import ClubProfile from "../Club/Profile/ClubProfile";
 
 const useStyles = makeStyles((theme) => ({

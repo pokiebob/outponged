@@ -110,6 +110,31 @@ const ATTRIB = {
     PHONE_NUMBER: 'phoneNumber'
 }
 
+
+function TextMaskCustom(props) {
+    const { inputRef, ...other } = props;
+
+    return (
+        <MaskedInput
+            {...other}
+            ref={(ref) => {
+                inputRef(ref ? ref.inputElement : null);
+            }}
+            mask={['(', /[1-9]/, /\d/, /\d/, ')', ' ', /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, /\d/]}
+            placeholderChar={'\u2000'}
+            showMask
+        />
+    );
+}
+
+TextMaskCustom.propTypes = {
+    inputRef: PropTypes.func.isRequired,
+};
+
+
+/**
+ * Form to edit a user's profile
+ */
 const editProfile = () => {
     const history = useHistory();
 
@@ -126,26 +151,6 @@ const editProfile = () => {
             });
     }
 
-
-    function TextMaskCustom(props) {
-        const { inputRef, ...other } = props;
-
-        return (
-            <MaskedInput
-                {...other}
-                ref={(ref) => {
-                    inputRef(ref ? ref.inputElement : null);
-                }}
-                mask={['(', /[1-9]/, /\d/, /\d/, ')', ' ', /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, /\d/]}
-                placeholderChar={'\u2000'}
-                showMask
-            />
-        );
-    }
-
-    TextMaskCustom.propTypes = {
-        inputRef: PropTypes.func.isRequired,
-    };
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -201,8 +206,6 @@ const editProfile = () => {
         console.log('[renderProfileCard] origPersonState', origPersonState);
         console.log('[renderProfileCard] newPersonState', newPersonState);
 
-
-
         return (
             <Paper className={classes.paper}>
                 <Grid container className={classes.container}>
@@ -257,8 +260,8 @@ const editProfile = () => {
                                 fullWidth
                             />
 
-                            {/* <TextField
-                                label="Phone Number"
+                            <TextField
+                                label="Phone Number Masked"
                                 defaultValue={origPersonState.phoneNumber}
                                 value={newPersonState?.phoneNumber }
                                 onInput={e => updateNewPersonState(ATTRIB.PHONE_NUMBER, e.target.value)}
@@ -268,7 +271,7 @@ const editProfile = () => {
                                     inputComponent: TextMaskCustom
                                 }}
                                 fullWidth
-                            /> */}
+                            />
 
                             <TextField
                                 id="standard-basic"
