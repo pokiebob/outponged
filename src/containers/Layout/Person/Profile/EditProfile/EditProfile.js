@@ -9,7 +9,10 @@ import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
 import { useHistory } from "react-router-dom";
 import TextField from '@material-ui/core/TextField';
-
+import Input from '@material-ui/core/Input';
+import InputLabel from '@material-ui/core/InputLabel';
+import MaskedInput from 'react-text-mask';
+import FormControl from '@material-ui/core/FormControl';
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -37,7 +40,6 @@ TabPanel.propTypes = {
     value: PropTypes.any.isRequired
 };
 
-
 const useStyles = makeStyles((theme) => ({
     root: {
         flexGrow: 1,
@@ -45,7 +47,7 @@ const useStyles = makeStyles((theme) => ({
         '& .MuiTextField-root': {
             margin: theme.spacing(1),
             width: '50ch',
-          },
+        },
     },
     paper: {
         marginTop: "30px",
@@ -95,22 +97,24 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const getPersonId = () => {
-    // var location = window.location.pathname;
-    // return location.substring(20, location.length);
-    return "5094b946-8b3b-4a8c-bfd9-6de41373c8da";
+    var location = window.location.pathname;
+    return location.substring(20, location.length);
+    // return "5094b946-8b3b-4a8c-bfd9-6de41373c8da";
 };
+
+const ATTRIB = {
+    FIRST_NAME: 'firstName',
+    LAST_NAME: 'lastName',
+    BIO: 'bio',
+    EMAIL: 'email',
+    PHONE_NUMBER: 'phoneNumber'
+}
 
 const editProfile = () => {
     const history = useHistory();
 
     const [origPersonState, setOrigPersonState] = useState(undefined);
     const [newPersonState, setNewPersonState] = useState();
-    // const [firstName, setFirstName] = useState('');
-    // const [lastName, setLastName] = useState('');
-    // const [bio, setBio] = useState('');
-    // const [email, setEmail] = useState('');
-    // const [phoneNumber, setPhoneNumber] = useState('');
-
 
     const initialize = () => {
         console.log('initializing');
@@ -118,31 +122,41 @@ const editProfile = () => {
             .then(resp => resp.json())
             .then((personData) => {
                 setOrigPersonState(personData);
-                setNewPersonState({...personData});
-                // setFirstName(personData.firstName);
-                // setLastName(personData.lastName);
-                // setBio(personData.bio);
-                // setEmail(personData.email);
-                // setPhoneNumber(personData.phoneNumber);
+                setNewPersonState({ ...personData });
             });
     }
 
+
+    function TextMaskCustom(props) {
+        const { inputRef, ...other } = props;
+
+        return (
+            <MaskedInput
+                {...other}
+                ref={(ref) => {
+                    inputRef(ref ? ref.inputElement : null);
+                }}
+                mask={['(', /[1-9]/, /\d/, /\d/, ')', ' ', /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, /\d/]}
+                placeholderChar={'\u2000'}
+                showMask
+            />
+        );
+    }
+
+    TextMaskCustom.propTypes = {
+        inputRef: PropTypes.func.isRequired,
+    };
+
     const handleSubmit = (event) => {
         event.preventDefault();
-        // newPersonState.firstName = firstName;
-        // newPersonState.lastName = lastName;
-        // newPersonState.bio = bio;
-        // newPersonState.email = email;
-        // newPersonState.phoneNumber = phoneNumber;
-        // setOrigPersonState(newPersonState);
         const difKeys = Object.keys(newPersonState).filter(key => newPersonState[key] !== origPersonState[key]);
 
         const diff = {}
-        difKeys.forEach(x=> diff[x] = newPersonState[x]);
+        difKeys.forEach(x => diff[x] = newPersonState[x]);
 
         const patch = {
-            method : 'PATCH',
-            headers : { 
+            method: 'PATCH',
+            headers: {
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': 'http://localhost:3000'
             },
@@ -152,10 +166,10 @@ const editProfile = () => {
         fetch("http://localhost:8080/person/" + getPersonId(), patch)
             .then(resp => resp.json())
             .then((resp) => {
-                console.log(resp);
-                setOrigPersonState({...newPersonState});
+                // console.log(resp);
+                setOrigPersonState({ ...newPersonState });
             });
-        
+
     }
 
     useEffect(() => {
@@ -171,10 +185,23 @@ const editProfile = () => {
         , []);
     const classes = useStyles();
 
-    const renderProfileCard = () => {
-        // console.log('[renderProfileCard] personState', personState);
+    /**
+     * True if deep compare shows a diff
+     */
+    const isSubmitEnabled = () => JSON.stringify(newPersonState) !== JSON.stringify(origPersonState);
 
-        const isSubmitEnabled = () => newPersonState?.firstName !== origPersonState?.firstName;
+    const updateNewPersonState = (key, value) => {
+        // console.log('updateNewProp', key, value);
+        const temp = { ...newPersonState };
+        temp[key] = value;
+        setNewPersonState(temp);
+    }
+
+    const renderProfileCard = () => {
+        console.log('[renderProfileCard] origPersonState', origPersonState);
+        console.log('[renderProfileCard] newPersonState', newPersonState);
+
+
 
         return (
             <Paper className={classes.paper}>
@@ -182,33 +209,33 @@ const editProfile = () => {
                     <Grid item xs={12} sm={4} >
                         <Avatar src={origPersonState.pictureUrl} className={classes.large}> </Avatar>
                         <div className={classes.photoButton}>
-                            <Button color="primary">Change Photo </Button>
+                            <Button color="primary">Change Photo</Button>
                         </div>
                         <Grid xs={12} item >
                             <div className={classes.usattLabel}>USATT #{origPersonState.usattNumber}</div>
                         </Grid>
                     </Grid>
                     <Grid container xs={8} item >
-                        <form 
-                        className={classes.root} 
-                        noValidate 
-                        autoComplete="off" 
-                        onSubmit={handleSubmit}>
-                            <TextField 
-                            id="standard-full-width" 
-                            label="First Name" 
-                            defaultValue={origPersonState.firstName}
-                            value={newPersonState?.firstName}
-                            onInput={ e => setNewPersonState({firstName: e.target.value}) }
-                            fullWidth
+                        <form
+                            className={classes.root}
+                            noValidate
+                            autoComplete="off"
+                            onSubmit={handleSubmit}>
+                            <TextField
+                                id="standard-full-width"
+                                label="First Name"
+                                defaultValue={origPersonState.firstName}
+                                value={newPersonState?.firstName}
+                                onInput={e => updateNewPersonState(ATTRIB.FIRST_NAME, e.target.value)}
+                                fullWidth
                             />
-                            <TextField 
-                            id="standard-basic" 
-                            label="Last Name" 
-                            defaultValue={origPersonState.lastName}
-                            value={newPersonState?.lastName}
-                            onInput={ e => setNewPersonState({lastName: e.target.value}) }
-                            fullWidth
+                            <TextField
+                                id="standard-basic"
+                                label="Last Name"
+                                defaultValue={origPersonState.lastName}
+                                value={newPersonState?.lastName}
+                                onInput={e => updateNewPersonState(ATTRIB.LAST_NAME, e.target.value)}
+                                fullWidth
                             />
                             <TextField
                                 id="filled-multiline-flexible"
@@ -217,29 +244,45 @@ const editProfile = () => {
                                 rowsMax={4}
                                 defaultValue={origPersonState.bio}
                                 value={newPersonState?.bio}
-                                onInput={ e => setNewPersonState({bio: e.target.value}) }
+                                onInput={e => updateNewPersonState(ATTRIB.BIO, e.target.value)}
                                 fullWidth
                             />
+
                             <TextField
                                 id="standard-basic"
                                 label="Email"
                                 defaultValue={origPersonState.email}
                                 value={newPersonState?.email}
-                                onInput={ e => setNewPersonState({email: e.target.value}) }
+                                onInput={e => updateNewPersonState(ATTRIB.EMAIL, e.target.value)}
                                 fullWidth
                             />
+
+                            {/* <TextField
+                                label="Phone Number"
+                                defaultValue={origPersonState.phoneNumber}
+                                value={newPersonState?.phoneNumber }
+                                onInput={e => updateNewPersonState(ATTRIB.PHONE_NUMBER, e.target.value)}
+                                name="Phone Number"
+                                id="formatted-text-mask-input"
+                                InputProps={{
+                                    inputComponent: TextMaskCustom
+                                }}
+                                fullWidth
+                            /> */}
+
                             <TextField
                                 id="standard-basic"
                                 label="Phone Number"
                                 defaultValue={origPersonState.phoneNumber}
                                 value={newPersonState?.phoneNumber}
-                                onInput={ e => setNewPersonState({phoneNumber: e.target.value}) }
+                                onInput={e => updateNewPersonState(ATTRIB.PHONE_NUMBER, e.target.value)}
                                 fullWidth
                             />
-                            <Button 
+
+                            <Button
                                 type="submit"
                                 variant="contained"
-                                disabled={! isSubmitEnabled() }
+                                disabled={!isSubmitEnabled()}
                             >
                                 Save
                             </Button>
