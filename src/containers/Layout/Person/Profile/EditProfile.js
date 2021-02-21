@@ -103,11 +103,35 @@ const getPersonId = () => {
 };
 
 const ATTRIB = {
-    FIRST_NAME: 'firstName',
-    LAST_NAME: 'lastName',
-    BIO: 'bio',
-    EMAIL: 'email',
-    PHONE_NUMBER: 'phoneNumber'
+    FIRST_NAME: {
+        propName: 'firstName',
+        isValid: true,
+        validate: (firstName) => firstName.trim().length > 0
+    },
+    LAST_NAME: {
+        propName: 'lastName',
+        isValid: true,
+        validate: (firstName) => firstName.trim().length > 0
+    },
+    BIO: {
+        propName: 'bio',
+        isValid: true,
+        validate: (bio) => bio.length < 100
+
+    },
+    EMAIL: {
+        propName: 'email',
+        isValid: true,
+        validate: (email) => {
+            const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+            return re.test(email?.toLowerCase());
+        }
+    },
+    PHONE_NUMBER: {
+        propName: 'phoneNumber',
+        isValid: true,
+        validate: (phoneNumber) => phoneNumber.trim().length === 14
+    }
 }
 
 
@@ -193,18 +217,25 @@ const editProfile = () => {
     /**
      * True if deep compare shows a diff
      */
-    const isSubmitEnabled = () => JSON.stringify(newPersonState) !== JSON.stringify(origPersonState);
+    const isSubmitEnabled = () => {
+        return JSON.stringify(newPersonState) !== JSON.stringify(origPersonState) &&
+            Object.values(ATTRIB).every(x => x.isValid);
+    }
 
-    const updateNewPersonState = (key, value) => {
-        // console.log('updateNewProp', key, value);
+
+    const updateNewPersonState = (attrib, value) => {
         const temp = { ...newPersonState };
-        temp[key] = value;
+        temp[attrib.propName] = value;
+        if (attrib?.validate) {
+            attrib.isValid = attrib.validate(value);
+        }
+        // console.log(attrib, value);
         setNewPersonState(temp);
     }
 
     const renderProfileCard = () => {
-        console.log('[renderProfileCard] origPersonState', origPersonState);
-        console.log('[renderProfileCard] newPersonState', newPersonState);
+        // console.log('[renderProfileCard] origPersonState', origPersonState);
+        // console.log('[renderProfileCard] newPersonState', newPersonState);
 
         return (
             <Paper className={classes.paper}>
@@ -225,60 +256,56 @@ const editProfile = () => {
                             autoComplete="off"
                             onSubmit={handleSubmit}>
                             <TextField
-                                id="standard-full-width"
+                                id="first-name"
                                 label="First Name"
                                 defaultValue={origPersonState.firstName}
                                 value={newPersonState?.firstName}
+                                error={!ATTRIB.FIRST_NAME.isValid}
                                 onInput={e => updateNewPersonState(ATTRIB.FIRST_NAME, e.target.value)}
                                 fullWidth
                             />
                             <TextField
-                                id="standard-basic"
+                                id="last-name"
                                 label="Last Name"
                                 defaultValue={origPersonState.lastName}
                                 value={newPersonState?.lastName}
+                                error={!ATTRIB.LAST_NAME.isValid}
                                 onInput={e => updateNewPersonState(ATTRIB.LAST_NAME, e.target.value)}
                                 fullWidth
                             />
                             <TextField
-                                id="filled-multiline-flexible"
+                                id="bio"
                                 label="Bio"
                                 multiline
                                 rowsMax={4}
                                 defaultValue={origPersonState.bio}
                                 value={newPersonState?.bio}
+                                error={!ATTRIB.BIO.isValid}
                                 onInput={e => updateNewPersonState(ATTRIB.BIO, e.target.value)}
                                 fullWidth
                             />
 
                             <TextField
-                                id="standard-basic"
+                                id="email"
                                 label="Email"
                                 defaultValue={origPersonState.email}
                                 value={newPersonState?.email}
+                                error={!ATTRIB.EMAIL.isValid}
                                 onInput={e => updateNewPersonState(ATTRIB.EMAIL, e.target.value)}
                                 fullWidth
                             />
 
                             <TextField
-                                label="Phone Number Masked"
-                                defaultValue={origPersonState.phoneNumber}
-                                value={newPersonState?.phoneNumber }
-                                onInput={e => updateNewPersonState(ATTRIB.PHONE_NUMBER, e.target.value)}
-                                name="Phone Number"
-                                id="formatted-text-mask-input"
-                                InputProps={{
-                                    inputComponent: TextMaskCustom
-                                }}
-                                fullWidth
-                            />
-
-                            <TextField
-                                id="standard-basic"
+                                id="phone-number"
                                 label="Phone Number"
                                 defaultValue={origPersonState.phoneNumber}
                                 value={newPersonState?.phoneNumber}
-                                onInput={e => updateNewPersonState(ATTRIB.PHONE_NUMBER, e.target.value)}
+                                onInput={e => updateNewPersonState(ATTRIB.PHONE_NUMBER, e.target.value.trim().substring(0,14))}
+                                name="Phone Number"
+                                error={!ATTRIB.PHONE_NUMBER.isValid} // 
+                                InputProps={{
+                                    inputComponent: TextMaskCustom
+                                }}
                                 fullWidth
                             />
 
