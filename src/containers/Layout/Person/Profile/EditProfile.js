@@ -13,6 +13,9 @@ import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import MaskedInput from 'react-text-mask';
 import FormControl from '@material-ui/core/FormControl';
+import aws from '../../../../keys';
+
+import ReactS3 from 'react-s3';
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -155,7 +158,6 @@ TextMaskCustom.propTypes = {
     inputRef: PropTypes.func.isRequired,
 };
 
-
 /**
  * Form to edit a user's profile
  */
@@ -222,6 +224,27 @@ const editProfile = () => {
             Object.values(ATTRIB).every(x => x.isValid);
     }
 
+    const s3config = {
+        bucketName: 'outponged-profile-pic',
+        region:'us-east-1',
+        accessKeyId: aws.accessKeyId,
+        secretAccessKey: aws.secretAccessKey
+    }
+
+    const onPhotoUpload = (e) => {
+        const file = e.currentTarget.files[0];
+        console.log("photo uploaded", file);
+        if (file !== undefined) {
+            ReactS3.uploadFile(file, s3config)
+            .then( (data) => {
+                console.log(data);
+            })
+            .catch( (err) => {
+                alert(err);
+            })
+        }
+    }
+
 
     const updateNewPersonState = (attrib, value) => {
         const temp = { ...newPersonState };
@@ -242,9 +265,21 @@ const editProfile = () => {
                 <Grid container className={classes.container}>
                     <Grid item xs={12} sm={4} >
                         <Avatar src={origPersonState.pictureUrl} className={classes.large}> </Avatar>
-                        <div className={classes.photoButton}>
-                            <Button color="primary">Change Photo</Button>
-                        </div>
+                            <input
+                                type="file"
+                                accept="image/*"
+                                id="contained-button-file"
+                                style={{ display: 'none' }}
+                                onChange={onPhotoUpload}
+                            />
+                            <label htmlFor="contained-button-file">
+                                <Button color="primary" component="span" className={classes.photoButton}>
+                                    Change Photo
+                                </Button>
+                            </label>
+                            
+
+                        {/* </div> */}
                         <Grid xs={12} item >
                             <div className={classes.usattLabel}>USATT #{origPersonState.usattNumber}</div>
                         </Grid>
@@ -300,7 +335,7 @@ const editProfile = () => {
                                 label="Phone Number"
                                 defaultValue={origPersonState.phoneNumber}
                                 value={newPersonState?.phoneNumber}
-                                onInput={e => updateNewPersonState(ATTRIB.PHONE_NUMBER, e.target.value.trim().substring(0,14))}
+                                onInput={e => updateNewPersonState(ATTRIB.PHONE_NUMBER, e.target.value.trim().substring(0, 14))}
                                 name="Phone Number"
                                 error={!ATTRIB.PHONE_NUMBER.isValid} // 
                                 InputProps={{

@@ -1,6 +1,13 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
 
+# ARCHITECTURE
+
+  Outponged UI (React)     ->  Outponged Service (NodeJS)    ->  MONGODB
+          |
+          |------pics-------> AWS S3
+
+
 # To-Do
 - Approval system
   - Player requests to join club
