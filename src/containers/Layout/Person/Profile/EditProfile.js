@@ -13,9 +13,10 @@ import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import MaskedInput from 'react-text-mask';
 import FormControl from '@material-ui/core/FormControl';
-import aws from '../../../../keys';
+import { aws } from '../../../../keys';
 
-import ReactS3 from 'react-s3';
+// import ReactS3 from 'react-s3';
+import S3 from 'aws-s3';
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -224,20 +225,35 @@ const editProfile = () => {
             Object.values(ATTRIB).every(x => x.isValid);
     }
 
-    const s3config = {
+    // const s3config = {
+    //     bucketName: 'outponged-profile-pic',
+    //     region:'us-east-1',
+    //     accessKeyId: aws.AWSAccessKeyId,
+    //     secretAccessKey: aws.AWSSecretAccessKey
+    // }
+
+    const config = {
         bucketName: 'outponged-profile-pic',
-        region:'us-east-1',
-        accessKeyId: aws.accessKeyId,
-        secretAccessKey: aws.secretAccessKey
+        region: 'us-east-1',
+        accessKeyId: aws.AWSAccessKeyId,
+        secretAccessKey: aws.AWSSecretKey,
+        s3Url: 'https://outponged-profile-pic.s3.amazonaws.com/'
     }
+
+    const S3Client = new S3(config);
+    /*  Notice that if you don't provide a dirName, the file will be automatically uploaded to the root of your bucket */
+    
 
     const onPhotoUpload = (e) => {
         const file = e.currentTarget.files[0];
         console.log("photo uploaded", file);
+        console.log(aws.AWSAccessKeyId);
         if (file !== undefined) {
-            ReactS3.uploadFile(file, s3config)
+            //ReactS3.uploadFile(file, s3config)
+            S3Client
+            .uploadFile(file)
             .then( (data) => {
-                console.log(data);
+                console.log('data', data);
             })
             .catch( (err) => {
                 alert(err);
