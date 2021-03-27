@@ -135,6 +135,11 @@ const ATTRIB = {
         propName: 'phoneNumber',
         isValid: true,
         validate: (phoneNumber) => phoneNumber.trim().length === 14
+    },
+    PICTURE_URL: {
+        propName: 'pictureUrl',
+        isValid: true,
+        validate: (url) => url.length > 0
     }
 }
 
@@ -185,6 +190,7 @@ const editProfile = () => {
 
         const diff = {}
         difKeys.forEach(x => diff[x] = newPersonState[x]);
+        console.log('diff', diff);
 
         const patch = {
             method: 'PATCH',
@@ -253,7 +259,23 @@ const editProfile = () => {
             S3Client
             .uploadFile(file)
             .then( (data) => {
-                console.log('data', data);
+                const url = data.location.replace('.com//', '.com/');
+                updateNewPersonState(ATTRIB.PICTURE_URL, url);
+                const patch = {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Access-Control-Allow-Origin': 'http://localhost:3000'
+                    },
+                    body: JSON.stringify({ 'pictureUrl' : url })
+                }
+        
+                fetch("http://localhost:8080/person/" + getPersonId(), patch)
+                    .then(resp => resp.json())
+                    .then((resp) => {
+                        // console.log(resp);
+                        setOrigPersonState({ ...newPersonState });
+                    });
             })
             .catch( (err) => {
                 alert(err);
@@ -263,9 +285,11 @@ const editProfile = () => {
 
 
     const updateNewPersonState = (attrib, value) => {
+        // console.log(attrib, value);
         const temp = { ...newPersonState };
         temp[attrib.propName] = value;
         if (attrib?.validate) {
+            // console.log('validated');
             attrib.isValid = attrib.validate(value);
         }
         // console.log(attrib, value);
@@ -280,7 +304,7 @@ const editProfile = () => {
             <Paper className={classes.paper}>
                 <Grid container className={classes.container}>
                     <Grid item xs={12} sm={4} >
-                        <Avatar src={origPersonState.pictureUrl} className={classes.large}> </Avatar>
+                        <Avatar src={newPersonState?.pictureUrl} className={classes.large}> </Avatar>
                             <input
                                 type="file"
                                 accept="image/*"
