@@ -3,6 +3,7 @@ import axios from "../../../../axios";
 
 import Card from "../../../../components/Card/PersonCard";
 import "./Players.css";
+import { API_URL } from "../../../../api-url";
 
 class Players extends Component {
   state = {
@@ -26,7 +27,7 @@ class Players extends Component {
     // this.setState({ players: players });
 
     axios
-      .get("http://localhost:8080/person")
+      .get(API_URL.person)
       .then((response) => {
         const players = response.data;
         const updatedPlayers = players.map((player, idx) => {

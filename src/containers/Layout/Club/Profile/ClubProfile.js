@@ -11,8 +11,8 @@ import Button from "@material-ui/core/Button";
 import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
 import { useHistory } from "react-router-dom";
-
 import { forkJoin } from 'rxjs';
+import { API_URL } from '../../../../api-url';
 
 
 function TabPanel(props) {
@@ -118,7 +118,7 @@ const clubPage = () => {
 
     const initialize = () => {
         console.log('initializing');
-        fetch("http://localhost:8080/club/" + getClubId())
+        fetch(API_URL.club + getClubId())
             .then(resp => resp.json())
             .then((clubData) => {
                 console.log('clubData', clubData);

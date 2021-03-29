@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import axios from "../../../../axios";
+import { API_URL } from "../../../../api-url";
 
 import Card from "../../../../components/Card/ClubCard";
 import "./Clubs.css";
@@ -13,7 +14,7 @@ class Clubs extends Component {
   componentDidMount() {
 
     axios
-      .get("http://localhost:8080/club")
+      .get(API_URL.club)
       .then((response) => {
         const clubs = response.data;
         const updatedClubs = clubs.map((club, idx) => {

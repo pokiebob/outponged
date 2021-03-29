@@ -11,8 +11,8 @@ import Button from "@material-ui/core/Button";
 import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
 import { useHistory } from "react-router-dom";
-
 import { forkJoin } from 'rxjs';
+import { API_URL } from '../../../../api-url';
 
 
 function TabPanel(props) {
@@ -118,7 +118,7 @@ const personPage = () => {
 
   const initialize = () => {
     console.log('initializing');
-    fetch("http://localhost:8080/person/" + getPersonId())
+    fetch(API_URL.person + getPersonId())
       .then(resp => resp.json())
       .then((personData) => {
         console.log('personData', personData);
@@ -130,7 +130,7 @@ const personPage = () => {
 
         console.log('linkedPersonIds', linkedPersonIds);
         console.log('linkedPersonIdsUniq', linkedPersonIdsUniq);
-        const linkedPersonsFetches = linkedPersonIdsUniq.map(id => fetch("http://localhost:8080/person/" + id)
+        const linkedPersonsFetches = linkedPersonIdsUniq.map(id => fetch(API_URL.person + id)
           .then(x => x.json()));
 
         forkJoin(linkedPersonsFetches)
@@ -144,7 +144,7 @@ const personPage = () => {
         const linkedClubIdsUniq = [...new Set(linkedClubIds)];
 
         console.log('linkedClubIds', linkedClubIds);
-        const linkedClubsFetches = linkedClubIdsUniq.map(id => fetch("http://localhost:8080/club/" + id)
+        const linkedClubsFetches = linkedClubIdsUniq.map(id => fetch(API_URL.club + id)
           .then(x => x.json()));
 
         forkJoin(linkedClubsFetches)

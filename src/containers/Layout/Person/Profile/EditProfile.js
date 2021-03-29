@@ -14,6 +14,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MaskedInput from 'react-text-mask';
 import FormControl from '@material-ui/core/FormControl';
 import { aws } from '../../../../keys';
+import { API_URL } from '../../../../api-url';
 
 // import ReactS3 from 'react-s3';
 import S3 from 'aws-s3';
@@ -175,7 +176,7 @@ const editProfile = () => {
 
     const initialize = () => {
         console.log('initializing');
-        fetch("http://localhost:8080/person/" + getPersonId())
+        fetch(API_URL.person + getPersonId())
             .then(resp => resp.json())
             .then((personData) => {
                 setOrigPersonState(personData);
@@ -201,7 +202,7 @@ const editProfile = () => {
             body: JSON.stringify(diff)
         }
 
-        fetch("http://localhost:8080/person/" + getPersonId(), patch)
+        fetch(API_URL.person + getPersonId(), patch)
             .then(resp => resp.json())
             .then((resp) => {
                 // console.log(resp);
@@ -270,7 +271,7 @@ const editProfile = () => {
                     body: JSON.stringify({ 'pictureUrl' : url })
                 }
         
-                fetch("http://localhost:8080/person/" + getPersonId(), patch)
+                fetch(API_URL.person + getPersonId(), patch)
                     .then(resp => resp.json())
                     .then((resp) => {
                         // console.log(resp);
