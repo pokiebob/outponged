@@ -2,4 +2,3 @@ node_modules
 .eslintcache
 build/
 debug.log
-keys.js
