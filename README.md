@@ -15,3 +15,6 @@ site: https://www.outponged.com/
 - Approval system
   - Player requests to join club
   - Club owner can change settings, require approval or free entry
+- Suggestions forum (add to nav bar)
+- Improve convenience
+  - Logo sends to home
