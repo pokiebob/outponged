@@ -8,7 +8,7 @@
 
 ## AWS (amplify)
 application: outponged
-site: https://master.d276ev60ycwn1c.amplifyapp.com/
+site: https://www.outponged.com/
 
 
 ## To-Do
