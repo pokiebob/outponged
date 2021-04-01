@@ -18,3 +18,13 @@ site: https://www.outponged.com/
 - Suggestions forum (add to nav bar)
 - Improve convenience
   - Logo sends to home
+- CSS
+  - Change theme: black and red
+  - Download icons for each page
+- Profile Pages
+  - Post videos and images
+  - Edit Profile Button
+- Edit Profile
+  - Fix margins on mobile
+- Home Page
+  - Posts feed

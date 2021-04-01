@@ -136,7 +136,7 @@ const personPage = () => {
         forkJoin(linkedPersonsFetches)
           .subscribe((linkedPersonData) => {
             setLinkedPersonsState(linkedPersonData.filter(x => x !== null));
-          } );
+          });
 
         const linkedClubIds = personData.links.clubs
           .map(p => p.clubId)
@@ -150,7 +150,7 @@ const personPage = () => {
         forkJoin(linkedClubsFetches)
           .subscribe((linkedClubData) => {
             setLinkedClubsState(linkedClubData.filter(x => x !== null));
-          } );
+          });
       });
   }
 
@@ -193,6 +193,21 @@ const personPage = () => {
               <div className={classes.heading}>400</div>
               <div className={classes.subtext}>Following</div>
             </Grid>
+            <Grid xs={12} item>
+              <div className={classes.subtext}>
+                {personState.bio}
+              </div>
+               
+                <Grid xs={4} item>
+                  <Button onClick={() => {
+                    navigateToEditPerson(personState.personId);
+                  }}>
+                    Edit Profile
+              </Button>
+
+              </Grid>
+
+            </Grid>
           </Grid>
         </Grid>
       </Paper>
@@ -202,6 +217,10 @@ const personPage = () => {
   const navigateToLinkedPerson = (personId) => {
     history.push('/person-profile/' + personId);
     initialize();
+
+  }
+  const navigateToEditPerson = (personId) => {
+    history.push('/edit-person-profile/' + personId);
 
   }
 
