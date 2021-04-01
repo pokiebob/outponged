@@ -25,6 +25,9 @@ import PersonProfile from "../Person/Profile/PersonProfile";
 import EditPersonProfile from "../Person/Profile/EditProfile";
 import ClubProfile from "../Club/Profile/ClubProfile";
 
+//Amplify
+import { Auth } from 'aws-amplify';
+
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
@@ -119,7 +122,10 @@ const renderAppBar = (classes) => {
           <Typography variant="h6" className={classes.title}>
             OutPonged
           </Typography>
-          <Button color="inherit">Login</Button>
+          <Button 
+          color="inherit"
+          onClick={() =>Auth.federatedSignIn()}>
+          Login</Button>
         </Toolbar>
       </AppBar>
       <Drawer open={state.isDrawerOpen} onClose={toggleDrawer(false)}>
