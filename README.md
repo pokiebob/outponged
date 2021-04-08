@@ -10,6 +10,10 @@
 application: outponged
 site: https://www.outponged.com/
 
+- install cli: 
+  - npm install -g @aws-amplify/cli
+  - amplify init
+
 
 ## To-Do
 - Approval system

@@ -63,7 +63,7 @@ class Players extends Component {
             key={card.personId}
             fullName={card.fullName}
             pic={card.pictureUrl}
-            usattNumber={card.usattNumber}
+            usattNumber={card.externalId.usattNumber}
             rating={card.rating}
             clicked={() => this.playerSelectedHandler(card.personId)}
           />

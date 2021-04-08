@@ -26,7 +26,8 @@ import EditPersonProfile from "../Person/Profile/EditProfile";
 import ClubProfile from "../Club/Profile/ClubProfile";
 
 //Amplify
-import { Auth } from 'aws-amplify';
+import { Auth, Hub } from 'aws-amplify';
+import { API_URL } from "../../../api-url";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -63,6 +64,51 @@ const renderAppBar = (classes) => {
     isDrawerOpen: false,
   });
 
+  const [user, setUser] = React.useState(null);
+  React.useEffect(() => {
+    const updateUser = async () => {
+      try {
+        await Auth.currentAuthenticatedUser()
+          .then((data) => {
+            setUser(data);
+          })
+      } catch {
+        setUser(null)
+      }
+    }
+    Hub.listen('auth', updateUser) // listen for login/signup events
+    updateUser() // check manually the first time because we won't get a Hub event
+    return () => Hub.remove('auth', updateUser) // cleanup
+  }, []);
+  console.log('user', user);
+
+  const insertPerson = () => {
+    if (user != null) {
+      const post = {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify( {
+          personId: user.attributes.sub,
+          email: user.attributes.email,
+          externalId: {
+            awsIdentity: user.attributes.sub
+          }
+        } )
+      }
+
+      fetch(API_URL.person, post)
+        .then(resp => resp.json())
+        .then((resp) => {
+          console.log(resp);
+        });
+    }
+
+  }
+
+  insertPerson();
+
   const toggleDrawer = (open) => (event) => {
     if (
       event.type === "keydown" &&
@@ -82,22 +128,22 @@ const renderAppBar = (classes) => {
           {/* <ListItemText primary={"Home"} href="/home/" /> */}
           Home
         </ListItem>
-  
+
         <ListItem button component={Link} to="/players/" onClick={toggleDrawer(false)}>
           <TableTennis />
           Players
         </ListItem>
-  
+
         <ListItem button component={Link} to="/coaches/" onClick={toggleDrawer(false)}>
           <TableTennis />
           Coaches
         </ListItem>
-  
+
         <ListItem button component={Link} to="/clubs/" onClick={toggleDrawer(false)}>
           <TableTennis />
           Clubs
         </ListItem>
-  
+
         <ListItem button component={Link} to="/tournaments/" onClick={toggleDrawer(false)}>
           <TableTennis />
           Tournaments
@@ -105,6 +151,31 @@ const renderAppBar = (classes) => {
       </List>
     );
   };
+
+  const renderLoginButton = () => {
+
+    if (user) {
+      return (
+        <Button
+          color="inherit"
+          onClick={() => {
+            Auth.signOut();
+          }}>
+          Sign Out
+        </Button>
+      )
+    } else {
+      return (
+        <Button
+          color="inherit"
+          onClick={() => {
+            Auth.federatedSignIn();
+          }}>
+          Login
+        </Button>
+      );
+    }
+  }
 
   return (
     <div className={classes.root}>
@@ -122,10 +193,8 @@ const renderAppBar = (classes) => {
           <Typography variant="h6" className={classes.title}>
             OutPonged
           </Typography>
-          <Button 
-          color="inherit"
-          onClick={() =>Auth.federatedSignIn()}>
-          Login</Button>
+          {renderLoginButton()}
+
         </Toolbar>
       </AppBar>
       <Drawer open={state.isDrawerOpen} onClose={toggleDrawer(false)}>

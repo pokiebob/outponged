@@ -9,10 +9,7 @@ import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
 import { useHistory } from "react-router-dom";
 import TextField from '@material-ui/core/TextField';
-import Input from '@material-ui/core/Input';
-import InputLabel from '@material-ui/core/InputLabel';
 import MaskedInput from 'react-text-mask';
-import FormControl from '@material-ui/core/FormControl';
 import { aws } from '../../../../keys';
 import { API_URL } from '../../../../api-url';
 
@@ -197,7 +194,7 @@ const editProfile = () => {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': 'http://localhost:3000'
+                // 'Access-Control-Allow-Origin': 'http://localhost:3000'
             },
             body: JSON.stringify(diff)
         }
@@ -266,7 +263,7 @@ const editProfile = () => {
                     method: 'PATCH',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Access-Control-Allow-Origin': 'http://localhost:3000'
+                        // 'Access-Control-Allow-Origin': 'http://localhost:3000'
                     },
                     body: JSON.stringify({ 'pictureUrl' : url })
                 }
@@ -322,7 +319,7 @@ const editProfile = () => {
 
                         {/* </div> */}
                         <Grid xs={12} item >
-                            <div className={classes.usattLabel}>USATT #{origPersonState.usattNumber}</div>
+                            <div className={classes.usattLabel}>USATT #{origPersonState.externalId.usattNumber}</div>
                         </Grid>
                     </Grid>
                     <Grid container xs={8} item >
