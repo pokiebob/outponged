@@ -60,6 +60,7 @@ const home = () => {
 };
 
 const renderAppBar = (classes) => {
+  var isLoggedIn = false;
   const [state, setState] = React.useState({
     isDrawerOpen: false,
   });
@@ -83,7 +84,7 @@ const renderAppBar = (classes) => {
   console.log('user', user);
 
   const insertPerson = () => {
-    if (user != null) {
+    if (user) {
       const post = {
         method: 'POST',
         headers: {
@@ -94,6 +95,16 @@ const renderAppBar = (classes) => {
           email: user.attributes.email,
           externalId: {
             awsIdentity: user.attributes.sub
+          },
+          role: {
+            player: false,
+            coach: false
+          },
+          links: {
+            persons: {
+            },
+            clubs: {
+            }
           }
         } )
       }
@@ -101,13 +112,14 @@ const renderAppBar = (classes) => {
       fetch(API_URL.person, post)
         .then(resp => resp.json())
         .then((resp) => {
-          console.log(resp);
+          console.log("MONGO response:", resp);
         });
+      isLoggedIn = true;
     }
 
   }
 
-  insertPerson();
+  if (! isLoggedIn) insertPerson();
 
   const toggleDrawer = (open) => (event) => {
     if (
