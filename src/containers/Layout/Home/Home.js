@@ -25,6 +25,7 @@ import Clubs from "../Club/Clubs/Clubs";
 import PersonProfile from "../Person/Profile/PersonProfile";
 import EditPersonProfile from "../Person/Profile/EditProfile";
 import ClubProfile from "../Club/Profile/ClubProfile";
+import Post from "../Post/Post";
 
 //Amplify
 import { Auth, Hub } from 'aws-amplify';
@@ -57,6 +58,7 @@ const home = () => {
         <Route path="/person-profile" component={PersonProfile} />
         <Route path="/edit-person-profile" component={EditPersonProfile} />
         <Route path="/club-profile" component={ClubProfile} />
+        <Route path="/post" component={Post} />
       </Switch>
 
     </div>
@@ -171,11 +173,21 @@ const renderAppBar = (classes) => {
   const renderPostButton = () => {
     if (user) {
       return (
-        <IconButton aria-label="Post" color="inherit">
+        <IconButton
+          aria-label="Post"
+          color="inherit"
+          component={Link}
+          to="/post/"
+        >
           <AddIcon />
         </IconButton>
       )
     }
+
+  }
+
+  const navigateToPost = () => {
+    history.push('/post/');
 
   }
 
