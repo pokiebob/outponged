@@ -12,6 +12,7 @@ import MenuIcon from "@material-ui/icons/Menu";
 import Drawer from "@material-ui/core/Drawer";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
+import AddIcon from '@material-ui/icons/Add';
 
 // Icons
 import TableTennis from "mdi-material-ui/TableTennis";
@@ -39,6 +40,9 @@ const useStyles = makeStyles((theme) => ({
   title: {
     flexGrow: 1,
   },
+  appBar: {
+    background: '#ba0018'
+  }
 }));
 
 const home = () => {
@@ -90,7 +94,7 @@ const renderAppBar = (classes) => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify( {
+        body: JSON.stringify({
           personId: user.attributes.sub,
           email: user.attributes.email,
           externalId: {
@@ -106,7 +110,7 @@ const renderAppBar = (classes) => {
             clubs: {
             }
           }
-        } )
+        })
       }
 
       fetch(API_URL.person, post)
@@ -119,7 +123,7 @@ const renderAppBar = (classes) => {
 
   }
 
-  if (! isLoggedIn) insertPerson();
+  if (!isLoggedIn) insertPerson();
 
   const toggleDrawer = (open) => (event) => {
     if (
@@ -164,6 +168,17 @@ const renderAppBar = (classes) => {
     );
   };
 
+  const renderPostButton = () => {
+    if (user) {
+      return (
+        <IconButton aria-label="Post" color="inherit">
+          <AddIcon />
+        </IconButton>
+      )
+    }
+
+  }
+
   const renderLoginButton = () => {
 
     if (user) {
@@ -191,7 +206,7 @@ const renderAppBar = (classes) => {
 
   return (
     <div className={classes.root}>
-      <AppBar position="static">
+      <AppBar position="static" className={classes.appBar}>
         <Toolbar>
           <IconButton
             edge="start"
@@ -205,6 +220,7 @@ const renderAppBar = (classes) => {
           <Typography variant="h6" className={classes.title}>
             OutPonged
           </Typography>
+          {renderPostButton()}
           {renderLoginButton()}
 
         </Toolbar>
