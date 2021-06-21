@@ -5,8 +5,6 @@ import Grid from "@material-ui/core/Grid";
 import Avatar from "@material-ui/core/Avatar";
 import PropTypes from "prop-types";
 import Button from "@material-ui/core/Button";
-import Box from "@material-ui/core/Box";
-import Typography from "@material-ui/core/Typography";
 import { useHistory } from "react-router-dom";
 import TextField from '@material-ui/core/TextField';
 import MaskedInput from 'react-text-mask';
@@ -15,32 +13,6 @@ import { API_URL } from '../../../../api-url';
 
 // import ReactS3 from 'react-s3';
 import S3 from 'aws-s3';
-
-function TabPanel(props) {
-    const { children, value, index, ...other } = props;
-
-    return (
-        <div
-            role="tabpanel"
-            hidden={value !== index}
-            id={`scrollable-force-tabpanel-${index}`}
-            aria-labelledby={`scrollable-force-tab-${index}`}
-            {...other}
-        >
-            {value === index && (
-                <Box p={1}>
-                    <Typography>{children}</Typography>
-                </Box>
-            )}
-        </div>
-    );
-}
-
-TabPanel.propTypes = {
-    children: PropTypes.node,
-    index: PropTypes.any.isRequired,
-    value: PropTypes.any.isRequired
-};
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -170,7 +142,7 @@ const editProfile = () => {
 
     const [origPersonState, setOrigPersonState] = useState(undefined);
     const [newPersonState, setNewPersonState] = useState();
-
+    const classes = useStyles();
     const initialize = () => {
         console.log('initializing');
         fetch(API_URL.person + getPersonId())
@@ -219,7 +191,6 @@ const editProfile = () => {
         })
     }
         , []);
-    const classes = useStyles();
 
     /**
      * True if deep compare shows a diff
