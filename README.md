@@ -25,10 +25,13 @@ site: https://www.outponged.com/
 - CSS
   - Change theme: black and red
   - Download icons for each page
+- Home Screen
+  - Add general social media feed of user posts
 - Profile Pages
   - Post videos and images
   - Edit Profile Button
 - Edit Profile
   - Fix margins on mobile
+  - User can only edit their own profile
 - Home Page
   - Posts feed
