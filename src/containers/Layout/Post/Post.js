@@ -3,7 +3,9 @@ import { makeStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
 import Avatar from "@material-ui/core/Avatar";
+import ReactPlayer from 'react-player';
 import Button from "@material-ui/core/Button";
+import { autoShowTooltip } from "@aws-amplify/ui";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -52,10 +54,11 @@ const useStyles = makeStyles((theme) => ({
     small: {
         width: theme.spacing(5),
         height: theme.spacing(5),
-        margin: "auto"
+        marginLeft: "40px",
     },
     name: {
         marginTop: "10px",
+        marginLeft: "40px",
         "font-size": "20px",
         textAlign: "center",
     },
@@ -63,6 +66,15 @@ const useStyles = makeStyles((theme) => ({
         "font-size": "32px",
         textAlign: "center",
         marginBottom: "15px"
+    },
+    videoWrapper: {
+        position: "relative",
+        paddingTop: "56.25%",
+    },
+    videoPlayer: {
+        position: "absolute",
+        top: "0",
+        left: "40px",
     }
 }));
 
@@ -73,7 +85,7 @@ const post = () => {
 
         return (
             <Paper className={classes.paper}>
-                <Grid container className={classes.container}>
+                <Grid container className={classes.container} spacing={2}>
                     <Grid xs={12} item >
                         <div className={classes.header}>New Post</div>
                     </Grid>
@@ -82,6 +94,16 @@ const post = () => {
                     </Grid>
                     <Grid item sm={2}>
                         <div className={classes.name}>UserName</div>
+                    </Grid>
+                    <Grid xs={12} item >
+                        <div className={classes.videoWrapper}>
+                            <ReactPlayer
+                                url='https://www.youtube.com/watch?v=hh-X60E0ySI'
+                                className={classes.videoPlayer}
+                                width='60%'
+                                height='60%'
+                            />
+                        </div>
                     </Grid>
                 </Grid>
             </Paper>
