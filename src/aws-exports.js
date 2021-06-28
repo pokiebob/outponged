@@ -18,8 +18,8 @@ const awsmobile = {
         ],
         // "redirectSignIn": "http://localhost:3000/",
         // "redirectSignOut": "http://localhost:3000/",
-        "redirectSignIn": "http://outponged.com/",
-        "redirectSignOut": "http://outponged.com/",
+        "redirectSignIn": "https://outponged.com/",
+        "redirectSignOut": "https://outponged.com/",
         "responseType": "code"
     },
     "federationTarget": "COGNITO_USER_POOLS"
