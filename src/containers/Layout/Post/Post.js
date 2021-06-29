@@ -4,6 +4,10 @@ import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
 import Avatar from "@material-ui/core/Avatar";
 import ReactPlayer from 'react-player';
+import Card from "@material-ui/core/Card";
+import CardActionArea from "@material-ui/core/CardActionArea";
+import CardActions from "@material-ui/core/CardActions";
+import CardMedia from "@material-ui/core/CardMedia";
 import Button from "@material-ui/core/Button";
 import { autoShowTooltip } from "@aws-amplify/ui";
 
@@ -60,7 +64,6 @@ const useStyles = makeStyles((theme) => ({
         marginTop: "10px",
         marginLeft: "40px",
         "font-size": "20px",
-        textAlign: "center",
     },
     header: {
         "font-size": "32px",
@@ -70,11 +73,19 @@ const useStyles = makeStyles((theme) => ({
     videoWrapper: {
         position: "relative",
         paddingTop: "56.25%",
+        left: "40px"
     },
     videoPlayer: {
         position: "absolute",
         top: "0",
-        left: "40px",
+        height: "100%",
+        width: "100%"
+    },
+    cardContent: {
+        position: "relative",
+        color: "#ffffff",
+        justifyContent: "flex-end"
+        // backgroundColor: "transparent"
     }
 }));
 
@@ -86,24 +97,42 @@ const post = () => {
         return (
             <Paper className={classes.paper}>
                 <Grid container className={classes.container} spacing={2}>
-                    <Grid xs={12} item >
+                    <Grid sm={12} item >
                         <div className={classes.header}>New Post</div>
                     </Grid>
                     <Grid item sm={1} >
                         <Avatar className={classes.small}></Avatar>
                     </Grid>
-                    <Grid item sm={2}>
+                    <Grid item sm={11}>
                         <div className={classes.name}>UserName</div>
                     </Grid>
-                    <Grid xs={12} item >
-                        <div className={classes.videoWrapper}>
-                            <ReactPlayer
-                                url='https://www.youtube.com/watch?v=hh-X60E0ySI'
+                    <Grid xs={8} item >
+                        <Card className={classes.videoWrapper}>
+                            {/* <CardActionArea> */}
+                            {/* <ReactPlayer
+                                    url='https://www.youtube.com/watch?v=hh-X60E0ySI'
+                                    className={classes.videoPlayer}
+                                    width='60%'
+                                    height='60%'
+                                /> */}
+                            <CardMedia
                                 className={classes.videoPlayer}
-                                width='60%'
-                                height='60%'
+                                media="picture"
+                                alt="Title"
+                                image="https://upload.wikimedia.org/wikipedia/commons/4/41/Ma_Long_2013.jpg"
+                                title="Title"
                             />
-                        </div>
+                            {/* </CardActionArea> */}
+                            <CardActions className={classes.cardContent}>
+                                <Button
+                                    size="small"
+                                    color="inherit"
+                                    variant="outlined"
+                                >
+                                    Edit
+                                </Button>
+                            </CardActions>
+                        </Card>
                     </Grid>
                 </Grid>
             </Paper>

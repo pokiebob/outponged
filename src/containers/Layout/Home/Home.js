@@ -77,9 +77,11 @@ const renderAppBar = (classes) => {
       try {
         await Auth.currentAuthenticatedUser()
           .then((data) => {
+            console.log('data', data);
             setUser(data);
           })
       } catch {
+        console.log('user not received');
         setUser(null)
       }
     }
