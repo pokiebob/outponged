@@ -1,15 +1,16 @@
-import React from "react";
+import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
 import Avatar from "@material-ui/core/Avatar";
 import ReactPlayer from 'react-player';
 import Card from "@material-ui/core/Card";
-import CardActionArea from "@material-ui/core/CardActionArea";
 import CardActions from "@material-ui/core/CardActions";
 import CardMedia from "@material-ui/core/CardMedia";
 import Button from "@material-ui/core/Button";
-import { autoShowTooltip } from "@aws-amplify/ui";
+import { aws } from '../../../keys';
+import S3 from 'aws-s3';
+import { API_URL } from '../../../api-url';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -92,7 +93,97 @@ const useStyles = makeStyles((theme) => ({
 const post = () => {
     const classes = useStyles();
 
+    const [file, setFile] = useState();
+
+    const config = {
+        bucketName: 'outponged-post',
+        region: 'us-east-1',
+        accessKeyId: aws.AWSAccessKeyId,
+        secretAccessKey: aws.AWSSecretKey,
+        s3Url: 'https://outponged-post.s3.amazonaws.com/'
+    }
+
+    const S3Client = new S3(config);
+
+    const onUpload = (e) => {
+        console.log("file uploaded", e.currentTarget.files[0]);
+        if (e.currentTarget?.files[0]?.size > 650000000) {
+            alert("file too big!");
+        } else {
+            setFile(e.currentTarget.files[0]);
+            // if (file?.type.includes("video")) {
+            //     console.log("file type: video");
+            // } else {
+            //     console.log("file type: image");
+            // }
+        }
+    }
+
+    const viewPost = () => {
+        if (!file) {
+            console.log("no file");
+            return (
+                <CardMedia
+                    className={classes.videoPlayer}
+                    media="picture"
+                    alt="Title"
+                    image="https://upload.wikimedia.org/wikipedia/commons/4/41/Ma_Long_2013.jpg"
+                />
+            );
+        }
+        if (file.type.includes("video")) {
+            return (
+                // <ReactPlayer
+                //     url={URL.createObjectURL(file)}
+                //     className={classes.videoPlayer}
+                //     controls="true"
+                // />
+                <CardMedia
+                    className={classes.videoPlayer}
+                    component="video"
+                    alt="Title"
+                    image={URL.createObjectURL(file)}
+                    controls="true"
+                />
+            );
+        }
+        else {
+            return (
+                <CardMedia
+                    className={classes.videoPlayer}
+                    media="picture"
+                    alt="Title"
+                    image={URL.createObjectURL(file)}
+                />
+            )
+        }
+    }
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        S3Client
+            .uploadFile(file)
+            .then((data) => {
+                console.log('data', data);
+                const url = data.location.replace('.com//', '.com/');
+                console.log('url', url);
+                // const patch = {
+                //     method: 'PATCH',
+                //     headers: {
+                //         'Content-Type': 'application/json',
+                //     },
+                //     body: JSON.stringify({ 'postUrl': url })
+                // }
+            })
+            .catch((err) => {
+                alert(err);
+            })
+    }
+
     const renderPostCard = () => {
+
+        // const forceUpdate = useForceUpdate();
 
         return (
             <Paper className={classes.paper}>
@@ -108,28 +199,22 @@ const post = () => {
                     </Grid>
                     <Grid xs={8} item >
                         <Card className={classes.videoWrapper}>
-                            {/* <CardActionArea> */}
-                            {/* <ReactPlayer
-                                    url='https://www.youtube.com/watch?v=hh-X60E0ySI'
-                                    className={classes.videoPlayer}
-                                    width='60%'
-                                    height='60%'
-                                /> */}
-                            <CardMedia
-                                className={classes.videoPlayer}
-                                media="picture"
-                                alt="Title"
-                                image="https://upload.wikimedia.org/wikipedia/commons/4/41/Ma_Long_2013.jpg"
-                                title="Title"
-                            />
-                            {/* </CardActionArea> */}
+                            {viewPost()}
                             <CardActions className={classes.cardContent}>
                                 <Button
                                     size="small"
                                     color="inherit"
                                     variant="outlined"
+                                    component="label"
+                                // onClick={forceUpdate}
                                 >
-                                    Edit
+                                    Upload
+                                    <input
+                                        hidden
+                                        type="file"
+                                        accept="video/*, image/*"
+                                        onChange={onUpload}
+                                    />
                                 </Button>
                             </CardActions>
                         </Card>
