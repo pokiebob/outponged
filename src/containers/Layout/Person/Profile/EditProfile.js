@@ -217,7 +217,7 @@ const editProfile = () => {
 
     const S3Client = new S3(config);
     /*  Notice that if you don't provide a dirName, the file will be automatically uploaded to the root of your bucket */
-    
+
 
     const onPhotoUpload = (e) => {
         const file = e.currentTarget.files[0];
@@ -226,29 +226,29 @@ const editProfile = () => {
         if (file !== undefined) {
             //ReactS3.uploadFile(file, s3config)
             S3Client
-            .uploadFile(file)
-            .then( (data) => {
-                const url = data.location.replace('.com//', '.com/');
-                updateNewPersonState(ATTRIB.PICTURE_URL, url);
-                const patch = {
-                    method: 'PATCH',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        // 'Access-Control-Allow-Origin': 'http://localhost:3000'
-                    },
-                    body: JSON.stringify({ 'pictureUrl' : url })
-                }
-        
-                fetch(API_URL.person + getPersonId(), patch)
-                    .then(resp => resp.json())
-                    .then((resp) => {
-                        // console.log(resp);
-                        setOrigPersonState({ ...newPersonState });
-                    });
-            })
-            .catch( (err) => {
-                alert(err);
-            })
+                .uploadFile(file)
+                .then((data) => {
+                    const url = data.location.replace('.com//', '.com/');
+                    updateNewPersonState(ATTRIB.PICTURE_URL, url);
+                    const patch = {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            // 'Access-Control-Allow-Origin': 'http://localhost:3000'
+                        },
+                        body: JSON.stringify({ 'pictureUrl': url })
+                    }
+
+                    fetch(API_URL.person + getPersonId(), patch)
+                        .then(resp => resp.json())
+                        .then((resp) => {
+                            // console.log(resp);
+                            setOrigPersonState({ ...newPersonState });
+                        });
+                })
+                .catch((err) => {
+                    alert(err);
+                })
         }
     }
 
@@ -274,19 +274,19 @@ const editProfile = () => {
                 <Grid container className={classes.container}>
                     <Grid item xs={12} sm={4} >
                         <Avatar src={newPersonState?.pictureUrl} className={classes.large}> </Avatar>
-                            <input
-                                type="file"
-                                accept="image/*"
-                                id="contained-button-file"
-                                style={{ display: 'none' }}
-                                onChange={onPhotoUpload}
-                            />
-                            <label htmlFor="contained-button-file">
-                                <Button color="primary" component="span" className={classes.photoButton}>
-                                    Change Photo
+                        <input
+                            type="file"
+                            accept="image/*"
+                            id="contained-button-file"
+                            style={{ display: 'none' }}
+                            onChange={onPhotoUpload}
+                        />
+                        <label htmlFor="contained-button-file">
+                            <Button color="primary" component="span" className={classes.photoButton}>
+                                Change Photo
                                 </Button>
-                            </label>
-                            
+                        </label>
+
 
                         {/* </div> */}
                         <Grid xs={12} item >

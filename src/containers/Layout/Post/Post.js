@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
 import Avatar from "@material-ui/core/Avatar";
+import IconButton from "@material-ui/core/IconButton";
+import CreateIcon from '@material-ui/icons/Create';
 import ReactPlayer from 'react-player';
 import Card from "@material-ui/core/Card";
 import CardActions from "@material-ui/core/CardActions";
@@ -11,15 +13,12 @@ import Button from "@material-ui/core/Button";
 import { aws } from '../../../keys';
 import S3 from 'aws-s3';
 import { API_URL } from '../../../api-url';
+import { TextField } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
     root: {
         flexGrow: 1,
         justify: "center",
-        '& .MuiTextField-root': {
-            margin: theme.spacing(1),
-            width: '50ch',
-        },
     },
     paper: {
         marginTop: "30px",
@@ -31,50 +30,26 @@ const useStyles = makeStyles((theme) => ({
     },
     container: {
         marginTop: "20px",
-        marginBottom: "20px",
-    },
-    photoButton: {
-        color: theme.palette.info.main,
-        justifyContent: "center",
-        display: "flex",
-        marginTop: "10px"
-    },
-
-    subheading: {
-        color: theme.palette.text.primary,
-        textAlign: "center",
-        "font-size": "15px",
-    },
-    subtext: {
-        color: theme.palette.text.secondary,
-        textAlign: "center",
-        "font-size": "13px",
-    },
-    usattLabel: {
-        color: theme.palette.text.secondary,
-        textAlign: "center",
-        "font-size": "13px",
-        marginTop: "30px",
+        marginBottom: "10px",
+        marginLeft: "40px"
     },
     small: {
         width: theme.spacing(5),
         height: theme.spacing(5),
-        marginLeft: "40px",
+    },
+    editIcon: {
+        width: theme.spacing(5),
+        height: theme.spacing(5)
     },
     name: {
         marginTop: "10px",
-        marginLeft: "40px",
         "font-size": "20px",
-    },
-    header: {
-        "font-size": "32px",
-        textAlign: "center",
-        marginBottom: "15px"
+        marginLeft: "20px",
     },
     videoWrapper: {
         position: "relative",
         paddingTop: "56.25%",
-        left: "40px"
+        marginTop: "10px",
     },
     videoPlayer: {
         position: "absolute",
@@ -87,6 +62,13 @@ const useStyles = makeStyles((theme) => ({
         color: "#ffffff",
         justifyContent: "flex-end"
         // backgroundColor: "transparent"
+    },
+    form: {
+        marginTop: "2px",
+    },
+    createPost: {
+        marginTop: "15px",
+        whiteSpace: "nowrap"
     }
 }));
 
@@ -94,6 +76,32 @@ const post = () => {
     const classes = useStyles();
 
     const [file, setFile] = useState();
+    const [postState, setPostState] = useState();
+
+    const initialize = () => {
+        console.log('initializing');
+
+        //get info on user
+        setPostState(
+            {
+                "title" : "",
+                "description" : ""
+            }
+        )
+    }
+
+    useEffect(() => {
+        initialize();
+        console.log("postState", postState);
+
+    }, []);
+
+    const updatePostState = (key, value) => {
+        const temp = { ...postState };
+        temp[key] = value;
+        setPostState(temp);
+        // console.log("postState", postState);
+    }
 
     const config = {
         bucketName: 'outponged-post',
@@ -121,7 +129,6 @@ const post = () => {
 
     const viewPost = () => {
         if (!file) {
-            console.log("no file");
             return (
                 <CardMedia
                     className={classes.videoPlayer}
@@ -161,24 +168,25 @@ const post = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        console.log('submitting',postState);
 
-        S3Client
-            .uploadFile(file)
-            .then((data) => {
-                console.log('data', data);
-                const url = data.location.replace('.com//', '.com/');
-                console.log('url', url);
-                // const patch = {
-                //     method: 'PATCH',
-                //     headers: {
-                //         'Content-Type': 'application/json',
-                //     },
-                //     body: JSON.stringify({ 'postUrl': url })
-                // }
-            })
-            .catch((err) => {
-                alert(err);
-            })
+        // S3Client
+        //     .uploadFile(file)
+        //     .then((data) => {
+        //         console.log('data', data);
+        //         const url = data.location.replace('.com//', '.com/');
+        //         console.log('url', url);
+        //         // const patch = {
+        //         //     method: 'PATCH',
+        //         //     headers: {
+        //         //         'Content-Type': 'application/json',
+        //         //     },
+        //         //     body: JSON.stringify({ 'postUrl': url })
+        //         // }
+        //     })
+        //     .catch((err) => {
+        //         alert(err);
+        //     })
     }
 
     const renderPostCard = () => {
@@ -187,38 +195,83 @@ const post = () => {
 
         return (
             <Paper className={classes.paper}>
-                <Grid container className={classes.container} spacing={2}>
-                    <Grid sm={12} item >
-                        <div className={classes.header}>New Post</div>
+                <Grid direction="column" className={classes.container} >
+                    {/* <Grid container>
+                        <Grid xs={12} item >
+                            <div className={classes.header}>New Post</div>
+                        </Grid>
+                    </Grid> */}
+                    <Grid container spacing={0}>
+                        <Grid item >
+                            <Avatar className={classes.small}></Avatar>
+                        </Grid>
+                        <Grid item >
+                            <div className={classes.name}>UserName</div>
+                        </Grid>
                     </Grid>
-                    <Grid item sm={1} >
-                        <Avatar className={classes.small}></Avatar>
-                    </Grid>
-                    <Grid item sm={11}>
-                        <div className={classes.name}>UserName</div>
-                    </Grid>
-                    <Grid xs={8} item >
+
+                    <Grid xs={6} item >
                         <Card className={classes.videoWrapper}>
                             {viewPost()}
                             <CardActions className={classes.cardContent}>
-                                <Button
-                                    size="small"
-                                    color="inherit"
-                                    variant="outlined"
-                                    component="label"
-                                // onClick={forceUpdate}
+                                <IconButton
+                                color="inherit"
                                 >
-                                    Upload
+                                    <CreateIcon className={classes.editIcon} />
                                     <input
                                         hidden
                                         type="file"
                                         accept="video/*, image/*"
                                         onChange={onUpload}
                                     />
-                                </Button>
+                                </IconButton>
                             </CardActions>
                         </Card>
                     </Grid>
+                    <form
+                        autoComplete="off"
+                        onSubmit={handleSubmit}
+                    >
+                        <Grid container>
+                            <Grid item xs={10}>
+                                <TextField
+                                    id="title"
+                                    label="Title"
+                                    fullWidth
+                                    required
+                                    className={classes.form}
+                                    onInput={e => updatePostState("title", e.target.value)}
+                                    inputProps={{ maxLength: 70 }}
+                                />
+                            </Grid>
+                        </Grid>
+                        <Grid container>
+                            <Grid item xs={10}>
+                                <TextField
+                                    id="description"
+                                    label="Description"
+                                    multiline
+                                    rowsMax={10}
+                                    fullWidth
+                                    className={classes.form}
+                                    inputProps={{ maxLength: 1000 }}
+                                    onInput={e => updatePostState("description", e.target.value)}
+                                />
+                            </Grid>
+                        </Grid>
+                        <Grid container>
+                            <Grid item >
+                                <Button
+                                color="primary"
+                                variant="contained"
+                                className={classes.createPost}
+                                type="submit"
+                                >
+                                    Create Post
+                                </Button>
+                            </Grid>
+                        </Grid>
+                    </form>
                 </Grid>
             </Paper>
         )
@@ -227,7 +280,7 @@ const post = () => {
     const renderPost = () => {
         return (
             <div className={classes.root}>
-                <Grid container justify="center" >
+                <Grid container spacing={2} justify="center" >
                     {renderPostCard()}
                 </Grid>
             </div>
