@@ -171,12 +171,12 @@ const personPage = () => {
               <div className={classes.subtext}>
                 {personState.bio}
               </div>
-               
-                <Grid xs={4} item>
-                  <Button onClick={() => {
-                    navigateToEditPerson(personState.personId);
-                  }}>
-                    Edit Profile
+
+              <Grid xs={4} item>
+                <Button onClick={() => {
+                  navigateToEditPerson(personState.personId);
+                }}>
+                  Edit Profile
               </Button>
 
               </Grid>

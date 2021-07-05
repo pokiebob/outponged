@@ -1,19 +1,20 @@
 import React, { Component } from "react";
 import { BrowserRouter } from "react-router-dom";
-
+import { Context } from "./Context";
 import Home from "./containers/Layout/Home/Home";
 
-class App extends Component {
-  render() {
-    return (
-      // <BrowserRouter basename="/my-app">
-      <BrowserRouter>
-        <div className="App">
+const app = () => {
+  const [userContext, setUserContext] = React.useState("");
+  return (
+    // <BrowserRouter basename="/my-app">
+    <BrowserRouter>
+      <div className="App">
+        <Context.Provider value={[userContext, setUserContext]}>
           <Home />
-        </div>
-      </BrowserRouter>
-    );
-  }
+        </Context.Provider>
+      </div>
+    </BrowserRouter>
+  );
 }
 
-export default App;
+export default app;

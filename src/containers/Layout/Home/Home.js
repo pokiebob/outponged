@@ -1,5 +1,5 @@
-import React from "react";
-import { Route, Link, Switch } from "react-router-dom";
+import React, { useContext } from "react";
+import { Context } from "../../../Context";
 
 //Material UI
 import { makeStyles } from "@material-ui/core/styles";
@@ -20,6 +20,7 @@ import TableTennis from "mdi-material-ui/TableTennis";
 import "./Home.css";
 
 // Components
+import { Route, Link, Switch } from "react-router-dom";
 import Players from "../Person/Players/Players";
 import Clubs from "../Club/Clubs/Clubs";
 import PersonProfile from "../Person/Profile/PersonProfile";
@@ -48,7 +49,6 @@ const useStyles = makeStyles((theme) => ({
 
 const home = () => {
   const classes = useStyles();
-
   return (
     <div>
       {renderAppBar(classes)}
@@ -58,7 +58,9 @@ const home = () => {
         <Route path="/person-profile" component={PersonProfile} />
         <Route path="/edit-person-profile" component={EditPersonProfile} />
         <Route path="/club-profile" component={ClubProfile} />
-        <Route path="/post" component={Post} />
+        <Route path="/post" >
+          <Post />
+        </Route>
       </Switch>
 
     </div>
@@ -72,12 +74,13 @@ const renderAppBar = (classes) => {
   });
 
   const [user, setUser] = React.useState(null);
+  const [userContext, setUserContext] = useContext(Context);
   React.useEffect(() => {
     const updateUser = async () => {
       try {
         await Auth.currentAuthenticatedUser()
           .then((data) => {
-            console.log('data', data);
+            // console.log('data', data);
             setUser(data);
           })
       } catch {
@@ -89,10 +92,11 @@ const renderAppBar = (classes) => {
     updateUser() // check manually the first time because we won't get a Hub event
     return () => Hub.remove('auth', updateUser) // cleanup
   }, []);
-  console.log('user', user);
+  // console.log('user', user);
 
   const insertPerson = () => {
     if (user) {
+      setUserContext(user);
       const post = {
         method: 'POST',
         headers: {
@@ -185,11 +189,6 @@ const renderAppBar = (classes) => {
         </IconButton>
       )
     }
-
-  }
-
-  const navigateToPost = () => {
-    history.push('/post/');
 
   }
 

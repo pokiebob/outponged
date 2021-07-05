@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import { Context } from "../../../Context";
 import { makeStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
@@ -61,7 +62,6 @@ const useStyles = makeStyles((theme) => ({
         position: "relative",
         color: "#ffffff",
         justifyContent: "flex-end"
-        // backgroundColor: "transparent"
     },
     form: {
         marginTop: "2px",
@@ -72,35 +72,39 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
+
 const post = () => {
     const classes = useStyles();
 
     const [file, setFile] = useState();
-    const [postState, setPostState] = useState();
+
+    // the context modified in Home when user logs in
+    const [user, setUser] = useContext(Context);
+    const [personState, setPersonState] = useState();
+
+    const personId = user?.attributes?.sub;
+    console.log("personId", personId);
+    const postRef = React.useRef();
 
     const initialize = () => {
         console.log('initializing');
-
-        //get info on user
-        setPostState(
-            {
-                "title" : "",
-                "description" : ""
-            }
-        )
+        fetch(API_URL.person + personId)
+            .then(resp => resp.json())
+            .then((personData) => {
+                setPersonState(personData);
+            });
     }
 
     useEffect(() => {
         initialize();
-        console.log("postState", postState);
+    });
 
-    }, []);
-
-    const updatePostState = (key, value) => {
-        const temp = { ...postState };
+    const updatePostRef = (key, value) => {
+        const temp = { ...postRef.current };
         temp[key] = value;
-        setPostState(temp);
-        // console.log("postState", postState);
+        postRef.current = temp;
+        // setPostState(temp);
+        console.log("postRef", postRef.current);
     }
 
     const config = {
@@ -114,7 +118,8 @@ const post = () => {
     const S3Client = new S3(config);
 
     const onUpload = (e) => {
-        console.log("file uploaded", e.currentTarget.files[0]);
+
+        // console.log("file uploaded", e.currentTarget.files[0]);
         if (e.currentTarget?.files[0]?.size > 650000000) {
             alert("file too big!");
         } else {
@@ -127,7 +132,7 @@ const post = () => {
         }
     }
 
-    const viewPost = () => {
+    const displayFile = () => {
         if (!file) {
             return (
                 <CardMedia
@@ -168,7 +173,7 @@ const post = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log('submitting',postState);
+        console.log('submitting', postRef.current);
 
         // S3Client
         //     .uploadFile(file)
@@ -176,22 +181,31 @@ const post = () => {
         //         console.log('data', data);
         //         const url = data.location.replace('.com//', '.com/');
         //         console.log('url', url);
-        //         // const patch = {
-        //         //     method: 'PATCH',
-        //         //     headers: {
-        //         //         'Content-Type': 'application/json',
-        //         //     },
-        //         //     body: JSON.stringify({ 'postUrl': url })
-        //         // }
+        //         const patch = {
+        //             method: 'PATCH',
+        //             headers: {
+        //                 'Content-Type': 'application/json',
+        //             },
+        //             body: JSON.stringify(
+        //                 {
+        //                     "ownerId" : personId,
+        //                     "ownerType" : "person",
+        //                     "visibility" : {
+        //                         "visibilityLevel" : "public"
+        //                     },
+        //                     "fileUrl": url,
+        //                     "title" : postRef.current.title,
+        //                     "description" : postRef.current.description,
+        //                 }
+        //             )
+        //         }
         //     })
         //     .catch((err) => {
         //         alert(err);
-        //     })
+        //     });
     }
 
     const renderPostCard = () => {
-
-        // const forceUpdate = useForceUpdate();
 
         return (
             <Paper className={classes.paper}>
@@ -203,19 +217,20 @@ const post = () => {
                     </Grid> */}
                     <Grid container spacing={0}>
                         <Grid item >
-                            <Avatar className={classes.small}></Avatar>
+                            <Avatar src={personState?.pictureUrl} className={classes.small}></Avatar>
                         </Grid>
                         <Grid item >
-                            <div className={classes.name}>UserName</div>
+                            <div className={classes.name}>{`${personState?.firstName} ${personState?.lastName}`}</div>
                         </Grid>
                     </Grid>
 
                     <Grid xs={6} item >
                         <Card className={classes.videoWrapper}>
-                            {viewPost()}
+                            {displayFile()}
                             <CardActions className={classes.cardContent}>
                                 <IconButton
-                                color="inherit"
+                                    color="inherit"
+                                    component="label"
                                 >
                                     <CreateIcon className={classes.editIcon} />
                                     <input
@@ -240,7 +255,7 @@ const post = () => {
                                     fullWidth
                                     required
                                     className={classes.form}
-                                    onInput={e => updatePostState("title", e.target.value)}
+                                    onInput={e => updatePostRef("title", e.target.value)}
                                     inputProps={{ maxLength: 70 }}
                                 />
                             </Grid>
@@ -255,17 +270,17 @@ const post = () => {
                                     fullWidth
                                     className={classes.form}
                                     inputProps={{ maxLength: 1000 }}
-                                    onInput={e => updatePostState("description", e.target.value)}
+                                    onInput={e => updatePostRef("description", e.target.value)}
                                 />
                             </Grid>
                         </Grid>
                         <Grid container>
                             <Grid item >
                                 <Button
-                                color="primary"
-                                variant="contained"
-                                className={classes.createPost}
-                                type="submit"
+                                    color="primary"
+                                    variant="contained"
+                                    className={classes.createPost}
+                                    type="submit"
                                 >
                                     Create Post
                                 </Button>
