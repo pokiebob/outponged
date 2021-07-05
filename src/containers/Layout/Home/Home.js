@@ -47,8 +47,217 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
+function useForceUpdate(){
+  const [value, setValue] = React.useState(0); // integer state
+  return () => setValue(value => value + 1); // update the state to force render
+}
+
+let isLoggedIn = false;
+
 const home = () => {
+  // const forceUpdate = useForceUpdate();
   const classes = useStyles();
+  const [userContext, setUserContext] = useContext(Context);
+  // const [personDataState, setPersonDataState] = React.useState();
+  const renderAppBar = (classes) => {
+    const [state, setState] = React.useState({
+      isDrawerOpen: false,
+    });
+
+  
+    const [awsUser, setAwsUser] = React.useState(null);
+    // const [userContext, setUserContext] = useContext(Context);
+    React.useEffect(() => {
+      const updateUser = async () => {
+        try {
+          await Auth.currentAuthenticatedUser()
+            .then((data) => {
+              // console.log('data', data);
+              setAwsUser(data);
+            });
+        } catch {
+          console.log('user not received');
+          setAwsUser(null)
+        }
+      }
+      Hub.listen('auth', updateUser) // listen for login/signup events
+      updateUser() // check manually the first time because we won't get a Hub event
+      return () => Hub.remove('auth', updateUser) // cleanup
+    }, []);
+  
+    const persistAndRefresh = (user) => {
+      isLoggedIn = true;
+      const post = {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            personId: user.attributes.sub,
+            email: user.attributes.email,
+            externalId: {
+              awsIdentity: user.attributes.sub
+            },
+            role: {
+              player: false,
+              coach: false
+            },
+            links: {
+              persons: {
+              },
+              clubs: {
+              }
+            }
+          })
+        }
+  
+        fetch(API_URL.person, post)
+          .then(resp => resp.json())
+          .then((resp) => {
+            console.log("MONGO response:", resp);
+          })
+          .then(
+            fetch(API_URL.person + user.attributes.sub)
+              .then(resp => resp.json())
+              .then((personData) => {
+                setUserContext(personData);
+                console.log(personData);
+              })
+          );
+    }
+
+    if (awsUser && ! isLoggedIn) persistAndRefresh(awsUser);
+  
+    const toggleDrawer = (open) => (event) => {
+      if (
+        event.type === "keydown" &&
+        (event.key === "Tab" || event.key === "Shift")
+      ) {
+        return;
+      }
+  
+      setState({ ...state, isDrawerOpen: open });
+    };
+  
+    const renderNavList = () => {
+      return (
+        <List>
+          <ListItem button component={Link} to="/home/" onClick={toggleDrawer(false)}>
+            <TableTennis />
+            {/* <ListItemText primary={"Home"} href="/home/" /> */}
+            Home
+          </ListItem>
+  
+          <ListItem button component={Link} to="/players/" onClick={toggleDrawer(false)}>
+            <TableTennis />
+            Players
+          </ListItem>
+  
+          <ListItem button component={Link} to="/coaches/" onClick={toggleDrawer(false)}>
+            <TableTennis />
+            Coaches
+          </ListItem>
+  
+          <ListItem button component={Link} to="/clubs/" onClick={toggleDrawer(false)}>
+            <TableTennis />
+            Clubs
+          </ListItem>
+  
+          <ListItem button component={Link} to="/tournaments/" onClick={toggleDrawer(false)}>
+            <TableTennis />
+            Tournaments
+          </ListItem>
+        </List>
+      );
+    };
+  
+    const renderPostButton = () => {
+      if (awsUser) {
+        return (
+          <IconButton
+            aria-label="Post"
+            color="inherit"
+            component={Link}
+            to="/post/"
+          >
+            <AddIcon />
+          </IconButton>
+        )
+      }
+  
+    }
+  
+    const renderLoginButton = () => {
+  
+      if (awsUser) {
+        return (
+          <Button
+            color="inherit"
+            onClick={() => {
+              Auth.signOut();
+            }}>
+            Sign Out
+          </Button>
+        )
+      } else {
+        return (
+          <Button
+            color="inherit"
+            onClick={() => {
+              Auth.federatedSignIn();
+            }}>
+            Login
+          </Button>
+        );
+      }
+    }
+  
+    return (
+      <div className={classes.root}>
+        <AppBar position="static" className={classes.appBar}>
+          <Toolbar>
+            <IconButton
+              edge="start"
+              className={classes.menuButton}
+              color="inherit"
+              aria-label="menu"
+              onClick={toggleDrawer(true)}
+            >
+              <MenuIcon />
+            </IconButton>
+            <Typography variant="h6" className={classes.title}>
+              OutPonged
+            </Typography>
+            {renderPostButton()}
+            {renderLoginButton()}
+  
+          </Toolbar>
+        </AppBar>
+        <Drawer open={state.isDrawerOpen} onClose={toggleDrawer(false)}>
+          {renderNavList()}
+        </Drawer>
+      </div>
+    );
+  };
+
+
+
+
+  const renderPostPage = () => {
+    // console.log('renderPostPage userContext', userContext);
+    if (userContext) {
+      return (
+        <Route path="/post" component={Post} />
+      );
+    } else {
+      return (
+        <Route path="/post" >
+          Please Log In
+        </Route>
+      );
+    }
+  }
+  
   return (
     <div>
       {renderAppBar(classes)}
@@ -58,192 +267,14 @@ const home = () => {
         <Route path="/person-profile" component={PersonProfile} />
         <Route path="/edit-person-profile" component={EditPersonProfile} />
         <Route path="/club-profile" component={ClubProfile} />
-        <Route path="/post" >
-          <Post />
-        </Route>
+        {renderPostPage()}
       </Switch>
 
     </div>
   );
 };
 
-const renderAppBar = (classes) => {
-  var isLoggedIn = false;
-  const [state, setState] = React.useState({
-    isDrawerOpen: false,
-  });
 
-  const [user, setUser] = React.useState(null);
-  const [userContext, setUserContext] = useContext(Context);
-  React.useEffect(() => {
-    const updateUser = async () => {
-      try {
-        await Auth.currentAuthenticatedUser()
-          .then((data) => {
-            // console.log('data', data);
-            setUser(data);
-          })
-      } catch {
-        console.log('user not received');
-        setUser(null)
-      }
-    }
-    Hub.listen('auth', updateUser) // listen for login/signup events
-    updateUser() // check manually the first time because we won't get a Hub event
-    return () => Hub.remove('auth', updateUser) // cleanup
-  }, []);
-  // console.log('user', user);
-
-  const insertPerson = () => {
-    if (user) {
-      setUserContext(user);
-      const post = {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          personId: user.attributes.sub,
-          email: user.attributes.email,
-          externalId: {
-            awsIdentity: user.attributes.sub
-          },
-          role: {
-            player: false,
-            coach: false
-          },
-          links: {
-            persons: {
-            },
-            clubs: {
-            }
-          }
-        })
-      }
-
-      fetch(API_URL.person, post)
-        .then(resp => resp.json())
-        .then((resp) => {
-          console.log("MONGO response:", resp);
-        });
-      isLoggedIn = true;
-    }
-
-  }
-
-  if (!isLoggedIn) insertPerson();
-
-  const toggleDrawer = (open) => (event) => {
-    if (
-      event.type === "keydown" &&
-      (event.key === "Tab" || event.key === "Shift")
-    ) {
-      return;
-    }
-
-    setState({ ...state, isDrawerOpen: open });
-  };
-
-  const renderNavList = () => {
-    return (
-      <List>
-        <ListItem button component={Link} to="/home/" onClick={toggleDrawer(false)}>
-          <TableTennis />
-          {/* <ListItemText primary={"Home"} href="/home/" /> */}
-          Home
-        </ListItem>
-
-        <ListItem button component={Link} to="/players/" onClick={toggleDrawer(false)}>
-          <TableTennis />
-          Players
-        </ListItem>
-
-        <ListItem button component={Link} to="/coaches/" onClick={toggleDrawer(false)}>
-          <TableTennis />
-          Coaches
-        </ListItem>
-
-        <ListItem button component={Link} to="/clubs/" onClick={toggleDrawer(false)}>
-          <TableTennis />
-          Clubs
-        </ListItem>
-
-        <ListItem button component={Link} to="/tournaments/" onClick={toggleDrawer(false)}>
-          <TableTennis />
-          Tournaments
-        </ListItem>
-      </List>
-    );
-  };
-
-  const renderPostButton = () => {
-    if (user) {
-      return (
-        <IconButton
-          aria-label="Post"
-          color="inherit"
-          component={Link}
-          to="/post/"
-        >
-          <AddIcon />
-        </IconButton>
-      )
-    }
-
-  }
-
-  const renderLoginButton = () => {
-
-    if (user) {
-      return (
-        <Button
-          color="inherit"
-          onClick={() => {
-            Auth.signOut();
-          }}>
-          Sign Out
-        </Button>
-      )
-    } else {
-      return (
-        <Button
-          color="inherit"
-          onClick={() => {
-            Auth.federatedSignIn();
-          }}>
-          Login
-        </Button>
-      );
-    }
-  }
-
-  return (
-    <div className={classes.root}>
-      <AppBar position="static" className={classes.appBar}>
-        <Toolbar>
-          <IconButton
-            edge="start"
-            className={classes.menuButton}
-            color="inherit"
-            aria-label="menu"
-            onClick={toggleDrawer(true)}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6" className={classes.title}>
-            OutPonged
-          </Typography>
-          {renderPostButton()}
-          {renderLoginButton()}
-
-        </Toolbar>
-      </AppBar>
-      <Drawer open={state.isDrawerOpen} onClose={toggleDrawer(false)}>
-        {renderNavList()}
-      </Drawer>
-    </div>
-  );
-};
 
 // const renderDrawer = () => {
 //   <React.Fragment>

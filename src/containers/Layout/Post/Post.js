@@ -79,32 +79,19 @@ const post = () => {
     const [file, setFile] = useState();
 
     // the context modified in Home when user logs in
-    const [user, setUser] = useContext(Context);
-    const [personState, setPersonState] = useState();
+    const [userContext, setUserContext] = useContext(Context);
+    console.log(userContext);
 
-    const personId = user?.attributes?.sub;
-    console.log("personId", personId);
+    // const personId = user?.attributes?.sub;
+    // console.log("personId", personId);
     const postRef = React.useRef();
-
-    const initialize = () => {
-        console.log('initializing');
-        fetch(API_URL.person + personId)
-            .then(resp => resp.json())
-            .then((personData) => {
-                setPersonState(personData);
-            });
-    }
-
-    useEffect(() => {
-        initialize();
-    });
 
     const updatePostRef = (key, value) => {
         const temp = { ...postRef.current };
         temp[key] = value;
         postRef.current = temp;
         // setPostState(temp);
-        console.log("postRef", postRef.current);
+        // console.log("postRef", postRef.current);
     }
 
     const config = {
@@ -175,34 +162,34 @@ const post = () => {
         e.preventDefault();
         console.log('submitting', postRef.current);
 
-        // S3Client
-        //     .uploadFile(file)
-        //     .then((data) => {
-        //         console.log('data', data);
-        //         const url = data.location.replace('.com//', '.com/');
-        //         console.log('url', url);
-        //         const patch = {
-        //             method: 'PATCH',
-        //             headers: {
-        //                 'Content-Type': 'application/json',
-        //             },
-        //             body: JSON.stringify(
-        //                 {
-        //                     "ownerId" : personId,
-        //                     "ownerType" : "person",
-        //                     "visibility" : {
-        //                         "visibilityLevel" : "public"
-        //                     },
-        //                     "fileUrl": url,
-        //                     "title" : postRef.current.title,
-        //                     "description" : postRef.current.description,
-        //                 }
-        //             )
-        //         }
-        //     })
-        //     .catch((err) => {
-        //         alert(err);
-        //     });
+        S3Client
+            .uploadFile(file)
+            .then((data) => {
+                console.log('data', data);
+                const url = data.location.replace('.com//', '.com/');
+                console.log('url', url);
+                const patch = {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(
+                        {
+                            "ownerId" : personId,
+                            "ownerType" : "person",
+                            "visibility" : {
+                                "visibilityLevel" : "public"
+                            },
+                            "fileUrl": url,
+                            "title" : postRef.current.title,
+                            "description" : postRef.current.description,
+                        }
+                    )
+                }
+            })
+            .catch((err) => {
+                alert(err);
+            });
     }
 
     const renderPostCard = () => {
@@ -217,10 +204,10 @@ const post = () => {
                     </Grid> */}
                     <Grid container spacing={0}>
                         <Grid item >
-                            <Avatar src={personState?.pictureUrl} className={classes.small}></Avatar>
+                            <Avatar src={userContext?.pictureUrl} className={classes.small}></Avatar>
                         </Grid>
                         <Grid item >
-                            <div className={classes.name}>{`${personState?.firstName} ${personState?.lastName}`}</div>
+                            <div className={classes.name}>{`${userContext?.firstName} ${userContext?.lastName}`}</div>
                         </Grid>
                     </Grid>
 
