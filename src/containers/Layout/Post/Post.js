@@ -15,6 +15,7 @@ import { aws } from '../../../keys';
 import S3 from 'aws-s3';
 import { API_URL } from '../../../api-url';
 import { TextField } from "@material-ui/core";
+import { useHistory } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -75,6 +76,8 @@ const useStyles = makeStyles((theme) => ({
 
 const post = () => {
     const classes = useStyles();
+
+    const history = useHistory();
 
     const [file, setFile] = useState();
 
@@ -183,7 +186,6 @@ const post = () => {
                             "fileUrl": url,
                             "title" : postRef.current.title,
                             "description" : postRef.current.description,
-                            "date" : Date().toLocaleString()
                         }
                     )
                 }
@@ -192,11 +194,16 @@ const post = () => {
                     .then(resp => resp.json())
                     .then((resp) => {
                         console.log(resp);
+                        navigateToPersonProfile(userContext.personId);
                     });
             })
             .catch((err) => {
                 alert(err);
             });
+    }
+
+    const navigateToPersonProfile = (personId) => {
+        history.push("/person-profile/" + personId);
     }
 
     const renderPostCard = () => {
