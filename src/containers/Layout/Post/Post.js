@@ -168,24 +168,31 @@ const post = () => {
                 console.log('data', data);
                 const url = data.location.replace('.com//', '.com/');
                 console.log('url', url);
-                const patch = {
-                    method: 'PATCH',
+                const post = {
+                    method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify(
                         {
-                            "ownerId" : personId,
+                            "ownerId" : userContext.personId,
                             "ownerType" : "person",
                             "visibility" : {
-                                "visibilityLevel" : "public"
+                                "level" : "public"
                             },
                             "fileUrl": url,
                             "title" : postRef.current.title,
                             "description" : postRef.current.description,
+                            "date" : Date().toLocaleString()
                         }
                     )
                 }
+
+                fetch(API_URL.post, post)
+                    .then(resp => resp.json())
+                    .then((resp) => {
+                        console.log(resp);
+                    });
             })
             .catch((err) => {
                 alert(err);
