@@ -1,18 +1,16 @@
-import React, { useState, useEffect } from "react";
-import { makeStyles } from "@material-ui/core/styles";
-import Paper from "@material-ui/core/Paper";
-import Grid from "@material-ui/core/Grid";
-import Avatar from "@material-ui/core/Avatar";
 import AppBar from "@material-ui/core/AppBar";
-import Tabs from "@material-ui/core/Tabs";
-import Tab from "@material-ui/core/Tab";
-import PropTypes from "prop-types";
+import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
-import Box from "@material-ui/core/Box";
-import Typography from "@material-ui/core/Typography";
+import Grid from "@material-ui/core/Grid";
+import Paper from "@material-ui/core/Paper";
+import { makeStyles } from "@material-ui/core/styles";
+import Tab from "@material-ui/core/Tab";
+import Tabs from "@material-ui/core/Tabs";
+import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { forkJoin } from 'rxjs';
 import { API_URL } from '../../../../api-url';
+import PostingCard from '../../../../components/Card/PostingCard';
 
 
 function a11yProps(index) {
@@ -84,6 +82,7 @@ const personPage = () => {
   const [personState, setPersonState] = useState(undefined);
   const [linkedPersonsState, setLinkedPersonsState] = useState(undefined);
   const [linkedClubsState, setLinkedClubsState] = useState(undefined);
+  const [postingState, setPostingState] = useState();
   const [value, setValue] = React.useState(0); //used by app bars
 
   const handleChange = (event, newValue) => {
@@ -125,6 +124,13 @@ const personPage = () => {
           .subscribe((linkedClubData) => {
             setLinkedClubsState(linkedClubData.filter(x => x !== null));
           });
+      });
+
+    fetch(API_URL.post + "find/" + getPersonId())
+      .then(resp => resp.json())
+      .then((postings) => {
+        console.log('postings', postings);
+        setPostingState(postings);
       });
   }
 
@@ -307,11 +313,34 @@ const personPage = () => {
     );
   }
 
+  const renderPostings = () => {
+    return (
+      postingState?.map((post, idx) => {
+
+        return (
+          <Paper className={classes.paper}>
+            <Grid container className={classes.container}>
+              <PostingCard
+                pictureUrl={personState.pictureUrl}
+                name={`${personState.firstName} ${personState.lastName}`}
+                title={post.title}
+                fileUrl={post.fileUrl}
+                description={post.description}
+              />
+            </Grid>
+          </Paper>
+        );
+      }
+      )
+    );
+  }
+
   const renderProfile = () => {
     return (
       <div className={classes.root}>
         <Grid container justify="center" >
           {renderProfileCard()}
+          {renderPostings()}
 
           <Paper className={classes.paper}>
             <Grid container className={classes.container}>
@@ -333,7 +362,10 @@ const personPage = () => {
               </Grid>
             </Grid>
           </Paper>
+
         </Grid>
+
+
       </div>
     );
   }

@@ -46,7 +46,7 @@ const useStyles = makeStyles((theme) => ({
     name: {
         marginTop: "10px",
         "font-size": "20px",
-        marginLeft: "20px",
+        // marginLeft: "10px",
     },
     videoWrapper: {
         position: "relative",
@@ -178,14 +178,14 @@ const post = () => {
                     },
                     body: JSON.stringify(
                         {
-                            "ownerId" : userContext.personId,
-                            "ownerType" : "person",
-                            "visibility" : {
-                                "level" : "public"
+                            "ownerId": userContext.personId,
+                            "ownerType": "person",
+                            "visibility": {
+                                "level": "public"
                             },
                             "fileUrl": url,
-                            "title" : postRef.current.title,
-                            "description" : postRef.current.description,
+                            "title": postRef.current.title,
+                            "description": postRef.current.description,
                         }
                     )
                 }
@@ -210,15 +210,15 @@ const post = () => {
 
         return (
             <Paper className={classes.paper}>
-                <Grid direction="column" className={classes.container} >
+                <Grid className={classes.container} >
                     {/* <Grid container>
                         <Grid xs={12} item >
                             <div className={classes.header}>New Post</div>
-                        </Grid>
+                        </Grid
                     </Grid> */}
-                    <Grid container spacing={0}>
+                    <Grid container spacing={2}>
                         <Grid item >
-                            <Avatar src={userContext?.pictureUrl} className={classes.small}></Avatar>
+                            <Avatar src={userContext?.pictureUrl} className={classes.small} />
                         </Grid>
                         <Grid item >
                             <div className={classes.name}>{`${userContext?.firstName} ${userContext?.lastName}`}</div>
