@@ -5,6 +5,7 @@ import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import ButtonBase from "@material-ui/core/ButtonBase";
+import { APP_PAPER_ELEVATION } from "../../app-config";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -34,7 +35,7 @@ const personCard = (props) => {
 
   return (
     <div className={classes.root} onClick={props.clicked}>
-      <Paper className={classes.paper} >
+      <Paper className={classes.paper} elevation={APP_PAPER_ELEVATION}>
         <Grid container spacing={2}>
           <Grid item>
             <ButtonBase className={classes.image}>

@@ -3,8 +3,6 @@ import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import Avatar from "@material-ui/core/Avatar";
-import Typography from "@material-ui/core/Typography";
-import ButtonBase from "@material-ui/core/ButtonBase";
 import Card from "@material-ui/core/Card";
 import CardMedia from "@material-ui/core/CardMedia";
 
@@ -20,13 +18,20 @@ const useStyles = makeStyles((theme) => ({
     height: theme.spacing(5),
   },
   name: {
-    marginTop: "10px",
-    "font-size": "20px",
-    marginLeft: "10px"
+    "font-size": "16px",
+    marginLeft: "10px",
+    marginTop: "5px"
+  },
+  date: {
+    marginTop: "5px",
+    "font-size": "12px",
+    marginLeft: "10px",
+    color: theme.palette.text.secondary,
   },
   title: {
-    marginTop: "10px",
-    "font-size": "30px"
+    marginTop: "20px",
+    "font-size": "16px",
+    "font-weight": "bold"
   },
   videoWrapper: {
     position: "relative",
@@ -41,7 +46,7 @@ const useStyles = makeStyles((theme) => ({
   },
   description: {
     color: theme.palette.text.secondary,
-    "font-size": "20px",
+    "font-size": "15px",
     marginTop: "10px"
   }
 
@@ -49,6 +54,35 @@ const useStyles = makeStyles((theme) => ({
 
 const postingCard = (props) => {
   const classes = useStyles();
+
+  const displayFile = () => {
+    if (props.fileType.includes("video")) {
+      return (
+        // <ReactPlayer
+        //     url={URL.createObjectURL(file)}
+        //     className={classes.videoPlayer}
+        //     controls="true"
+        // />
+        <CardMedia
+          className={classes.videoPlayer}
+          component="video"
+          alt="Title"
+          image={props.fileUrl}
+          controls="true"
+        />
+      );
+    }
+    else {
+      return (
+        <CardMedia
+          className={classes.videoPlayer}
+          media="picture"
+          alt="Title"
+          image={props.fileUrl}
+        />
+      )
+    }
+  }
 
   return (
     <div className={classes.root}>
@@ -59,6 +93,7 @@ const postingCard = (props) => {
           </Grid>
           <Grid item>
             <div className={classes.name}>{props.name}</div>
+            <div className={classes.date}>{props.date}</div>
           </Grid>
           {/* add role and follow button */}
 
@@ -71,13 +106,7 @@ const postingCard = (props) => {
         <Grid container>
           <Grid xs={10} item>
             <Card className={classes.videoWrapper}>
-              <CardMedia 
-                className={classes.videoPlayer}
-                media="video"
-                alt="Title"
-                image={props.fileUrl}
-                controls="true"
-                />
+              {displayFile()}
             </Card>
           </Grid>
         </Grid>

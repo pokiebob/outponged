@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import axios from "../../../../axios";
-
+import Grid from "@material-ui/core/Grid";
 import Card from "../../../../components/Card/PersonCard";
 import "./Players.css";
 import { API_URL } from "../../../../api-url";
@@ -58,24 +58,24 @@ class Players extends Component {
       players = this.state.players.map((card) => {
         console.log(card);
         return (
-          // <Link to={'/posts/' + post.id} key={post.id}>
-          <Card
-            key={card.personId}
-            fullName={card.fullName}
-            pic={card.pictureUrl}
-            usattNumber={card.externalId.usattNumber}
-            rating={card.rating}
-            clicked={() => this.playerSelectedHandler(card.personId)}
-          />
-          // </Link>
+          <Grid container>
+            <Card
+              key={card.personId}
+              fullName={card.fullName}
+              pic={card.pictureUrl}
+              usattNumber={card.externalId.usattNumber}
+              rating={card.rating}
+              clicked={() => this.playerSelectedHandler(card.personId)}
+            />
+          </Grid>
         );
       });
     }
 
     return (
-      <div>
-        <section className="Players">{players}</section>
-      </div>
+      <Grid container spacing={2} className="Players">
+        {players}
+      </Grid>
     );
   }
 }

@@ -168,9 +168,7 @@ const post = () => {
         S3Client
             .uploadFile(file)
             .then((data) => {
-                console.log('data', data);
                 const url = data.location.replace('.com//', '.com/');
-                console.log('url', url);
                 const post = {
                     method: 'POST',
                     headers: {
@@ -184,11 +182,13 @@ const post = () => {
                                 "level": "public"
                             },
                             "fileUrl": url,
+                            "fileType": file.type,
                             "title": postRef.current.title,
                             "description": postRef.current.description,
                         }
                     )
                 }
+                console.log('post body', post.body);
 
                 fetch(API_URL.post, post)
                     .then(resp => resp.json())
