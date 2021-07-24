@@ -173,9 +173,12 @@ const editProfile = () => {
 
         fetch(API_URL.person + getPersonId(), patch)
             .then(resp => resp.json())
-            .then((resp) => {
+            .then(() => {
                 // console.log(resp);
                 setOrigPersonState({ ...newPersonState });
+            })
+            .then(() => {
+                navigateToPersonProfile(getPersonId())
             });
 
     }
@@ -191,6 +194,10 @@ const editProfile = () => {
         })
     }
         , []);
+
+    const navigateToPersonProfile = (personId) => {
+        history.push("/person-profile" + personId);
+    }
 
     /**
      * True if deep compare shows a diff

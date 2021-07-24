@@ -140,11 +140,11 @@ const personPage = () => {
           });
       });
 
-    fetch(API_URL.post + "find/" + getPersonId())
+    fetch(API_URL.post + "find/?page=pp&pid=" + getPersonId())
       .then(resp => resp.json())
       .then((postings) => {
-        // console.log('postings', postings);
-        setPostingState(postings);
+        console.log('postings', postings);
+        setPostingState(postings.reverse());
       });
   }
 
