@@ -27,6 +27,7 @@ import PersonProfile from "../Person/Profile/PersonProfile";
 import EditPersonProfile from "../Person/Profile/EditProfile";
 import ClubProfile from "../Club/Profile/ClubProfile";
 import Post from "../Post/Post";
+import Feed from "./Feed/Feed";
 
 //Amplify
 import { Auth, Hub } from 'aws-amplify';
@@ -266,6 +267,7 @@ const home = () => {
     <div>
       {renderAppBar(classes)}
       <Switch>
+        <Route path="/home" component={Feed} />
         <Route path="/players" component={Players} />
         <Route path="/clubs" component={Clubs} />
         <Route path="/person-profile" component={PersonProfile} />

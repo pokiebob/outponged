@@ -65,6 +65,7 @@ class Players extends Component {
               pic={card.pictureUrl}
               usattNumber={card.externalId?.usattNumber}
               rating={card.rating}
+              role={card.role}
               clicked={() => this.playerSelectedHandler(card.personId)}
             />
           </Grid>

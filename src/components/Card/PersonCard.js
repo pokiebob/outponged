@@ -4,7 +4,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
-import ButtonBase from "@material-ui/core/ButtonBase";
+import Avatar from "@material-ui/core/Avatar";
 import { APP_PAPER_ELEVATION } from "../../app-config";
 
 const useStyles = makeStyles((theme) => ({
@@ -17,34 +17,52 @@ const useStyles = makeStyles((theme) => ({
     margin: "auto",
     maxWidth: 500,
   },
-  image: {
-    width: 128,
-    height: 128,
+  medium: {
+    width: theme.spacing(10),
+    height: theme.spacing(10),
+    margin: "auto"
   },
-  img: {
-    margin: "auto",
-    display: "block",
-    maxWidth: "100%",
-    maxHeight: "100%",
-  },
+  col: {
+    marginLeft: "15px"
+  }
 }));
 
 const personCard = (props) => {
   const classes = useStyles();
-  console.log(props);
+  // console.log(props);
+
+  const renderRole = () => {
+    // console.log(props.role);
+    if (props.role.player) {
+      if (props.role.coach) {
+        return (
+          <div>
+            <Typography variant="subtitle1">Player</Typography>
+            <Typography variant="subtitle1">Coach</Typography>
+          </div>
+        );
+      } else {
+        return (
+          <Typography variant="subtitle1">Player</Typography>
+        );
+      }
+    } else {
+      return (
+        <Typography variant="subtitle1">Coach</Typography>
+      );
+    }
+  }
 
   return (
     <div className={classes.root} onClick={props.clicked}>
       <Paper className={classes.paper} elevation={APP_PAPER_ELEVATION}>
-        <Grid container spacing={2}>
-          <Grid item>
-            <ButtonBase className={classes.image}>
-              <img className={classes.img} alt="complex" src={props.pic} />
-            </ButtonBase>
+        <Grid container xs={12}>
+          <Grid item xs={2}>
+            <Avatar src={props.pic} className={classes.medium} />
           </Grid>
-          <Grid item xs={12} sm container>
-            <Grid item xs container direction="column" spacing={2}>
-              <Grid item xs>
+          <Grid item xs={10} container>
+            <Grid item xs={9} container className={classes.col} direction="column">
+              <Grid item>
                 <Typography gutterBottom variant="h6">
                   {props.fullName}
                 </Typography>
@@ -56,9 +74,8 @@ const personCard = (props) => {
                 </Typography>
               </Grid>
             </Grid>
-            <Grid item>
-              <Typography variant="subtitle1">Player</Typography>
-              <Typography variant="subtitle1">Coach</Typography>
+            <Grid item className={classes.col} xs={2}>
+              {renderRole()}
             </Grid>
           </Grid>
         </Grid>

@@ -180,11 +180,11 @@ const personPage = () => {
               <div className={classes.subtext}>Rating</div>
             </Grid>
             <Grid xs={4} item >
-              <div className={classes.stats}>234</div>
+              <div className={classes.stats}>-</div>
               <div className={classes.subtext}>Followers</div>
             </Grid>
             <Grid xs={4} item >
-              <div className={classes.stats}>400</div>
+              <div className={classes.stats}>-</div>
               <div className={classes.subtext}>Following</div>
             </Grid>
             <Grid xs={12} item>

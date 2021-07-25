@@ -4,7 +4,8 @@ import { makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
-import ButtonBase from "@material-ui/core/ButtonBase";
+import Avatar from "@material-ui/core/Avatar";
+import { APP_PAPER_ELEVATION } from "../../app-config";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -16,16 +17,14 @@ const useStyles = makeStyles((theme) => ({
     margin: "auto",
     maxWidth: 500,
   },
-  image: {
-    width: 128,
-    height: 128,
+  medium: {
+    width: theme.spacing(10),
+    height: theme.spacing(10),
+    margin: "auto"
   },
-  img: {
-    margin: "auto",
-    display: "block",
-    maxWidth: "100%",
-    maxHeight: "100%",
-  },
+  col: {
+    marginLeft: "15px"
+  }
 }));
 
 const clubCard = (props) => {
@@ -34,24 +33,20 @@ const clubCard = (props) => {
 
 
   return (
-    <div className={classes.root} 
-    onClick={props.clicked}
-    >
-      <Paper className={classes.paper} >
-        <Grid container spacing={2}>
-          <Grid item>
-            <ButtonBase className={classes.image}>
-              <img className={classes.img} alt="complex" src={props.pic} />
-            </ButtonBase>
+    <div className={classes.root} onClick={props.clicked}>
+      <Paper className={classes.paper} elevation={APP_PAPER_ELEVATION}>
+        <Grid container xs={12}>
+          <Grid item xs={2}>
+            <Avatar src={props.pic} className={classes.medium} />
           </Grid>
-          <Grid item xs={12} sm container>
-            <Grid item xs container direction="column" spacing={2}>
-              <Grid item xs>
+          <Grid item xs={10} container>
+            <Grid item xs={9}  className={classes.col} container direction="column" >
+              <Grid item>
                 <Typography gutterBottom variant="h6">
                   {props.name}
                 </Typography>
                 <Typography variant="body2" gutterBottom >
-                   <a href={props.siteUrl} target="_blank">{props.siteUrl}</a>
+                  <a href={props.siteUrl} target="_blank">{props.siteUrl}</a>
                 </Typography>
                 <Typography variant="body2" color="textSecondary">
                   Address: {props.address}
@@ -61,7 +56,7 @@ const clubCard = (props) => {
                 </Typography>
               </Grid>
             </Grid>
-            <Grid item>
+            <Grid item className={classes.col} xs={2}>
               <Typography variant="subtitle1">Club</Typography>
             </Grid>
           </Grid>
