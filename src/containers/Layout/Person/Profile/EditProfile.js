@@ -90,7 +90,7 @@ const ATTRIB = {
     BIO: {
         propName: 'bio',
         isValid: true,
-        validate: (bio) => bio.length < 100
+        validate: (bio) => bio.length < 200
 
     },
     EMAIL: {
@@ -297,7 +297,7 @@ const editProfile = () => {
 
                         {/* </div> */}
                         <Grid xs={12} item >
-                            <div className={classes.usattLabel}>USATT #{origPersonState.externalId.usattNumber}</div>
+                            <div className={classes.usattLabel}>USATT #{origPersonState.externalId?.usattNumber}</div>
                         </Grid>
                     </Grid>
                     <Grid container xs={8} item >

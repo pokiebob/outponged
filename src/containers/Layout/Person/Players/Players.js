@@ -27,10 +27,10 @@ class Players extends Component {
     // this.setState({ players: players });
 
     axios
-      .get(API_URL.person)
+      .get(API_URL.person + '?role=player')
       .then((response) => {
-        const players = response.data;
-        const updatedPlayers = players.map((player, idx) => {
+        const persons = response.data;
+        const updatedPlayers = persons.map((player, idx) => {
           return {
             ...player,
             
@@ -63,7 +63,7 @@ class Players extends Component {
               key={card.personId}
               fullName={card.fullName}
               pic={card.pictureUrl}
-              usattNumber={card.externalId.usattNumber}
+              usattNumber={card.externalId?.usattNumber}
               rating={card.rating}
               clicked={() => this.playerSelectedHandler(card.personId)}
             />

@@ -129,7 +129,7 @@ const post = () => {
                     className={classes.videoPlayer}
                     media="picture"
                     alt="Title"
-                    image="https://upload.wikimedia.org/wikipedia/commons/4/41/Ma_Long_2013.jpg"
+                    image="https://workwiththebest.intraway.com/wp-content/uploads/sites/4/2016/10/upload-1118929_960_720.png"
                 />
             );
         }
@@ -188,7 +188,7 @@ const post = () => {
                         }
                     )
                 }
-                console.log('post body', post.body);
+                // console.log('post body', post.body);
 
                 fetch(API_URL.post, post)
                     .then(resp => resp.json())

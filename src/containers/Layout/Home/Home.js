@@ -59,7 +59,7 @@ const home = () => {
       isDrawerOpen: false,
     });
 
-  
+
     const [awsUser, setAwsUser] = React.useState(null);
     // const [userContext, setUserContext] = useContext(Context);
     React.useEffect(() => {
@@ -67,62 +67,68 @@ const home = () => {
         try {
           await Auth.currentAuthenticatedUser()
             .then((data) => {
-              // console.log('data', data);
+              console.log('data', data);
               setAwsUser(data);
             });
-        } catch {
-          console.log('user not received');
-          setAwsUser(null)
+        } catch (error) {
+          console.log(error);
+          console.log('user not received, logging in as Guest User');
+          fetch(API_URL.person + 'd5f3a250-ad24-47dc-a250-3ade9538ba0d')
+            .then(resp => resp.json())
+            .then((personData) => {
+              setUserContext(personData);
+              console.log(personData);
+            });
         }
       }
       Hub.listen('auth', updateUser) // listen for login/signup events
       updateUser() // check manually the first time because we won't get a Hub event
       return () => Hub.remove('auth', updateUser) // cleanup
     }, []);
-  
+
     const persistAndRefresh = (user) => {
       isLoggedIn = true;
       const post = {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          personId: user.attributes.sub,
+          email: user.attributes.email,
+          externalId: {
+            awsIdentity: user.attributes.sub
           },
-          body: JSON.stringify({
-            personId: user.attributes.sub,
-            email: user.attributes.email,
-            externalId: {
-              awsIdentity: user.attributes.sub
+          role: {
+            player: false,
+            coach: false
+          },
+          links: {
+            persons: {
             },
-            role: {
-              player: false,
-              coach: false
-            },
-            links: {
-              persons: {
-              },
-              clubs: {
-              }
+            clubs: {
             }
-          })
-        }
-  
-        fetch(API_URL.person, post)
-          .then(resp => resp.json())
-          .then((resp) => {
-            console.log("MONGO response:", resp);
-          })
-          .then(
-            fetch(API_URL.person + user.attributes.sub)
-              .then(resp => resp.json())
-              .then((personData) => {
-                setUserContext(personData);
-                console.log(personData);
-              })
-          );
+          }
+        })
+      }
+
+      fetch(API_URL.person, post)
+        .then(resp => resp.json())
+        .then((resp) => {
+          console.log("MONGO response:", resp);
+        })
+        .then(
+          fetch(API_URL.person + user.attributes.sub)
+            .then(resp => resp.json())
+            .then((personData) => {
+              setUserContext(personData);
+              console.log(personData);
+            })
+        );
     }
 
-    if (awsUser && ! isLoggedIn) persistAndRefresh(awsUser);
-  
+    if (awsUser && !isLoggedIn) persistAndRefresh(awsUser);
+
     const toggleDrawer = (open) => (event) => {
       if (
         event.type === "keydown" &&
@@ -130,10 +136,10 @@ const home = () => {
       ) {
         return;
       }
-  
+
       setState({ ...state, isDrawerOpen: open });
     };
-  
+
     const renderNavList = () => {
       return (
         <List>
@@ -142,22 +148,22 @@ const home = () => {
             {/* <ListItemText primary={"Home"} href="/home/" /> */}
             Home
           </ListItem>
-  
+
           <ListItem button component={Link} to="/players/" onClick={toggleDrawer(false)}>
             <TableTennis />
             Players
           </ListItem>
-  
+
           <ListItem button component={Link} to="/coaches/" onClick={toggleDrawer(false)}>
             <TableTennis />
             Coaches
           </ListItem>
-  
+
           <ListItem button component={Link} to="/clubs/" onClick={toggleDrawer(false)}>
             <TableTennis />
             Clubs
           </ListItem>
-  
+
           <ListItem button component={Link} to="/tournaments/" onClick={toggleDrawer(false)}>
             <TableTennis />
             Tournaments
@@ -165,25 +171,25 @@ const home = () => {
         </List>
       );
     };
-  
+
     const renderPostButton = () => {
-      if (awsUser) {
-        return (
-          <IconButton
-            aria-label="Post"
-            color="inherit"
-            component={Link}
-            to="/post/"
-          >
-            <AddIcon />
-          </IconButton>
-        )
-      }
-  
+      // if (awsUser) {
+      return (
+        <IconButton
+          aria-label="Post"
+          color="inherit"
+          component={Link}
+          to="/post/"
+        >
+          <AddIcon />
+        </IconButton>
+      );
+      // }
+
     }
-  
+
     const renderLoginButton = () => {
-  
+
       if (awsUser) {
         return (
           <Button
@@ -206,7 +212,7 @@ const home = () => {
         );
       }
     }
-  
+
     return (
       <div className={classes.root}>
         <AppBar position="static" className={classes.appBar}>
@@ -224,8 +230,8 @@ const home = () => {
               OutPonged
             </Typography>
             {renderPostButton()}
-            {renderLoginButton()}
-  
+            {/* {renderLoginButton()} */}
+
           </Toolbar>
         </AppBar>
         <Drawer open={state.isDrawerOpen} onClose={toggleDrawer(false)}>
@@ -240,19 +246,22 @@ const home = () => {
 
   const renderPostPage = () => {
     // console.log('renderPostPage userContext', userContext);
-    if (userContext) {
-      return (
-        <Route path="/post" component={Post} />
-      );
-    } else {
-      return (
-        <Route path="/post" >
-          Please Log In
-        </Route>
-      );
-    }
+    // if (userContext) {
+    //   return (
+    //     <Route path="/post" component={Post} />
+    //   );
+    // } else {
+    //   return (
+    //     <Route path="/post" >
+    //       Please Log In
+    //     </Route>
+    //   );
+    // }
+    return (
+      <Route path="/post" component={Post} />
+    );
   }
-  
+
   return (
     <div>
       {renderAppBar(classes)}
