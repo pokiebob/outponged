@@ -1,5 +1,10 @@
 # outponged
 
+## to start
+- enter outponged directory
+- setenv
+- npm start
+
 ## ARCHITECTURE
 
   Outponged UI (React)     ->  Outponged Service (NodeJS)    ->  MONGODB
