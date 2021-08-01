@@ -87,8 +87,9 @@ const feed = () => {
   }
 
   useEffect(() => {
+    console.log('Context',userContext);
     initialize();
-  })
+  },[userContext]);
 
   /** API CALL 
    *  send user ID
@@ -105,8 +106,8 @@ const feed = () => {
           <Paper className={classes.paper} elevation={APP_PAPER_ELEVATION}>
             <Grid container className={classes.container}>
               <PostingCard
-                pictureUrl={""}
-                name={""}
+                pictureUrl={post.ownerProfilePic}
+                name={post.ownerName}
                 title={post.title}
                 fileUrl={post.fileUrl}
                 fileType={post.fileType}

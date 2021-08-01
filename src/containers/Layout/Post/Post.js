@@ -178,6 +178,8 @@ const post = () => {
                         {
                             "ownerId": userContext.personId,
                             "ownerType": "person",
+                            "ownerName": `${userContext?.firstName} ${userContext?.lastName}`,
+                            "ownerProfilePic": userContext.pictureUrl,
                             "visibility": {
                                 "level": "public"
                             },

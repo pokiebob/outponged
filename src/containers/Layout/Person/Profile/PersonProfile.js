@@ -377,8 +377,8 @@ const personPage = () => {
           <Paper className={classes.paper} elevation={APP_PAPER_ELEVATION}>
             <Grid container className={classes.container}>
               <PostingCard
-                pictureUrl={personState.pictureUrl}
-                name={`${personState.firstName} ${personState.lastName}`}
+                pictureUrl={post.ownerProfilePic}
+                name={post.ownerName}
                 title={post.title}
                 fileUrl={post.fileUrl}
                 fileType={post.fileType}
