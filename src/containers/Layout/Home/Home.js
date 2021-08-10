@@ -206,7 +206,16 @@ const home = () => {
           <Button
             color="inherit"
             onClick={() => {
-              Auth.federatedSignIn();
+              Auth.federatedSignIn()
+              .then(cred => {
+                return Auth.currentAuthenticatedUser();
+              })
+              .then(user => {
+                console.log('user', user);
+              })
+              .then(e => {
+                console.log(e);
+              });
             }}>
             Login
           </Button>
