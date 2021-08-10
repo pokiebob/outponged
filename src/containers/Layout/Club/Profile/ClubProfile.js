@@ -124,19 +124,6 @@ const clubPage = () => {
                 console.log('clubData', clubData);
                 setClubState(clubData);
                 console.log('clubState', clubState);
-                // const linkedPersonIds = clubData.links.persons
-                //     .map(p => p.personId)
-                //     .filter(x => x !== undefined);
-                // const linkedPersonIdsUniq = [...new Set(linkedPersonIds)];
-
-                // console.log('linkedPersonIds', linkedPersonIds);
-                // const linkedPersonsFetches = linkedPersonIdsUniq.map(id => fetch("http://localhost:8080/club/" + id)
-                //     .then(x => x.json()));
-
-                // forkJoin(linkedPersonsFetches)
-                //     .subscribe((linkedPersonData) => {
-                //         setLinkedClubsState(linkedPersonData.filter(x => x !== null));
-                //     });
             });
     }
 

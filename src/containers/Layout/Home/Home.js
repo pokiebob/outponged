@@ -231,7 +231,7 @@ const home = () => {
               OutPonged
             </Typography>
             {renderPostButton()}
-            {/* {renderLoginButton()} */}
+            {renderLoginButton()}
 
           </Toolbar>
         </AppBar>

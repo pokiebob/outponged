@@ -166,7 +166,6 @@ const editProfile = () => {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
-                // 'Access-Control-Allow-Origin': 'http://localhost:3000'
             },
             body: JSON.stringify(diff)
         }
@@ -241,7 +240,6 @@ const editProfile = () => {
                         method: 'PATCH',
                         headers: {
                             'Content-Type': 'application/json',
-                            // 'Access-Control-Allow-Origin': 'http://localhost:3000'
                         },
                         body: JSON.stringify({ 'pictureUrl': url })
                     }
