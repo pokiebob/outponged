@@ -66,20 +66,23 @@ const home = () => {
     React.useEffect(() => {
       const updateUser = async () => {
         try {
-          await Auth.currentAuthenticatedUser()
+          await Auth.currentUserInfo()
             .then((data) => {
               console.log('data', data);
-              setAwsUser(data);
+              if (data) {
+                setAwsUser(data);
+              } else {
+                console.log('user not received, logging in as Guest User');
+                fetch(API_URL.person + 'd5f3a250-ad24-47dc-a250-3ade9538ba0d')
+                  .then(resp => resp.json())
+                  .then((personData) => {
+                    setUserContext(personData);
+                    console.log(personData);
+                  });
+              }
             });
         } catch (error) {
           console.log(error);
-          console.log('user not received, logging in as Guest User');
-          fetch(API_URL.person + 'd5f3a250-ad24-47dc-a250-3ade9538ba0d')
-            .then(resp => resp.json())
-            .then((personData) => {
-              setUserContext(personData);
-              console.log(personData);
-            });
         }
       }
       Hub.listen('auth', updateUser) // listen for login/signup events
@@ -206,16 +209,17 @@ const home = () => {
           <Button
             color="inherit"
             onClick={() => {
-              Auth.federatedSignIn()
-              .then(cred => {
-                return Auth.currentAuthenticatedUser();
-              })
-              .then(user => {
-                console.log('user', user);
-              })
-              .then(e => {
-                console.log(e);
-              });
+              Auth.federatedSignIn();
+              // .then(cred => {
+              //   console.log(cred);
+              //   Auth.currentAuthenticatedUser();
+              // })
+              // .then(user => {
+              //   console.log('user', user);
+              // })
+              // .catch(e => {
+              //   console.log(e);
+              // });
             }}>
             Login
           </Button>
