@@ -13,6 +13,9 @@ import Drawer from "@material-ui/core/Drawer";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import AddIcon from '@material-ui/icons/Add';
+import Avatar from '@material-ui/core/Avatar';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
 
 // Icons
 import TableTennis from "mdi-material-ui/TableTennis";
@@ -45,7 +48,11 @@ const useStyles = makeStyles((theme) => ({
   },
   appBar: {
     background: '#ba0018'
-  }
+  },
+  small: {
+    width: theme.spacing(5),
+    height: theme.spacing(5),
+  },
 }));
 
 let isLoggedIn = false;
@@ -58,6 +65,7 @@ const home = () => {
   const renderAppBar = (classes) => {
     const [state, setState] = React.useState({
       isDrawerOpen: false,
+      isMenuOpen: false,
     });
 
 
@@ -144,6 +152,11 @@ const home = () => {
       setState({ ...state, isDrawerOpen: open });
     };
 
+    const toggleMenu = () => {
+      // console.log('toggleMenu');
+      setState({ ...state, isMenuOpen: !state.isMenuOpen });
+    }
+
     const renderNavList = () => {
       return (
         <List>
@@ -196,33 +209,79 @@ const home = () => {
 
       if (awsUser) {
         return (
-          <Button
-            color="inherit"
-            onClick={() => {
-              Auth.signOut();
-            }}>
-            Sign Out
-          </Button>
+          <div>
+            <IconButton
+              onClick={toggleMenu}
+              aria-controls="customized-menu"
+              aria-haspopup="true"
+            >
+              <Avatar src={userContext.pictureUrl} className={classes.small} />
+            </IconButton>
+            <Menu
+              id="customized-menu"
+              anchorEl={state.isMenuOpen}
+              keepMounted
+              open={state.isMenuOpen}
+              onClose={toggleMenu}
+              getContentAnchorEl={null}
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'right'
+              }}
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'center'
+              }}
+            >
+              <MenuItem
+                onClick={() => {
+                  Auth.signOut();
+                }}>
+                Sign Out
+              </MenuItem>
+              <MenuItem>
+                View Profile
+              </MenuItem>
+            </Menu>
+          </div>
         )
       } else {
         return (
-          <Button
-            color="inherit"
-            onClick={() => {
-              Auth.federatedSignIn();
-              // .then(cred => {
-              //   console.log(cred);
-              //   Auth.currentAuthenticatedUser();
-              // })
-              // .then(user => {
-              //   console.log('user', user);
-              // })
-              // .catch(e => {
-              //   console.log(e);
-              // });
-            }}>
-            Login
-          </Button>
+          <div>
+            <IconButton
+              onClick={toggleMenu}
+              aria-controls="customized-menu"
+              aria-haspopup="true"
+            >
+              <Avatar src={userContext.pictureUrl} className={classes.small} />
+            </IconButton>
+            <Menu
+              id="customized-menu"
+              anchorEl={state.isMenuOpen}
+              keepMounted
+              open={state.isMenuOpen}
+              onClose={toggleMenu}
+              getContentAnchorEl={null}
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'right'
+              }}
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'center'
+              }}
+            >
+              <MenuItem
+                onClick={() => {
+                  Auth.federatedSignIn();
+                }}>
+                Login or Create Account
+              </MenuItem>
+              <MenuItem>
+                Login as Guest User
+              </MenuItem>
+            </Menu>
+          </div>
         );
       }
     }

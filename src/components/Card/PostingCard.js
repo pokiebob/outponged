@@ -29,8 +29,8 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.text.secondary,
   },
   title: {
-    marginTop: "20px",
-    "font-size": "16px",
+    marginTop: "10px",
+    "font-size": "20px",
     "font-weight": "bold"
   },
   videoWrapper: {
