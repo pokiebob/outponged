@@ -80,13 +80,7 @@ const home = () => {
               if (data) {
                 setAwsUser(data);
               } else {
-                console.log('user not received, logging in as Guest User');
-                fetch(API_URL.person + 'd5f3a250-ad24-47dc-a250-3ade9538ba0d')
-                  .then(resp => resp.json())
-                  .then((personData) => {
-                    setUserContext(personData);
-                    console.log(personData);
-                  });
+                console.log('user not received');
               }
             });
         } catch (error) {
@@ -189,6 +183,15 @@ const home = () => {
       );
     };
 
+    const logInAsGuestUser = () => {
+      fetch(API_URL.person + 'd5f3a250-ad24-47dc-a250-3ade9538ba0d')
+        .then(resp => resp.json())
+        .then((personData) => {
+          setUserContext(personData);
+          console.log(personData);
+        });
+    }
+
     const renderPostButton = () => {
       // if (awsUser) {
       return (
@@ -206,8 +209,8 @@ const home = () => {
     }
 
     const renderLoginButton = () => {
-
-      if (awsUser) {
+      // console.log('userContext', userContext);
+      if (userContext) {
         return (
           <div>
             <IconButton
@@ -235,6 +238,7 @@ const home = () => {
             >
               <MenuItem
                 onClick={() => {
+                  setUserContext();
                   Auth.signOut();
                 }}>
                 Sign Out
@@ -253,11 +257,11 @@ const home = () => {
               aria-controls="customized-menu"
               aria-haspopup="true"
             >
-              <Avatar src={userContext.pictureUrl} className={classes.small} />
+              <Avatar className={classes.small} />
             </IconButton>
             <Menu
               id="customized-menu"
-              anchorEl={state.isMenuOpen}
+              // anchorEl={state.isMenuOpen}
               keepMounted
               open={state.isMenuOpen}
               onClose={toggleMenu}
@@ -277,7 +281,11 @@ const home = () => {
                 }}>
                 Login or Create Account
               </MenuItem>
-              <MenuItem>
+              <MenuItem
+                onClick={() => {
+                  logInAsGuestUser();
+                }}
+              >
                 Login as Guest User
               </MenuItem>
             </Menu>

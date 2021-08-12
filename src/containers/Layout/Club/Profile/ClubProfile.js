@@ -154,12 +154,12 @@ const clubPage = () => {
                     </Grid>
                     <Grid container xs={6} item >
                         <Grid xs={6} item >
-                            <div className={classes.heading}>234</div>
+                            <div className={classes.heading}>-</div>
                             <div className={classes.subtext}>Followers</div>
                         </Grid>
                         <Grid xs={6} item >
-                            <div className={classes.heading}>400</div>
-                            <div className={classes.subtext}>Following</div>
+                            <div className={classes.heading}>-</div>
+                            <div className={classes.subtext}>Members</div>
                         </Grid>
                     </Grid>
                 </Grid>
