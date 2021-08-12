@@ -78,16 +78,16 @@ const feed = () => {
   const [userContext, setUserContext] = useContext(Context);
 
   const initialize = () => {
-    fetch(API_URL.post + "find/?page=pp&pid=" + userContext.personId)
+    fetch(API_URL.post + "find/?page=pp&pid=" + userContext?.personId)
       .then(resp => resp.json())
       .then((postings) => {
-        console.log('postings', postings);
+        // console.log('postings', postings);
         setPostingState(postings.reverse());
       });
   }
 
   useEffect(() => {
-    console.log('Context',userContext);
+    // console.log('Context',userContext);
     initialize();
   },[userContext]);
 

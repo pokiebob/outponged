@@ -23,7 +23,7 @@ import TableTennis from "mdi-material-ui/TableTennis";
 import "./Home.css";
 
 // Components
-import { Route, Link, Switch } from "react-router-dom";
+import { Route, Link, Switch, Redirect } from "react-router-dom";
 import Players from "../Person/Players/Players";
 import Clubs from "../Club/Clubs/Clubs";
 import PersonProfile from "../Person/Profile/PersonProfile";
@@ -76,11 +76,11 @@ const home = () => {
         try {
           await Auth.currentUserInfo()
             .then((data) => {
-              console.log('data', data);
+              // console.log('data', data);
               if (data) {
                 setAwsUser(data);
               } else {
-                console.log('user not received');
+                // console.log('user not received');
               }
             });
         } catch (error) {
@@ -121,14 +121,14 @@ const home = () => {
       fetch(API_URL.person, post)
         .then(resp => resp.json())
         .then((resp) => {
-          console.log("MONGO response:", resp);
+          // console.log("MONGO response:", resp);
         })
         .then(
           fetch(API_URL.person + user.attributes.sub)
             .then(resp => resp.json())
             .then((personData) => {
               setUserContext(personData);
-              console.log(personData);
+              // console.log(personData);
             })
         );
     }
@@ -193,7 +193,7 @@ const home = () => {
         .then(resp => resp.json())
         .then((personData) => {
           setUserContext(personData);
-          console.log(personData);
+          // console.log(personData);
         });
     }
 
@@ -241,6 +241,9 @@ const home = () => {
                 horizontal: 'center'
               }}
             >
+              <MenuItem disabled={true}>
+              {`${userContext.firstName} ${userContext.lastName}`}
+              </MenuItem>
               <MenuItem
                 onClick={() => {
                   setUserContext();
@@ -248,7 +251,9 @@ const home = () => {
                 }}>
                 Sign Out
               </MenuItem>
-              <MenuItem>
+              <MenuItem
+              component={Link} to={"/person-profile/" + userContext?.personId}
+              >
                 View Profile
               </MenuItem>
             </Menu>

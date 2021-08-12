@@ -56,7 +56,7 @@ class Players extends Component {
     let players = <p style={{ textAlign: "center" }}>Something went wrong!</p>;
     if (!this.state.error) {
       players = this.state.players.map((card) => {
-        console.log(card);
+        // console.log(card);
         return (
           <Grid container>
             <Card

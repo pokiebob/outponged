@@ -187,13 +187,13 @@ const personPage = () => {
               <div className={classes.stats}>-</div>
               <div className={classes.subtext}>Following</div>
             </Grid>
-            <Grid xs={12} item>
+            <Grid xs={12} sm={10} item>
               <div className={classes.bio}>
                 {personState.bio}
               </div>
             </Grid>
 
-            <Grid xs={12} item>
+            <Grid xs={11} container justify="flex-end">
               <Button onClick={() => {
                 navigateToEditPerson(personState.personId);
               }}>
