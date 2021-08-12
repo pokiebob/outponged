@@ -146,10 +146,15 @@ const home = () => {
       setState({ ...state, isDrawerOpen: open });
     };
 
-    const toggleMenu = () => {
-      // console.log('toggleMenu');
-      setState({ ...state, isMenuOpen: !state.isMenuOpen });
-    }
+    const [anchorEl, setAnchorEl] = React.useState(null);
+
+    const handleClick = (event) => {
+      setAnchorEl(event.currentTarget);
+    };
+
+    const handleClose = () => {
+      setAnchorEl(null);
+    };
 
     const renderNavList = () => {
       return (
@@ -214,7 +219,7 @@ const home = () => {
         return (
           <div>
             <IconButton
-              onClick={toggleMenu}
+              onClick={handleClick}
               aria-controls="customized-menu"
               aria-haspopup="true"
             >
@@ -222,10 +227,10 @@ const home = () => {
             </IconButton>
             <Menu
               id="customized-menu"
-              anchorEl={state.isMenuOpen}
+              anchorEl={anchorEl}
               keepMounted
-              open={state.isMenuOpen}
-              onClose={toggleMenu}
+              open={Boolean(anchorEl)}
+              onClose={handleClose}
               getContentAnchorEl={null}
               anchorOrigin={{
                 vertical: 'bottom',
@@ -253,7 +258,7 @@ const home = () => {
         return (
           <div>
             <IconButton
-              onClick={toggleMenu}
+              onClick={handleClick}
               aria-controls="customized-menu"
               aria-haspopup="true"
             >
@@ -261,14 +266,14 @@ const home = () => {
             </IconButton>
             <Menu
               id="customized-menu"
-              // anchorEl={state.isMenuOpen}
+              anchorEl={anchorEl}
               keepMounted
-              open={state.isMenuOpen}
-              onClose={toggleMenu}
+              open={Boolean(anchorEl)}
+              onClose={handleClose}
               getContentAnchorEl={null}
               anchorOrigin={{
                 vertical: 'bottom',
-                horizontal: 'right'
+                horizontal: 'center'
               }}
               transformOrigin={{
                 vertical: 'top',
@@ -327,20 +332,20 @@ const home = () => {
 
   const renderPostPage = () => {
     // console.log('renderPostPage userContext', userContext);
-    // if (userContext) {
-    //   return (
-    //     <Route path="/post" component={Post} />
-    //   );
-    // } else {
-    //   return (
-    //     <Route path="/post" >
-    //       Please Log In
-    //     </Route>
-    //   );
-    // }
-    return (
-      <Route path="/post" component={Post} />
-    );
+    if (userContext) {
+      return (
+        <Route path="/post" component={Post} />
+      );
+    } else {
+      return (
+        <Route path="/post" >
+          Please Log In
+        </Route>
+      );
+    }
+    // return (
+    //   <Route path="/post" component={Post} />
+    // );
   }
 
   return (
