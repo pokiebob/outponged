@@ -76,13 +76,14 @@ const home = () => {
     React.useEffect(() => {
       const updateUser = async () => {
         try {
-          await Auth.currentUserInfo()
+          await Auth.currentSession()
             .then((data) => {
               console.log('data', data);
               if (data) {
-                setAwsUser(data);
+                const payload = data.getIdToken().payload
+                setAwsUser(payload);
               } else {
-                // console.log('user not received');
+                console.log('user not received');
               }
             });
         } catch (error) {
@@ -102,10 +103,10 @@ const home = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          personId: user.attributes.sub,
-          email: user.attributes.email,
+          personId: user.sub,
+          email: user.email,
           externalId: {
-            awsIdentity: user.attributes.sub
+            awsIdentity: user.sub
           },
           role: {
             player: false,
@@ -126,7 +127,7 @@ const home = () => {
           // console.log("MONGO response:", resp);
         })
         .then(
-          fetch(API_URL.person + user.attributes.sub)
+          fetch(API_URL.person + user.sub)
             .then(resp => resp.json())
             .then((personData) => {
               setUserContext(personData);
