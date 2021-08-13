@@ -75,22 +75,34 @@ const home = () => {
     // const [userContext, setUserContext] = useContext(Context);
     React.useEffect(() => {
       const updateUser = async () => {
-        setTimeout(async () => {
-          try {
-            await Auth.currentSession()
-              .then((data) => {
-                console.log('data', data);
-                if (data) {
-                  const payload = data.getIdToken().payload
-                  setAwsUser(payload);
-                } else {
-                  console.log('user not received');
-                }
-              });
-          } catch (error) {
-            console.log(error);
-          }
-        },100);
+        try {
+          const info = localStorage;
+          const provider = "CognitoIdentityServiceProvider.7jr2f6rahrfv2mbpuqfogivjob."
+          const user = info.getItem(provider + "LastAuthUser");
+          const userData = JSON.parse(info.getItem(provider + user + ".userData"));
+          // console.log('info', info);
+          // console.log('user', user);
+          console.log('userData', userData);
+          setAwsUser(userData);
+        } catch (error) {
+          console.log(error);
+        }
+        // setTimeout(async () => {
+          // try {
+          //   await Auth.currentSession()
+          //     .then((data) => {
+          //       console.log('data', data);
+          //       if (data) {
+          //         const payload = data.getIdToken().payload
+          //         setAwsUser(payload);
+          //       } else {
+          //         console.log('user not received');
+          //       }
+          //     });
+          // } catch (error) {
+          //   console.log(error);
+          // }
+        // },100);
   }
   Hub.listen('auth', updateUser) // listen for login/signup events
   updateUser() // check manually the first time because we won't get a Hub event
@@ -105,10 +117,10 @@ const persistAndRefresh = (user) => {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      personId: user.sub,
-      email: user.email,
+      personId: user.UserAttributes[0].Value,
+      email: user.UserAttributes[2].Value,
       externalId: {
-        awsIdentity: user.sub
+        awsIdentity: user.UserAttributes[0].Value
       },
       role: {
         player: false,
@@ -129,7 +141,7 @@ const persistAndRefresh = (user) => {
       // console.log("MONGO response:", resp);
     })
     .then(
-      fetch(API_URL.person + user.sub)
+      fetch(API_URL.person + user.UserAttributes[0].Value)
         .then(resp => resp.json())
         .then((personData) => {
           setUserContext(personData);
