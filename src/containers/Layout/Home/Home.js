@@ -80,8 +80,8 @@ const home = () => {
           const provider = "CognitoIdentityServiceProvider.7jr2f6rahrfv2mbpuqfogivjob."
           const user = info.getItem(provider + "LastAuthUser");
           const userData = JSON.parse(info.getItem(provider + user + ".userData"));
-          // console.log('info', info);
-          // console.log('user', user);
+          console.log('info', info);
+          console.log('user', user);
           console.log('userData', userData);
           setAwsUser(userData);
         } catch (error) {
