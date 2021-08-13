@@ -75,311 +75,313 @@ const home = () => {
     // const [userContext, setUserContext] = useContext(Context);
     React.useEffect(() => {
       const updateUser = async () => {
-        try {
-          await Auth.currentSession()
-            .then((data) => {
-              console.log('data', data);
-              if (data) {
-                const payload = data.getIdToken().payload
-                setAwsUser(payload);
-              } else {
-                console.log('user not received');
-              }
-            });
-        } catch (error) {
-          console.log(error);
+        setTimeout(async () => {
+          try {
+            await Auth.currentSession()
+              .then((data) => {
+                console.log('data', data);
+                if (data) {
+                  const payload = data.getIdToken().payload
+                  setAwsUser(payload);
+                } else {
+                  console.log('user not received');
+                }
+              });
+          } catch (error) {
+            console.log(error);
+          }
+        },100);
+  }
+  Hub.listen('auth', updateUser) // listen for login/signup events
+  updateUser() // check manually the first time because we won't get a Hub event
+  return () => Hub.remove('auth', updateUser) // cleanup
+}, []);
+
+const persistAndRefresh = (user) => {
+  isLoggedIn = true;
+  const post = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      personId: user.sub,
+      email: user.email,
+      externalId: {
+        awsIdentity: user.sub
+      },
+      role: {
+        player: false,
+        coach: false
+      },
+      links: {
+        persons: {
+        },
+        clubs: {
         }
       }
-      Hub.listen('auth', updateUser) // listen for login/signup events
-      updateUser() // check manually the first time because we won't get a Hub event
-      return () => Hub.remove('auth', updateUser) // cleanup
-    }, []);
+    })
+  }
 
-    const persistAndRefresh = (user) => {
-      isLoggedIn = true;
-      const post = {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          personId: user.sub,
-          email: user.email,
-          externalId: {
-            awsIdentity: user.sub
-          },
-          role: {
-            player: false,
-            coach: false
-          },
-          links: {
-            persons: {
-            },
-            clubs: {
-            }
-          }
-        })
-      }
-
-      fetch(API_URL.person, post)
-        .then(resp => resp.json())
-        .then((resp) => {
-          // console.log("MONGO response:", resp);
-        })
-        .then(
-          fetch(API_URL.person + user.sub)
-            .then(resp => resp.json())
-            .then((personData) => {
-              setUserContext(personData);
-              console.log(personData);
-              return personData;
-            })
-            .then((personData) => {
-              if (!personData.firstName || !personData.lastName || personData?.firstName?.length === 0 || personData?.lastName?.length === 0) {
-                history.push('/edit-person-profile/' + personData?.personId);
-              }
-            })
-        );
-    }
-
-    if (awsUser && !isLoggedIn) persistAndRefresh(awsUser);
-
-    const toggleDrawer = (open) => (event) => {
-      if (
-        event.type === "keydown" &&
-        (event.key === "Tab" || event.key === "Shift")
-      ) {
-        return;
-      }
-
-      setState({ ...state, isDrawerOpen: open });
-    };
-
-    const [anchorEl, setAnchorEl] = React.useState(null);
-
-    const handleClick = (event) => {
-      setAnchorEl(event.currentTarget);
-    };
-
-    const handleClose = () => {
-      setAnchorEl(null);
-    };
-
-    const renderNavList = () => {
-      return (
-        <List>
-          <ListItem button component={Link} to="/home/" onClick={toggleDrawer(false)}>
-            <TableTennis />
-            {/* <ListItemText primary={"Home"} href="/home/" /> */}
-            Home
-          </ListItem>
-
-          <ListItem button component={Link} to="/players/" onClick={toggleDrawer(false)}>
-            <TableTennis />
-            Players
-          </ListItem>
-
-          <ListItem button component={Link} to="/coaches/" onClick={toggleDrawer(false)}>
-            <TableTennis />
-            Coaches
-          </ListItem>
-
-          <ListItem button component={Link} to="/clubs/" onClick={toggleDrawer(false)}>
-            <TableTennis />
-            Clubs
-          </ListItem>
-
-          <ListItem button component={Link} to="/tournaments/" onClick={toggleDrawer(false)}>
-            <TableTennis />
-            Tournaments
-          </ListItem>
-        </List>
-      );
-    };
-
-    const logInAsGuestUser = () => {
-      fetch(API_URL.person + 'd5f3a250-ad24-47dc-a250-3ade9538ba0d')
+  fetch(API_URL.person, post)
+    .then(resp => resp.json())
+    .then((resp) => {
+      // console.log("MONGO response:", resp);
+    })
+    .then(
+      fetch(API_URL.person + user.sub)
         .then(resp => resp.json())
         .then((personData) => {
           setUserContext(personData);
-          // console.log(personData);
-        });
-    }
+          console.log(personData);
+          return personData;
+        })
+        .then((personData) => {
+          if (!personData.firstName || !personData.lastName || personData?.firstName?.length === 0 || personData?.lastName?.length === 0) {
+            history.push('/edit-person-profile/' + personData?.personId);
+          }
+        })
+    );
+}
 
-    const renderPostButton = () => {
-      // if (awsUser) {
-      return (
-        <IconButton
-          aria-label="Post"
-          color="inherit"
-          component={Link}
-          to="/post/"
-        >
-          <AddIcon />
-        </IconButton>
-      );
-      // }
+if (awsUser && !isLoggedIn) persistAndRefresh(awsUser);
 
-    }
+const toggleDrawer = (open) => (event) => {
+  if (
+    event.type === "keydown" &&
+    (event.key === "Tab" || event.key === "Shift")
+  ) {
+    return;
+  }
 
-    const renderLoginButton = () => {
-      // console.log('userContext', userContext);
-      if (userContext) {
-        return (
-          <div>
-            <IconButton
-              onClick={handleClick}
-              aria-controls="customized-menu"
-              aria-haspopup="true"
-            >
-              <Avatar src={userContext.pictureUrl} className={classes.small} />
-            </IconButton>
-            <Menu
-              id="customized-menu"
-              anchorEl={anchorEl}
-              keepMounted
-              open={Boolean(anchorEl)}
-              onClose={handleClose}
-              getContentAnchorEl={null}
-              anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'right'
-              }}
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'center'
-              }}
-            >
-              <MenuItem disabled={true}>
-                {
-                  userContext.firstName && userContext.lastName ?
-                  `${userContext?.firstName} ${userContext?.lastName}` : 'Enter Profile Info'
-                }
-              </MenuItem>
-              <MenuItem
-                onClick={() => {
-                  setUserContext();
-                  Auth.signOut();
-                }}>
-                Sign Out
-              </MenuItem>
-              <MenuItem
-                component={Link} to={"/person-profile/" + userContext?.personId}
-              >
-                View Profile
-              </MenuItem>
-            </Menu>
-          </div>
-        )
-      } else {
-        return (
-          <div>
-            <IconButton
-              onClick={handleClick}
-              aria-controls="customized-menu"
-              aria-haspopup="true"
-            >
-              <Avatar className={classes.small} />
-            </IconButton>
-            <Menu
-              id="customized-menu"
-              anchorEl={anchorEl}
-              keepMounted
-              open={Boolean(anchorEl)}
-              onClose={handleClose}
-              getContentAnchorEl={null}
-              anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'center'
-              }}
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'center'
-              }}
-            >
-              <MenuItem
-                onClick={() => {
-                  Auth.federatedSignIn();
-                }}>
-                Login or Create Account
-              </MenuItem>
-              <MenuItem
-                onClick={() => {
-                  logInAsGuestUser();
-                }}
-              >
-                Login as Guest User
-              </MenuItem>
-            </Menu>
-          </div>
-        );
-      }
-    }
+  setState({ ...state, isDrawerOpen: open });
+};
 
+const [anchorEl, setAnchorEl] = React.useState(null);
+
+const handleClick = (event) => {
+  setAnchorEl(event.currentTarget);
+};
+
+const handleClose = () => {
+  setAnchorEl(null);
+};
+
+const renderNavList = () => {
+  return (
+    <List>
+      <ListItem button component={Link} to="/home/" onClick={toggleDrawer(false)}>
+        <TableTennis />
+        {/* <ListItemText primary={"Home"} href="/home/" /> */}
+        Home
+      </ListItem>
+
+      <ListItem button component={Link} to="/players/" onClick={toggleDrawer(false)}>
+        <TableTennis />
+        Players
+      </ListItem>
+
+      <ListItem button component={Link} to="/coaches/" onClick={toggleDrawer(false)}>
+        <TableTennis />
+        Coaches
+      </ListItem>
+
+      <ListItem button component={Link} to="/clubs/" onClick={toggleDrawer(false)}>
+        <TableTennis />
+        Clubs
+      </ListItem>
+
+      <ListItem button component={Link} to="/tournaments/" onClick={toggleDrawer(false)}>
+        <TableTennis />
+        Tournaments
+      </ListItem>
+    </List>
+  );
+};
+
+const logInAsGuestUser = () => {
+  fetch(API_URL.person + 'd5f3a250-ad24-47dc-a250-3ade9538ba0d')
+    .then(resp => resp.json())
+    .then((personData) => {
+      setUserContext(personData);
+      // console.log(personData);
+    });
+}
+
+const renderPostButton = () => {
+  // if (awsUser) {
+  return (
+    <IconButton
+      aria-label="Post"
+      color="inherit"
+      component={Link}
+      to="/post/"
+    >
+      <AddIcon />
+    </IconButton>
+  );
+  // }
+
+}
+
+const renderLoginButton = () => {
+  // console.log('userContext', userContext);
+  if (userContext) {
     return (
-      <div className={classes.root}>
-        <AppBar position="static" className={classes.appBar}>
-          <Toolbar>
-            <IconButton
-              edge="start"
-              className={classes.menuButton}
-              color="inherit"
-              aria-label="menu"
-              onClick={toggleDrawer(true)}
-            >
-              <MenuIcon />
-            </IconButton>
-            <Typography variant="h6" className={classes.title}>
-              OutPonged
-            </Typography>
-            {renderPostButton()}
-            {renderLoginButton()}
-
-          </Toolbar>
-        </AppBar>
-        <Drawer open={state.isDrawerOpen} onClose={toggleDrawer(false)}>
-          {renderNavList()}
-        </Drawer>
+      <div>
+        <IconButton
+          onClick={handleClick}
+          aria-controls="customized-menu"
+          aria-haspopup="true"
+        >
+          <Avatar src={userContext.pictureUrl} className={classes.small} />
+        </IconButton>
+        <Menu
+          id="customized-menu"
+          anchorEl={anchorEl}
+          keepMounted
+          open={Boolean(anchorEl)}
+          onClose={handleClose}
+          getContentAnchorEl={null}
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'right'
+          }}
+          transformOrigin={{
+            vertical: 'top',
+            horizontal: 'center'
+          }}
+        >
+          <MenuItem disabled={true}>
+            {
+              userContext.firstName && userContext.lastName ?
+                `${userContext?.firstName} ${userContext?.lastName}` : 'Enter Profile Info'
+            }
+          </MenuItem>
+          <MenuItem
+            onClick={() => {
+              setUserContext();
+              Auth.signOut();
+            }}>
+            Sign Out
+          </MenuItem>
+          <MenuItem
+            component={Link} to={"/person-profile/" + userContext?.personId}
+          >
+            View Profile
+          </MenuItem>
+        </Menu>
+      </div>
+    )
+  } else {
+    return (
+      <div>
+        <IconButton
+          onClick={handleClick}
+          aria-controls="customized-menu"
+          aria-haspopup="true"
+        >
+          <Avatar className={classes.small} />
+        </IconButton>
+        <Menu
+          id="customized-menu"
+          anchorEl={anchorEl}
+          keepMounted
+          open={Boolean(anchorEl)}
+          onClose={handleClose}
+          getContentAnchorEl={null}
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'center'
+          }}
+          transformOrigin={{
+            vertical: 'top',
+            horizontal: 'center'
+          }}
+        >
+          <MenuItem
+            onClick={() => {
+              Auth.federatedSignIn();
+            }}>
+            Login or Create Account
+          </MenuItem>
+          <MenuItem
+            onClick={() => {
+              logInAsGuestUser();
+            }}
+          >
+            Login as Guest User
+          </MenuItem>
+        </Menu>
       </div>
     );
+  }
+}
+
+return (
+  <div className={classes.root}>
+    <AppBar position="static" className={classes.appBar}>
+      <Toolbar>
+        <IconButton
+          edge="start"
+          className={classes.menuButton}
+          color="inherit"
+          aria-label="menu"
+          onClick={toggleDrawer(true)}
+        >
+          <MenuIcon />
+        </IconButton>
+        <Typography variant="h6" className={classes.title}>
+          OutPonged
+        </Typography>
+        {renderPostButton()}
+        {renderLoginButton()}
+
+      </Toolbar>
+    </AppBar>
+    <Drawer open={state.isDrawerOpen} onClose={toggleDrawer(false)}>
+      {renderNavList()}
+    </Drawer>
+  </div>
+);
   };
 
 
 
 
-  const renderPostPage = () => {
-    // console.log('renderPostPage userContext', userContext);
-    if (userContext) {
-      return (
-        <Route path="/post" component={Post} />
-      );
-    } else {
-      return (
-        <Route path="/post" >
-          Please Log In
-        </Route>
-      );
-    }
-    // return (
-    //   <Route path="/post" component={Post} />
-    // );
+const renderPostPage = () => {
+  // console.log('renderPostPage userContext', userContext);
+  if (userContext) {
+    return (
+      <Route path="/post" component={Post} />
+    );
+  } else {
+    return (
+      <Route path="/post" >
+        Please Log In
+      </Route>
+    );
   }
+  // return (
+  //   <Route path="/post" component={Post} />
+  // );
+}
 
-  return (
-    <div>
-      {renderAppBar(classes)}
-      <Switch>
-        <Route path="/home" component={Feed} />
-        <Route path="/players" component={Players} />
-        <Route path="/clubs" component={Clubs} />
-        <Route path="/person-profile" component={PersonProfile} />
-        <Route path="/edit-person-profile" component={EditPersonProfile} />
-        <Route path="/club-profile" component={ClubProfile} />
-        {renderPostPage()}
-      </Switch>
+return (
+  <div>
+    {renderAppBar(classes)}
+    <Switch>
+      <Route path="/home" component={Feed} />
+      <Route path="/players" component={Players} />
+      <Route path="/clubs" component={Clubs} />
+      <Route path="/person-profile" component={PersonProfile} />
+      <Route path="/edit-person-profile" component={EditPersonProfile} />
+      <Route path="/club-profile" component={ClubProfile} />
+      {renderPostPage()}
+    </Switch>
 
-    </div>
-  );
+  </div>
+);
 };
 
 
