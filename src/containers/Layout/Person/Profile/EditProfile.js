@@ -76,43 +76,6 @@ const getPersonId = () => {
     // return "5094b946-8b3b-4a8c-bfd9-6de41373c8da";
 };
 
-const ATTRIB = {
-    FIRST_NAME: {
-        propName: 'firstName',
-        isValid: true,
-        validate: (firstName) => firstName.trim().length > 0
-    },
-    LAST_NAME: {
-        propName: 'lastName',
-        isValid: true,
-        validate: (firstName) => firstName.trim().length > 0
-    },
-    BIO: {
-        propName: 'bio',
-        isValid: true,
-        validate: (bio) => bio.length < 200
-
-    },
-    EMAIL: {
-        propName: 'email',
-        isValid: true,
-        validate: (email) => {
-            const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-            return re.test(email?.toLowerCase());
-        }
-    },
-    PHONE_NUMBER: {
-        propName: 'phoneNumber',
-        isValid: true,
-        validate: (phoneNumber) => phoneNumber.trim().length === 14
-    },
-    PICTURE_URL: {
-        propName: 'pictureUrl',
-        isValid: true,
-        validate: (url) => url.length > 0
-    }
-}
-
 
 function TextMaskCustom(props) {
     const { inputRef, ...other } = props;
@@ -153,6 +116,43 @@ const editProfile = () => {
             });
     }
 
+    const ATTRIB = {
+        FIRST_NAME: {
+            propName: 'firstName',
+            isValid: newPersonState?.firstName?.trim().length > 0,
+            validate: (firstName) => firstName.trim().length > 0
+        },
+        LAST_NAME: {
+            propName: 'lastName',
+            isValid: newPersonState?.lastName?.trim().length > 0,
+            validate: (lastName) => lastName.trim().length > 0
+        },
+        BIO: {
+            propName: 'bio',
+            isValid: true,
+            validate: (bio) => bio.length < 200
+    
+        },
+        EMAIL: {
+            propName: 'email',
+            isValid: true,
+            validate: (email) => {
+                const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+                return re.test(email?.toLowerCase());
+            }
+        },
+        PHONE_NUMBER: {
+            propName: 'phoneNumber',
+            isValid: true,
+            validate: (phoneNumber) => phoneNumber.trim().length === 14
+        },
+        PICTURE_URL: {
+            propName: 'pictureUrl',
+            isValid: true,
+            validate: (url) => url.length > 0
+        }
+    }
+
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -186,11 +186,6 @@ const editProfile = () => {
         console.log('useEffect');
         initialize();
         // Register a listener to trap url changes
-        return history.listen((location) => {
-            if (location.pathname.includes('person-profile')) {
-                initialize();
-            }
-        })
     }
         , []);
 

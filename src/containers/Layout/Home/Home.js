@@ -1,5 +1,6 @@
 import React, { useContext } from "react";
 import { Context } from "../../../Context";
+import { useHistory } from "react-router-dom";
 
 //Material UI
 import { makeStyles } from "@material-ui/core/styles";
@@ -70,13 +71,14 @@ const home = () => {
 
 
     const [awsUser, setAwsUser] = React.useState(null);
+    const history = useHistory();
     // const [userContext, setUserContext] = useContext(Context);
     React.useEffect(() => {
       const updateUser = async () => {
         try {
           await Auth.currentUserInfo()
             .then((data) => {
-              // console.log('data', data);
+              console.log('data', data);
               if (data) {
                 setAwsUser(data);
               } else {
@@ -128,7 +130,13 @@ const home = () => {
             .then(resp => resp.json())
             .then((personData) => {
               setUserContext(personData);
-              // console.log(personData);
+              console.log(personData);
+              return personData;
+            })
+            .then((personData) => {
+              if (!personData.firstName || !personData.lastName || personData?.firstName?.length === 0 || personData?.lastName?.length === 0) {
+                history.push('/edit-person-profile/' + personData?.personId);
+              }
             })
         );
     }
@@ -242,7 +250,10 @@ const home = () => {
               }}
             >
               <MenuItem disabled={true}>
-              {`${userContext.firstName} ${userContext.lastName}`}
+                {
+                  userContext.firstName && userContext.lastName ?
+                  `${userContext?.firstName} ${userContext?.lastName}` : 'Enter Profile Info'
+                }
               </MenuItem>
               <MenuItem
                 onClick={() => {
@@ -252,7 +263,7 @@ const home = () => {
                 Sign Out
               </MenuItem>
               <MenuItem
-              component={Link} to={"/person-profile/" + userContext?.personId}
+                component={Link} to={"/person-profile/" + userContext?.personId}
               >
                 View Profile
               </MenuItem>
