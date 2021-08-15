@@ -16,6 +16,7 @@ import S3 from 'aws-s3';
 import { API_URL } from '../../../api-url';
 import { TextField } from "@material-ui/core";
 import { useHistory } from "react-router-dom";
+import { APP_PAPER_ELEVATION } from "../../../app-config";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -211,7 +212,7 @@ const post = () => {
     const renderPostCard = () => {
 
         return (
-            <Paper className={classes.paper}>
+            <Paper className={classes.paper} elevation={APP_PAPER_ELEVATION}>
                 <Grid className={classes.container} >
                     {/* <Grid container>
                         <Grid xs={12} item >

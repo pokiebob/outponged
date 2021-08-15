@@ -75,33 +75,33 @@ const home = () => {
     // const [userContext, setUserContext] = useContext(Context);
     React.useEffect(() => {
       const updateUser = async () => {
-        try {
-          const info = localStorage;
-          const provider = "CognitoIdentityServiceProvider.7jr2f6rahrfv2mbpuqfogivjob."
-          const user = info.getItem(provider + "LastAuthUser");
-          const userData = JSON.parse(info.getItem(provider + user + ".userData"));
-          console.log('info', info);
-          console.log('user', user);
-          console.log('userData', userData);
-          setAwsUser(userData);
-        } catch (error) {
-          console.log(error);
-        }
+        // try {
+        //   const info = localStorage;
+        //   const provider = "CognitoIdentityServiceProvider.7jr2f6rahrfv2mbpuqfogivjob."
+        //   const user = info.getItem(provider + "LastAuthUser");
+        //   const userData = JSON.parse(info.getItem(provider + user + ".userData"));
+        //   console.log('info', info);
+        //   console.log('user', user);
+        //   console.log('userData', userData);
+        //   setAwsUser(userData);
+        // } catch (error) {
+        //   console.log(error);
+        // }
         // setTimeout(async () => {
-          // try {
-          //   await Auth.currentSession()
-          //     .then((data) => {
-          //       console.log('data', data);
-          //       if (data) {
-          //         const payload = data.getIdToken().payload
-          //         setAwsUser(payload);
-          //       } else {
-          //         console.log('user not received');
-          //       }
-          //     });
-          // } catch (error) {
-          //   console.log(error);
-          // }
+          try {
+            await Auth.currentSession()
+              .then((data) => {
+                console.log('data', data);
+                if (data) {
+                  const payload = data.getIdToken().payload
+                  setAwsUser(payload);
+                } else {
+                  console.log('user not received');
+                }
+              });
+          } catch (error) {
+            console.log(error);
+          }
         // },100);
   }
   Hub.listen('auth', updateUser) // listen for login/signup events
@@ -117,10 +117,10 @@ const persistAndRefresh = (user) => {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      personId: user.UserAttributes[0].Value,
-      email: user.UserAttributes[2].Value,
+      personId: user.sub,
+      email: user.email,
       externalId: {
-        awsIdentity: user.UserAttributes[0].Value
+        awsIdentity: user.sub
       },
       role: {
         player: false,
@@ -141,7 +141,7 @@ const persistAndRefresh = (user) => {
       // console.log("MONGO response:", resp);
     })
     .then(
-      fetch(API_URL.person + user.UserAttributes[0].Value)
+      fetch(API_URL.person + user.sub)
         .then(resp => resp.json())
         .then((personData) => {
           setUserContext(personData);

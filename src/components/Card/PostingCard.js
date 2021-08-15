@@ -3,6 +3,8 @@ import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import Avatar from "@material-ui/core/Avatar";
+import Favorite from '@material-ui/icons/Favorite';
+import IconButton from "@material-ui/core/IconButton";
 import Card from "@material-ui/core/Card";
 import CardMedia from "@material-ui/core/CardMedia";
 
@@ -112,6 +114,9 @@ const postingCard = (props) => {
         </Grid>
         <Grid container>
           <Grid xs={10} item>
+          <IconButton>
+              <Favorite />
+            </IconButton>
             <div className={classes.description}>{props.description}</div>
           </Grid>
         </Grid>
