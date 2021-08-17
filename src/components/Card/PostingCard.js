@@ -3,7 +3,8 @@ import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import Avatar from "@material-ui/core/Avatar";
-import Favorite from '@material-ui/icons/Favorite';
+import BallOutline from '@material-ui/icons/FiberManualRecordOutlined';
+import BallFilled from '@material-ui/icons/FiberManualRecord';
 import IconButton from "@material-ui/core/IconButton";
 import Card from "@material-ui/core/Card";
 import CardMedia from "@material-ui/core/CardMedia";
@@ -50,12 +51,30 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.text.secondary,
     "font-size": "15px",
     marginTop: "10px"
+  },
+  ballContainer: {
+    padding: "0px",
+  },
+  ball: {
+    fill: "black"
+  },
+  likesContainer: {
+    marginTop: "10px",
+  },
+  likesNum: {
+    fontWeight: "bold",
+    verticalAlign: "middle"
+  },
+  likesText: {
+    color: theme.palette.text.secondary,
+    verticalAlign: "middle"
   }
-
 }));
 
 const postingCard = (props) => {
   const classes = useStyles();
+
+  const [likeStatus, setLikeStatus] = React.useState(false);
 
   const displayFile = () => {
     if (props.fileType.includes("video")) {
@@ -86,6 +105,24 @@ const postingCard = (props) => {
     }
   }
 
+  const displayBall = () => {
+    var ball;
+    if (likeStatus) {
+      ball = <BallFilled className={classes.ball}/>
+    } else {
+      ball = <BallOutline className={classes.ball}/>
+    }
+    return (
+      <div className={classes.likesContainer} >
+        <IconButton className={classes.ballContainer}>
+          {ball}
+        </IconButton>
+        <span className={classes.likesNum} >13 </span>
+        <span className={classes.likesText}>Likes</span>
+      </div>
+    );
+  }
+
   return (
     <div className={classes.root}>
       <Grid container className={classes.container} spacing={2}>
@@ -114,9 +151,7 @@ const postingCard = (props) => {
         </Grid>
         <Grid container>
           <Grid xs={10} item>
-          <IconButton>
-              <Favorite />
-            </IconButton>
+            {displayBall()}
             <div className={classes.description}>{props.description}</div>
           </Grid>
         </Grid>
