@@ -1,13 +1,14 @@
-import React from "react";
-
+import React, { useState, useContext } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import Avatar from "@material-ui/core/Avatar";
-import BallOutline from '@material-ui/icons/FiberManualRecordOutlined';
-import BallFilled from '@material-ui/icons/FiberManualRecord';
+import ThumbUpOutlined from '@material-ui/icons/ThumbUpOutlined';
+import ThumbUpIcon from '@material-ui/icons/ThumbUp';
 import IconButton from "@material-ui/core/IconButton";
 import Card from "@material-ui/core/Card";
 import CardMedia from "@material-ui/core/CardMedia";
+import { API_URL } from "../../api-url";
+import { Context } from "../../Context";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -62,6 +63,7 @@ const useStyles = makeStyles((theme) => ({
     marginTop: "10px",
   },
   likesNum: {
+    marginLeft: "5px",
     fontWeight: "bold",
     verticalAlign: "middle"
   },
@@ -74,16 +76,11 @@ const useStyles = makeStyles((theme) => ({
 const postingCard = (props) => {
   const classes = useStyles();
 
-  const [likeStatus, setLikeStatus] = React.useState(false);
-
+  const [likeStatus, setLikeStatus] = useState(props.isLiked);
+  const [userContext, setUserContext] = useContext(Context);
   const displayFile = () => {
     if (props.fileType.includes("video")) {
       return (
-        // <ReactPlayer
-        //     url={URL.createObjectURL(file)}
-        //     className={classes.videoPlayer}
-        //     controls="true"
-        // />
         <CardMedia
           className={classes.videoPlayer}
           component="video"
@@ -105,16 +102,68 @@ const postingCard = (props) => {
     }
   }
 
+  const handleLike = () => {
+    if (likeStatus) {
+      unSubmitLike();
+    } else {
+      submitLike();
+    }
+  }
+
+  const submitLike = () => {
+    const like = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(
+        {
+          'personId': userContext.personId,
+          'postId': props.postId
+        }
+      )
+    }
+    fetch(API_URL.postingLike, like)
+      .then(resp => resp.json())
+      .then((resp) => {
+        console.log(resp);
+        setLikeStatus(true);
+      })
+  }
+
+  const unSubmitLike = () => {
+    const unLike = {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(
+        {
+          'personId': userContext.personId,
+          'postId': props.postId
+        }
+      )
+    }
+    fetch(API_URL.postingLike, unLike)
+      .then(resp => resp.json())
+      .then((resp) => {
+        console.log(resp);
+        setLikeStatus(false);
+      })
+  }
+
   const displayBall = () => {
     var ball;
     if (likeStatus) {
-      ball = <BallFilled className={classes.ball}/>
+      ball = <ThumbUpIcon className={classes.ball} />
     } else {
-      ball = <BallOutline className={classes.ball}/>
+      ball = <ThumbUpOutlined className={classes.ball} />
     }
     return (
       <div className={classes.likesContainer} >
-        <IconButton className={classes.ballContainer}>
+        <IconButton
+          className={classes.ballContainer}
+          onClick={handleLike}>
           {ball}
         </IconButton>
         <span className={classes.likesNum} >13 </span>

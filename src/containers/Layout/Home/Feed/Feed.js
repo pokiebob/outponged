@@ -113,6 +113,8 @@ const feed = () => {
                 fileType={post.fileType}
                 description={post.description}
                 date={date.toLocaleDateString()}
+                postId={post.postId}
+                isLIked={post.isLiked}
               />
             </Grid>
           </Paper>

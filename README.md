@@ -21,6 +21,10 @@ site: https://www.outponged.com/
 
 
 ## To-Do
+- Functional liking system
+- Comments
+- Personalized algorithm for feed
+- Functional login system on outponged
 - Approval system
   - Player requests to join club
   - Club owner can change settings, require approval or free entry

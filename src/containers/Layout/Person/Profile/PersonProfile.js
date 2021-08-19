@@ -384,6 +384,8 @@ const personPage = () => {
                 fileType={post.fileType}
                 description={post.description}
                 date={date.toLocaleDateString()}
+                postId={post.postId}
+                isLiked={post.isLiked}
               />
             </Grid>
           </Paper>

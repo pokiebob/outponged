@@ -222,8 +222,6 @@ const editProfile = () => {
 
     const onPhotoUpload = (e) => {
         const file = e.currentTarget.files[0];
-        console.log("photo uploaded", file);
-        console.log(aws.AWSAccessKeyId);
         if (file !== undefined) {
             //ReactS3.uploadFile(file, s3config)
             S3Client
