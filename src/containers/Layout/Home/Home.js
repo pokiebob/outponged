@@ -216,7 +216,6 @@ const logInAsGuestUser = () => {
     .then(resp => resp.json())
     .then((personData) => {
       setUserContext(personData);
-      // console.log(personData);
     });
 }
 
@@ -321,6 +320,7 @@ const renderLoginButton = () => {
             onClick={() => {
               logInAsGuestUser();
             }}
+            component={Link} to={"/home/"}
           >
             Login as Guest User
           </MenuItem>
