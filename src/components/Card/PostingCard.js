@@ -5,8 +5,14 @@ import Avatar from "@material-ui/core/Avatar";
 import ThumbUpOutlined from '@material-ui/icons/ThumbUpOutlined';
 import ThumbUpIcon from '@material-ui/icons/ThumbUp';
 import IconButton from "@material-ui/core/IconButton";
+import Button from "@material-ui/core/Button";
 import Card from "@material-ui/core/Card";
 import CardMedia from "@material-ui/core/CardMedia";
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 import { API_URL } from "../../api-url";
 import { Context } from "../../Context";
 
@@ -77,6 +83,12 @@ const postingCard = (props) => {
   const classes = useStyles();
 
   const [likeStatus, setLikeStatus] = useState(props.isLiked);
+  const [open, setOpen] = useState(false);
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+  
   const [userContext, setUserContext] = useContext(Context);
   const displayFile = () => {
     if (props.fileType.includes("video")) {
@@ -103,11 +115,39 @@ const postingCard = (props) => {
   }
 
   const handleLike = () => {
-    if (likeStatus) {
-      unSubmitLike();
+    if (userContext.personId) {
+      if (likeStatus) {
+        unSubmitLike();
+      } else {
+        submitLike();
+      }
     } else {
-      submitLike();
+      //dialog
+      setOpen(true);
     }
+  }
+
+  const displayDialog = () => {
+    return (
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{"Please Log In"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            You must log in to OutPonged in order to continue. Log in or make an account by clicking the button on the top right of your screen.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} color="primary">
+            OK
+          </Button>
+        </DialogActions>
+      </Dialog>
+    )
   }
 
   const submitLike = () => {
@@ -168,6 +208,7 @@ const postingCard = (props) => {
         </IconButton>
         <span className={classes.likesNum} >13 </span>
         <span className={classes.likesText}>Likes</span>
+        {displayDialog()}
       </div>
     );
   }
