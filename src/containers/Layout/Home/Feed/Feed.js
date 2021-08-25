@@ -78,7 +78,7 @@ const feed = () => {
   const [userContext, setUserContext] = useContext(Context);
 
   const initialize = () => {
-    fetch(API_URL.post + "find/?page=pp&pid=" + userContext?.personId)
+    fetch(API_URL.post + "find/?page=pp&ppid=" + userContext?.personId + "&upid=" + userContext?.personId)
       .then(resp => resp.json())
       .then((postings) => {
         // console.log('postings', postings);
@@ -114,7 +114,7 @@ const feed = () => {
                 description={post.description}
                 date={date.toLocaleDateString()}
                 postId={post.postId}
-                isLIked={post.isLiked}
+                isLiked={post.isLiked}
               />
             </Grid>
           </Paper>

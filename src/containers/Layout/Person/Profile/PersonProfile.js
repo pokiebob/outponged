@@ -6,11 +6,12 @@ import Paper from "@material-ui/core/Paper";
 import { makeStyles } from "@material-ui/core/styles";
 import Tab from "@material-ui/core/Tab";
 import Tabs from "@material-ui/core/Tabs";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useHistory } from "react-router-dom";
 import { forkJoin } from 'rxjs';
 import { API_URL } from '../../../../api-url';
 import { APP_PAPER_ELEVATION } from "../../../../app-config";
+import { Context } from "../../../../Context";
 import PostingCard from '../../../../components/Card/PostingCard';
 
 
@@ -92,7 +93,7 @@ const getPersonId = () => {
 
 const personPage = () => {
   const history = useHistory();
-
+  const [userContext, setUserContext] = useContext(Context);
   const [personState, setPersonState] = useState(undefined);
   const [linkedPersonsState, setLinkedPersonsState] = useState(undefined);
   const [linkedClubsState, setLinkedClubsState] = useState(undefined);
@@ -140,7 +141,10 @@ const personPage = () => {
           });
       });
 
-    fetch(API_URL.post + "find/?page=pp&pid=" + getPersonId())
+    //pp = person profile
+    //ppid = person id of profile page owner
+    //upid = person id of logged in user
+    fetch(API_URL.post + "find/?page=pp&ppid=" + getPersonId() + "&upid=" + userContext?.personId)
       .then(resp => resp.json())
       .then((postings) => {
         console.log('postings', postings);
