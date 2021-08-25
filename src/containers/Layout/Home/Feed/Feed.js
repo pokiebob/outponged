@@ -115,6 +115,7 @@ const feed = () => {
                 date={date.toLocaleDateString()}
                 postId={post.postId}
                 isLiked={post.isLiked}
+                numLikes={post.numLikes}
               />
             </Grid>
           </Paper>

@@ -206,7 +206,7 @@ const postingCard = (props) => {
           onClick={handleLike}>
           {ball}
         </IconButton>
-        <span className={classes.likesNum} >13 </span>
+        <span className={classes.likesNum} >{props.numLikes} </span>
         <span className={classes.likesText}>Likes</span>
         {displayDialog()}
       </div>
