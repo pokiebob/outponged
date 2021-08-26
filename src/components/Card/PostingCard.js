@@ -83,6 +83,7 @@ const postingCard = (props) => {
   const classes = useStyles();
 
   const [likeStatus, setLikeStatus] = useState(props.isLiked);
+  const [numLikes, setNumLikes] = useState(props.numLikes);
   const [open, setOpen] = useState(false);
 
   const handleClose = () => {
@@ -168,6 +169,7 @@ const postingCard = (props) => {
       .then((resp) => {
         console.log(resp);
         setLikeStatus(true);
+        setNumLikes(numLikes + 1);
       })
   }
 
@@ -189,6 +191,7 @@ const postingCard = (props) => {
       .then((resp) => {
         console.log(resp);
         setLikeStatus(false);
+        setNumLikes(numLikes - 1);
       })
   }
 
@@ -206,7 +209,7 @@ const postingCard = (props) => {
           onClick={handleLike}>
           {ball}
         </IconButton>
-        <span className={classes.likesNum} >{props.numLikes} </span>
+        <span className={classes.likesNum} >{numLikes} </span>
         <span className={classes.likesText}>Likes</span>
         {displayDialog()}
       </div>

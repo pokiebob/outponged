@@ -380,21 +380,32 @@ const home = () => {
     // );
   }
 
-  return (
-    <div>
-      {renderAppBar(classes)}
-      <Switch>
-        <Route path="/home" component={Feed} />
-        <Route path="/players" component={Players} />
-        <Route path="/clubs" component={Clubs} />
-        <Route path="/person-profile" component={PersonProfile} />
-        <Route path="/edit-person-profile" component={EditPersonProfile} />
-        <Route path="/club-profile" component={ClubProfile} />
-        {renderPostPage()}
-      </Switch>
+  if (userContext) {
 
-    </div>
-  );
+    return (
+      <div>
+        {renderAppBar(classes)}
+        <Switch>
+          <Route path="/home" component={Feed} />
+          <Route path="/players" component={Players} />
+          <Route path="/clubs" component={Clubs} />
+          <Route path="/person-profile" component={PersonProfile} />
+          <Route path="/edit-person-profile" component={EditPersonProfile} />
+          <Route path="/club-profile" component={ClubProfile} />
+          {renderPostPage()}
+        </Switch>
+
+      </div>
+    );
+  } else {
+    // rendering the app bar makes the call to aws and mongo
+    return (
+      <div>
+        {renderAppBar(classes)}
+        loading...
+      </div>
+    );
+  }
 };
 
 
