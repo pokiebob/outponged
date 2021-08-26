@@ -210,7 +210,7 @@ const postingCard = (props) => {
           {ball}
         </IconButton>
         <span className={classes.likesNum} >{numLikes} </span>
-        <span className={classes.likesText}>Likes</span>
+        <span className={classes.likesText}>Like{numLikes===1 ? '' : 's'}</span>
         {displayDialog()}
       </div>
     );
