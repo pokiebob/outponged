@@ -4,7 +4,11 @@ import Grid from "@material-ui/core/Grid";
 import Avatar from "@material-ui/core/Avatar";
 import ThumbUpOutlined from '@material-ui/icons/ThumbUpOutlined';
 import ThumbUpIcon from '@material-ui/icons/ThumbUp';
+import CommentIcon from '@material-ui/icons/ChatBubbleOutline';
 import IconButton from "@material-ui/core/IconButton";
+import { InputAdornment } from "@material-ui/core";
+import SendIcon from '@material-ui/icons/Send';
+import { TextField } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import Card from "@material-ui/core/Card";
 import CardMedia from "@material-ui/core/CardMedia";
@@ -15,6 +19,7 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { API_URL } from "../../api-url";
 import { Context } from "../../Context";
+import Send from "@material-ui/icons/Send";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -62,6 +67,10 @@ const useStyles = makeStyles((theme) => ({
   ballContainer: {
     padding: "0px",
   },
+  commentContainer: {
+    padding: "0px",
+    marginLeft: "15px"
+  },
   ball: {
     fill: "black"
   },
@@ -84,12 +93,14 @@ const postingCard = (props) => {
 
   const [likeStatus, setLikeStatus] = useState(props.isLiked);
   const [numLikes, setNumLikes] = useState(props.numLikes);
-  const [open, setOpen] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [commentOpen, setCommentOpen] = useState(false);
+  const [commentState, setCommentState] = useState();
 
   const handleClose = () => {
-    setOpen(false);
+    setDialogOpen(false);
   };
-  
+
   const [userContext, setUserContext] = useContext(Context);
   const displayFile = () => {
     if (props.fileType.includes("video")) {
@@ -124,14 +135,50 @@ const postingCard = (props) => {
       }
     } else {
       //dialog
-      setOpen(true);
+      setDialogOpen(true);
     }
+  }
+
+  const handleComment = () => {
+    if (userContext.personId) {
+      //send comment
+      submitComment();
+    } else {
+      setDialogOpen(true);
+    }
+  }
+
+  const submitComment = () => {
+    console.log(commentState);
+    const comment = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(
+        {
+          'ownerId': userContext.personId,
+          'ownerType': 'person',
+          'ownerName': `${userContext?.firstName} ${userContext?.lastName}`,
+          'ownerProfilePic': userContext.pictureUrl,
+          'visibility': {
+            'level': 'public'
+          },
+          'description': commentState
+        }
+      )
+    }
+    fetch(API_URL.post + '?postType=comment', comment)
+      .then(resp => resp.json())
+      .then((resp) => {
+        console.log(resp);
+      })
   }
 
   const displayDialog = () => {
     return (
       <Dialog
-        open={open}
+        open={dialogOpen}
         onClose={handleClose}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
@@ -149,6 +196,36 @@ const postingCard = (props) => {
         </DialogActions>
       </Dialog>
     )
+  }
+
+  const displayComments = () => {
+    return (
+      <div>The comments will be here.</div>
+    );
+  }
+
+  const displayCommentField = () => {
+    return ( commentOpen &&
+      <form className={classes.root} autoComplete="off">
+        <TextField 
+        multiline
+        fullWidth
+        value={commentState}
+        onInput={e => setCommentState(e.target.value)}
+        InputProps={{
+          maxLength: 1000,
+          endAdornment: 
+            <InputAdornment position="end">
+              <IconButton
+                onClick={handleComment}
+              >
+                <SendIcon color="primary"/>
+              </IconButton>
+            </InputAdornment>
+        }}
+        />
+      </form>
+    );
   }
 
   const submitLike = () => {
@@ -210,7 +287,13 @@ const postingCard = (props) => {
           {ball}
         </IconButton>
         <span className={classes.likesNum} >{numLikes} </span>
-        <span className={classes.likesText}>Like{numLikes===1 ? '' : 's'}</span>
+        <span className={classes.likesText}>Like{numLikes === 1 ? '' : 's'}</span>
+        <IconButton
+          className={classes.commentContainer}
+          title="Comment" 
+          onClick={() => {setCommentOpen(! commentOpen)}}>
+          <CommentIcon className={classes.ball} />
+        </IconButton>
         {displayDialog()}
       </div>
     );
@@ -246,6 +329,8 @@ const postingCard = (props) => {
           <Grid xs={10} item>
             {displayBall()}
             <div className={classes.description}>{props.description}</div>
+            {displayComments()}
+            {displayCommentField()}
           </Grid>
         </Grid>
       </Grid>

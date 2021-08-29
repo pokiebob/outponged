@@ -193,7 +193,7 @@ const post = () => {
                 }
                 // console.log('post body', post.body);
 
-                fetch(API_URL.post, post)
+                fetch(API_URL.post + "?postType=post", post)
                     .then(resp => resp.json())
                     .then((resp) => {
                         console.log(resp);
