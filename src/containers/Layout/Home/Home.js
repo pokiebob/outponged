@@ -402,7 +402,7 @@ const home = () => {
     return (
       <div>
         {renderAppBar(classes)}
-        loading...
+        Please log in... (sorry)
       </div>
     );
   }
