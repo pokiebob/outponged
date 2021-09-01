@@ -19,8 +19,7 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { API_URL } from "../../api-url";
 import { Context } from "../../Context";
-import Send from "@material-ui/icons/Send";
-
+import PostingCommentCard from "./PostingCommentCard";
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
@@ -62,7 +61,7 @@ const useStyles = makeStyles((theme) => ({
   description: {
     color: theme.palette.text.secondary,
     "font-size": "15px",
-    marginTop: "10px"
+    marginTop: "10px",
   },
   ballContainer: {
     padding: "0px",
@@ -150,6 +149,9 @@ const postingCard = (props) => {
 
   const submitComment = () => {
     console.log(commentState);
+    setCommentOpen(false);
+    setCommentState("");
+
     const comment = {
       method: 'POST',
       headers: {
@@ -157,6 +159,9 @@ const postingCard = (props) => {
       },
       body: JSON.stringify(
         {
+          'ultimateParentOwnerId': props.ownerId,
+          'ultimateParentPostId': props.postId,
+          'parentPostId': props.postId,
           'ownerId': userContext.personId,
           'ownerType': 'person',
           'ownerName': `${userContext?.firstName} ${userContext?.lastName}`,
@@ -198,31 +203,26 @@ const postingCard = (props) => {
     )
   }
 
-  const displayComments = () => {
-    return (
-      <div>The comments will be here.</div>
-    );
-  }
-
   const displayCommentField = () => {
-    return ( commentOpen &&
+    return (commentOpen &&
       <form className={classes.root} autoComplete="off">
-        <TextField 
-        multiline
-        fullWidth
-        value={commentState}
-        onInput={e => setCommentState(e.target.value)}
-        InputProps={{
-          maxLength: 1000,
-          endAdornment: 
-            <InputAdornment position="end">
-              <IconButton
-                onClick={handleComment}
-              >
-                <SendIcon color="primary"/>
-              </IconButton>
-            </InputAdornment>
-        }}
+        <TextField
+          multiline
+          fullWidth
+          placeholder="Write a comment..."
+          value={commentState}
+          onInput={e => setCommentState(e.target.value)}
+          InputProps={{
+            maxLength: 1000,
+            endAdornment:
+              <InputAdornment position="end">
+                <IconButton
+                  onClick={handleComment}
+                >
+                  <SendIcon color="primary" />
+                </IconButton>
+              </InputAdornment>
+          }}
         />
       </form>
     );
@@ -290,12 +290,22 @@ const postingCard = (props) => {
         <span className={classes.likesText}>Like{numLikes === 1 ? '' : 's'}</span>
         <IconButton
           className={classes.commentContainer}
-          title="Comment" 
-          onClick={() => {setCommentOpen(! commentOpen)}}>
+          title="Comment"
+          onClick={() => { setCommentOpen(!commentOpen) }}>
           <CommentIcon className={classes.ball} />
         </IconButton>
         {displayDialog()}
       </div>
+    );
+  }
+
+  const displayComments = () => {
+    // console.log(props.postId);
+    return (
+      <PostingCommentCard
+        comments={props.comments}
+        ultimateParentPostId={props.postId}
+      />
     );
   }
 
