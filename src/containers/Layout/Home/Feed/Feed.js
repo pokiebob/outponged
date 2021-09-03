@@ -89,7 +89,7 @@ const feed = () => {
   useEffect(() => {
     // console.log('Context',userContext);
     initialize();
-  },[userContext]);
+  }, [userContext]);
 
   /** API CALL 
    *  send user ID
@@ -97,15 +97,17 @@ const feed = () => {
    *  and returns array of posts in response
   */
 
-
   const renderPostings = () => {
     return (
-      postingState?.map((post, idx) => {
+      postingState?.filter(x => x.postType === "post").map((post, idx) => {
+        const comments = postingState?.filter(x => x.postType === "comment" && x.ultimateParentPostId === post.postId);
+        // console.log(post.title, comments);
         const date = new Date(post.date);
         return (
           <Paper className={classes.paper} elevation={APP_PAPER_ELEVATION}>
             <Grid container className={classes.container}>
               <PostingCard
+                ownerId={post.ownerId}
                 pictureUrl={post.ownerProfilePic}
                 name={post.ownerName}
                 title={post.title}
@@ -116,6 +118,7 @@ const feed = () => {
                 postId={post.postId}
                 isLiked={post.isLiked}
                 numLikes={post.numLikes}
+                comments={comments}
               />
             </Grid>
           </Paper>

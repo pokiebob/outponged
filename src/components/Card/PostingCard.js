@@ -25,6 +25,7 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
   },
   container: {
+    marginTop: "5px",
     marginLeft: "40px"
   },
   small: {
@@ -59,21 +60,21 @@ const useStyles = makeStyles((theme) => ({
     width: "100%",
   },
   description: {
-    color: theme.palette.text.secondary,
-    "font-size": "15px",
+    // color: theme.palette.text.secondary,
+    "font-size": "16px",
     marginTop: "10px",
   },
-  ballContainer: {
+  iconContainer: {
     padding: "0px",
   },
   commentContainer: {
     padding: "0px",
     marginLeft: "15px"
   },
-  ball: {
+  icon: {
     fill: "black"
   },
-  likesContainer: {
+  smallContainer: {
     marginTop: "10px",
   },
   likesNum: {
@@ -84,6 +85,12 @@ const useStyles = makeStyles((theme) => ({
   likesText: {
     color: theme.palette.text.secondary,
     verticalAlign: "middle"
+  },
+  outerCol: {
+    marginLeft: "10px"
+  },
+  font: {
+    fontSize: "14px",
   }
 }));
 
@@ -148,7 +155,7 @@ const postingCard = (props) => {
   }
 
   const submitComment = () => {
-    console.log(commentState);
+    console.log(props, commentState);
     setCommentOpen(false);
     setCommentState("");
 
@@ -206,24 +213,34 @@ const postingCard = (props) => {
   const displayCommentField = () => {
     return (commentOpen &&
       <form className={classes.root} autoComplete="off">
-        <TextField
-          multiline
-          fullWidth
-          placeholder="Write a comment..."
-          value={commentState}
-          onInput={e => setCommentState(e.target.value)}
-          InputProps={{
-            maxLength: 1000,
-            endAdornment:
-              <InputAdornment position="end">
-                <IconButton
-                  onClick={handleComment}
-                >
-                  <SendIcon color="primary" />
-                </IconButton>
-              </InputAdornment>
-          }}
-        />
+        <Grid container className={classes.smallContainer}>
+          <Grid item>
+            <Avatar src={userContext.pictureUrl} className={classes.small} />
+          </Grid>
+          <Grid item xs={10} className={classes.outerCol} >
+            <TextField
+              multiline
+              fullWidth
+              placeholder="Write a comment..."
+              value={commentState}
+              onInput={e => setCommentState(e.target.value)}
+              InputProps={{
+                maxLength: 1000,
+                classes: {
+                  input: classes.font,
+                },
+                endAdornment:
+                  <InputAdornment position="end">
+                    <IconButton
+                      onClick={handleComment}
+                    >
+                      <SendIcon color="primary" />
+                    </IconButton>
+                  </InputAdornment>
+              }}
+            />
+          </Grid>
+        </Grid>
       </form>
     );
   }
@@ -272,19 +289,19 @@ const postingCard = (props) => {
       })
   }
 
-  const displayBall = () => {
-    var ball;
+  const displayInteractionBar = () => {
+    var likeIcon;
     if (likeStatus) {
-      ball = <ThumbUpIcon className={classes.ball} />
+      likeIcon = <ThumbUpIcon className={classes.icon} />
     } else {
-      ball = <ThumbUpOutlined className={classes.ball} />
+      likeIcon = <ThumbUpOutlined className={classes.icon} />
     }
     return (
-      <div className={classes.likesContainer} >
+      <div className={classes.smallContainer} >
         <IconButton
-          className={classes.ballContainer}
+          className={classes.iconContainer}
           onClick={handleLike}>
-          {ball}
+          {likeIcon}
         </IconButton>
         <span className={classes.likesNum} >{numLikes} </span>
         <span className={classes.likesText}>Like{numLikes === 1 ? '' : 's'}</span>
@@ -292,7 +309,7 @@ const postingCard = (props) => {
           className={classes.commentContainer}
           title="Comment"
           onClick={() => { setCommentOpen(!commentOpen) }}>
-          <CommentIcon className={classes.ball} />
+          <CommentIcon className={classes.icon} />
         </IconButton>
         {displayDialog()}
       </div>
@@ -337,7 +354,7 @@ const postingCard = (props) => {
         </Grid>
         <Grid container>
           <Grid xs={10} item>
-            {displayBall()}
+            {displayInteractionBar()}
             <div className={classes.description}>{props.description}</div>
             {displayComments()}
             {displayCommentField()}

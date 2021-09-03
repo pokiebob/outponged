@@ -98,7 +98,7 @@ const personPage = () => {
   const [linkedPersonsState, setLinkedPersonsState] = useState(undefined);
   const [linkedClubsState, setLinkedClubsState] = useState(undefined);
   const [postingState, setPostingState] = useState();
-  const [value, setValue] = React.useState(0); //used by app bars
+  const [value, setValue] = useState(0); //used by app bars
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -197,7 +197,7 @@ const personPage = () => {
               </div>
             </Grid>
 
-            <Grid xs={11} container justify="flex-end">
+            <Grid xs={11} container item justify="flex-end">
               <Button onClick={() => {
                 navigateToEditPerson(personState.personId);
               }}>
