@@ -376,7 +376,7 @@ const personPage = () => {
   const renderPostings = () => {
     return (
       postingState?.filter(x => x.postType === "post").map((post, idx) => {
-        const comments = postingState?.filter(x => x.postType === "comment" && x.ultimateParentPostId === post.postId);
+        const comments = postingState?.filter(x => x.ultimateParentPostId === post.postId);
         // console.log(post.title, comments);
         const date = new Date(post.date);
         return (

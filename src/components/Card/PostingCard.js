@@ -20,6 +20,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import { API_URL } from "../../api-url";
 import { Context } from "../../Context";
 import PostingCommentCard from "./PostingCommentCard";
+import PostingCommentTree from "./PostingCommentTree";
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
@@ -319,7 +320,12 @@ const postingCard = (props) => {
   const displayComments = () => {
     // console.log(props.postId);
     return (
-      <PostingCommentCard
+      // <PostingCommentCard
+      //   node={props.postId}
+      //   comments={props.comments}
+      //   ultimateParentPostId={props.postId}
+      // />
+      <PostingCommentTree 
         comments={props.comments}
         ultimateParentPostId={props.postId}
       />
