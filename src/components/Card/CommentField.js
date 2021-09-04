@@ -7,6 +7,7 @@ import { InputAdornment } from "@material-ui/core";
 import SendIcon from '@material-ui/icons/Send';
 import { TextField } from "@material-ui/core";
 import { Context } from "../../Context";
+import CloseIcon from '@material-ui/icons/Close';
 
 const useStyles = makeStyles((theme) => ({
     smallContainer: {
@@ -34,7 +35,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-const commentField = ({handleComment}) => {
+const commentField = ({ handleComment, level, parentOwnerName, closeComment }) => {
     const classes = useStyles();
     const [userContext, setUserContext] = useContext(Context);
     const [commentState, setCommentState] = useState();
@@ -43,13 +44,14 @@ const commentField = ({handleComment}) => {
         <form className={classes.root} autoComplete="off">
             <Grid container className={classes.smallContainer}>
                 <Grid item>
-                    <Avatar src={userContext.pictureUrl} className={classes.extraSmall} />
+                    <Avatar src={userContext.pictureUrl} className={level > 0 ? classes.extraSmall : classes.small} />
                 </Grid>
                 <Grid item xs={10} className={classes.outerCol}>
                     <TextField
                         multiline
                         fullWidth
                         placeholder="Write a comment..."
+                        defaultValue={level === 2 ? "@" + parentOwnerName + " " : ""}
                         value={commentState}
                         onInput={e => setCommentState(e.target.value)}
                         InputProps={{
@@ -59,6 +61,11 @@ const commentField = ({handleComment}) => {
                             },
                             endAdornment:
                                 <InputAdornment position="end">
+                                    <IconButton
+                                        onClick={closeComment}
+                                    >
+                                        <CloseIcon />
+                                    </IconButton>
                                     <IconButton
                                         onClick={() => handleComment(commentState)}
                                     >

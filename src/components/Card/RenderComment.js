@@ -22,11 +22,16 @@ const useStyles = makeStyles((theme) => ({
         height: theme.spacing(5)
     },
     extraSmall: {
+        marginLeft: "10px",
         width: theme.spacing(3),
-        height: theme.spacing(3)
+        height: theme.spacing(3),
+    },
+    border: {
+        borderLeft: "1px solid lightgray",
     },
     name: {
-        "font-size": "14px",
+        "font-size": "13px",
+        fontWeight: "bold"
         // marginTop: "5px"
     },
     date: {
@@ -36,7 +41,6 @@ const useStyles = makeStyles((theme) => ({
         color: theme.palette.text.secondary,
     },
     description: {
-        color: theme.palette.text.secondary,
         "font-size": "14px",
         marginTop: "5px"
     },
@@ -59,12 +63,12 @@ const useStyles = makeStyles((theme) => ({
         marginLeft: "5px",
         fontWeight: "bold",
         verticalAlign: "middle",
-        fontSize: "14px"
+        fontSize: "13px"
     },
     likesText: {
         color: theme.palette.text.secondary,
         verticalAlign: "middle",
-        fontSize: "14px"
+        fontSize: "13px"
     },
     outerCol: {
         marginLeft: "20px"
@@ -73,22 +77,24 @@ const useStyles = makeStyles((theme) => ({
         padding: "0px"
     },
     font: {
-        fontSize: "14px",
+        fontSize: "13px",
     },
     reducedPadding: {
         padding: "0px 0 7px"
+    },
+    rootCommentField: {
+        marginLeft: "60px"
     }
 }));
 
 
-const renderComment = ({comment, level, treeHandleComment}) => {
+const renderComment = ({ comment, level, treeHandleComment, rootCommentOpen }) => {
 
     // console.log(comment);
     const classes = useStyles();
     const [likeStatus, setLikeStatus] = useState(comment.isLiked);
     const [numLikes, setNumLikes] = useState(comment.numLikes);
-    const [commentOpen, setCommentOpen] = useState(false);
-    const [commentState, setCommentState] = useState();
+    const [commentOpen, setCommentOpen] = useState(comment.isRoot && rootCommentOpen ? true : false);
     const [userContext, setUserContext] = useContext(Context);
 
     const handleLike = () => {
@@ -113,7 +119,11 @@ const renderComment = ({comment, level, treeHandleComment}) => {
 
     const displayCommentField = () => {
         return (commentOpen &&
-            <CommentField handleComment={handleComment}/>
+            <CommentField
+                handleComment={handleComment}
+                level={level}
+                parentOwnerName={comment.ownerName}
+                closeComment={handleOpenComment} />
         );
     }
 
@@ -161,6 +171,11 @@ const renderComment = ({comment, level, treeHandleComment}) => {
             })
     }
 
+    const handleOpenComment = () => {
+        setCommentOpen(!commentOpen);
+        console.log("root comment open set to true");
+    }
+
     const displayInteractionBar = () => {
         var likeIcon;
         if (likeStatus) {
@@ -180,7 +195,7 @@ const renderComment = ({comment, level, treeHandleComment}) => {
                 <IconButton
                     className={classes.commentContainer}
                     title="Comment"
-                    onClick={() => { setCommentOpen(!commentOpen) }}>
+                    onClick={handleOpenComment}>
                     <CommentIcon className={classes.icon} />
                 </IconButton>
                 {/* {displayDialog()} */}
@@ -190,23 +205,37 @@ const renderComment = ({comment, level, treeHandleComment}) => {
 
     const date = new Date(comment.date);
     return (
-        <Grid container className={classes.smallContainer} >
-            <Grid container>
-                <Grid item >
-                    <Avatar src={comment.ownerProfilePic} className={level < 2 ? classes.small : classes.extraSmall} />
-                </Grid>
-                <Grid item xs={10} className={classes.outerCol}>
-                    <div>
-                        <span className={classes.name}>{comment.ownerName}</span>
-                        <span className={classes.date}>{date.toLocaleDateString()}</span>
-                    </div>
-                    <div className={classes.description}>{comment.description}</div>
-                    {displayInteractionBar()}
+        level === 0 ?
+            <Grid container >
+                <Grid item xs={10} className={classes.rootCommentField}>
                     {displayCommentField()}
                 </Grid>
             </Grid>
-
-        </Grid>
+            :
+            <Grid container className=
+                //not first comment
+                {level === 2 && !comment.isFirstChild ? classes.border : {}}
+            >
+                <Grid container className={classes.smallContainer}>
+                    <Grid container className={
+                        //first comment
+                        level === 2 && comment.isFirstChild ? classes.border : {}
+                    }>
+                        <Grid item >
+                            <Avatar src={comment.ownerProfilePic} className={level < 2 ? classes.small : classes.extraSmall} />
+                        </Grid>
+                        <Grid item xs={10} className={classes.outerCol}>
+                            <div>
+                                <span className={classes.name}>{comment.ownerName}</span>
+                                <span className={classes.date}>{date.toLocaleDateString()}</span>
+                            </div>
+                            <div className={classes.description}>{comment.description}</div>
+                            {displayInteractionBar()}
+                            {displayCommentField()}
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </Grid>
     );
 }
 

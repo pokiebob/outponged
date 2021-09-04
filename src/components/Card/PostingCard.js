@@ -8,6 +8,7 @@ import CommentIcon from '@material-ui/icons/ChatBubbleOutline';
 import IconButton from "@material-ui/core/IconButton";
 import { InputAdornment } from "@material-ui/core";
 import SendIcon from '@material-ui/icons/Send';
+import CloseIcon from '@material-ui/icons/Close';
 import { TextField } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import Card from "@material-ui/core/Card";
@@ -19,7 +20,6 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { API_URL } from "../../api-url";
 import { Context } from "../../Context";
-import PostingCommentCard from "./PostingCommentCard";
 import PostingCommentTree from "./PostingCommentTree";
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -34,20 +34,20 @@ const useStyles = makeStyles((theme) => ({
     height: theme.spacing(5),
   },
   name: {
-    "font-size": "16px",
+    fontSize: "14px",
     marginLeft: "10px",
-    marginTop: "5px"
+    marginTop: "5px",
+    fontWeight: "bold"
   },
   date: {
     marginTop: "5px",
-    "font-size": "12px",
+    fontSize: "12px",
     marginLeft: "10px",
     color: theme.palette.text.secondary,
   },
   title: {
     marginTop: "10px",
-    "font-size": "20px",
-    "font-weight": "bold"
+    fontSize: "18px",
   },
   videoWrapper: {
     position: "relative",
@@ -62,7 +62,7 @@ const useStyles = makeStyles((theme) => ({
   },
   description: {
     // color: theme.palette.text.secondary,
-    "font-size": "16px",
+    fontSize: "14px",
     marginTop: "10px",
   },
   iconContainer: {
@@ -70,10 +70,12 @@ const useStyles = makeStyles((theme) => ({
   },
   commentContainer: {
     padding: "0px",
-    marginLeft: "15px"
+    marginLeft: "20px"
   },
   icon: {
-    fill: "black"
+    fill: "black",
+    width: theme.spacing(2.5),
+    height: theme.spacing(2.5)
   },
   smallContainer: {
     marginTop: "10px",
@@ -81,17 +83,19 @@ const useStyles = makeStyles((theme) => ({
   likesNum: {
     marginLeft: "5px",
     fontWeight: "bold",
-    verticalAlign: "middle"
+    verticalAlign: "middle",
+    fontSize: "13px"
   },
   likesText: {
     color: theme.palette.text.secondary,
-    verticalAlign: "middle"
+    verticalAlign: "middle",
+    fontSize: "13px"
   },
   outerCol: {
     marginLeft: "10px"
   },
   font: {
-    fontSize: "14px",
+    fontSize: "13px",
   }
 }));
 
@@ -102,12 +106,7 @@ const postingCard = (props) => {
   const [numLikes, setNumLikes] = useState(props.numLikes);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [commentOpen, setCommentOpen] = useState(false);
-  const [commentState, setCommentState] = useState(
-    {
-      parentPostId: props.postId,
-      description: ""
-    }
-  );
+  
 
   const handleClose = () => {
     setDialogOpen(false);
@@ -163,7 +162,6 @@ const postingCard = (props) => {
   const submitComment = (newComment) => {
     // console.log(props, newComment);
     setCommentOpen(false);
-    setCommentState("");
 
     const comment = {
       method: 'POST',
@@ -216,46 +214,8 @@ const postingCard = (props) => {
     )
   }
 
-  const displayCommentField = () => {
-
-    const handleInput = (input) => {
-      const copy = {...commentState};
-      copy.description = input;
-      setCommentState(copy);
-    }
-
-    return (commentOpen &&
-      <form className={classes.root} autoComplete="off">
-        <Grid container className={classes.smallContainer}>
-          <Grid item>
-            <Avatar src={userContext.pictureUrl} className={classes.small} />
-          </Grid>
-          <Grid item xs={10} className={classes.outerCol} >
-            <TextField
-              multiline
-              fullWidth
-              placeholder="Write a comment..."
-              value={commentState.description}
-              onInput={e => handleInput(e.target.value)}
-              InputProps={{
-                maxLength: 1000,
-                classes: {
-                  input: classes.font,
-                },
-                endAdornment:
-                  <InputAdornment position="end">
-                    <IconButton
-                      onClick={() => handleComment(commentState)}
-                    >
-                      <SendIcon color="primary" />
-                    </IconButton>
-                  </InputAdornment>
-              }}
-            />
-          </Grid>
-        </Grid>
-      </form>
-    );
+  const handleOpenComment = () => {
+    setCommentOpen(!commentOpen)
   }
 
   const submitLike = () => {
@@ -321,7 +281,7 @@ const postingCard = (props) => {
         <IconButton
           className={classes.commentContainer}
           title="Comment"
-          onClick={() => { setCommentOpen(!commentOpen) }}>
+          onClick={handleOpenComment}>
           <CommentIcon className={classes.icon} />
         </IconButton>
         {displayDialog()}
@@ -332,10 +292,11 @@ const postingCard = (props) => {
   const displayComments = () => {
     // console.log(props.postId);
     return (
-      <PostingCommentTree 
+      <PostingCommentTree
         comments={props.comments}
         ultimateParentPostId={props.postId}
         postingCardHandleComment={handleComment}
+        rootCommentOpen={commentOpen}
       />
     );
   }
@@ -371,7 +332,6 @@ const postingCard = (props) => {
             {displayInteractionBar()}
             <div className={classes.description}>{props.description}</div>
             {displayComments()}
-            {displayCommentField()}
           </Grid>
         </Grid>
       </Grid>

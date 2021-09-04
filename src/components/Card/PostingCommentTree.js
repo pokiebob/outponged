@@ -1,19 +1,36 @@
 import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core';
-import Button from "@material-ui/core/Button";
+import Link from "@material-ui/core/Link"
 import RenderComment from './RenderComment';
 
+const useStyles = makeStyles((theme) => ({
+    commentsHeader: {
+        paddingTop: "10px",
+        borderTop: "1px solid lightgrey",
+        marginTop: "10px",
+        color: "gray",
+        fontSize: "16px"
+    }
+}));
+
 const postingCommentTree = (props) => {
+    const classes = useStyles();
 
     const flatComments = props.comments.map(fc => {
         return (
             {
                 ...fc,
+                isFirstChild: false,
                 isRoot: fc.parentPostId === fc.postId,
                 numVisibleChildren: fc.postId === fc.ultimateParentPostId ? 2 : 0,
                 numImmediateChildren: props.comments.filter(x => x.parentPostId === fc.postId && x.parentPostId != x.postId).length
             });
     });
+
+    const isPlural = (num) => {
+        return (num === 1 ? false : true);
+    }
+
     const [nodes, setNodes] = useState(flatComments);
 
     const maxLevel = 2;
@@ -31,23 +48,20 @@ const postingCommentTree = (props) => {
             marginLeft: 60 * (level - 1) + "px",
         }
         const buttonStyle = {
+            marginTop: "10px",
             marginLeft: level === 0 ? "0px" : "60px"
-        }
-
-        const handleComment = (newCommentDescription) => {
-            const newComment = {
-                parentPostId: postId,
-                description: newCommentDescription
-            }
-            // console.log('[PostingCommentTree.js]', newComment);
-            props.postingCardHandleComment(newComment);
         }
 
         const postingCommentCard = (item, level) => {
             //level 0 is the post itself
-            return (level > 0 &&
-                <div style={commentStyle}>
-                    <RenderComment comment={item} level={level} treeHandleComment={handleComment} />
+            return (
+                // level > 0 &&
+                <div key={props.rootCommentOpen} style={commentStyle}>
+                    <RenderComment 
+                    comment={item} 
+                    level={level} 
+                    treeHandleComment={handleComment}
+                    rootCommentOpen={props.rootCommentOpen}/>
                 </div>
             );
         }
@@ -55,7 +69,7 @@ const postingCommentTree = (props) => {
         if (level > maxLevel) {
             return "";
         }
-
+        // console.log('nodes', nodes);
         const item = nodes.find((c) => c.postId === postId);
         // console.log(postId, item);
         const children = nodes.filter((c) => c.parentPostId === postId && !c.isRoot) || [];
@@ -63,7 +77,20 @@ const postingCommentTree = (props) => {
             return c?.sort((a, b) => -a.date.localeCompare(b.date))
         }
 
+        //callback function
+        const handleComment = (newCommentDescription) => {
+            const newComment = {
+                parentPostId: level===2 ? item.parentPostId : postId,
+                description: newCommentDescription
+            }
+            // console.log('[PostingCommentTree.js]', newComment);
+            props.postingCardHandleComment(newComment);
+        }
+
         const topNChildren = sortByDate(children).slice(0, item.numVisibleChildren);
+        if (topNChildren.length > 0) {
+            topNChildren[0].isFirstChild = true;
+        }
         // console.log(item.description, topNChildren);
         return (
             <div>
@@ -75,12 +102,15 @@ const postingCommentTree = (props) => {
                 ))}
                 {level < 2 && item.numVisibleChildren < item.numImmediateChildren &&
                     <div style={buttonStyle}>
-                        <Button
-                            size="small"
+                        <Link
+                            href=""
                             color="primary"
-                            // style={{ marginLeft: "40px" }}
-                            onClick={() => readMore(item.postId)}
-                        >View More Comments</Button>
+                            style={{ fontSize: 14 }}
+                            onClick={(e) => {
+                                e.preventDefault();
+                                readMore(item.postId);
+                            }}
+                        >{item.isRoot ? "View More" : item.numImmediateChildren - item.numVisibleChildren + (isPlural(item.numImmediateChildren - item.numVisibleChildren) ? " Replies" : " Reply")} </Link>
                     </div>}
             </div>
         );
@@ -88,6 +118,7 @@ const postingCommentTree = (props) => {
 
     return (
         <div>
+            <div className={classes.commentsHeader}>{nodes.length - 1 + (isPlural(nodes.length - 1) ? " Comments" : " Comment")}</div>
             {recurHelper(props.ultimateParentPostId, 0)}
         </div>
     );
