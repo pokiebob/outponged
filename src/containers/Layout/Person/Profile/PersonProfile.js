@@ -262,7 +262,7 @@ const personPage = () => {
           const name = `${linkedPersonsState[idx].firstName} ${linkedPersonsState[idx].lastName}`;
           let reducedName = name;
           if (name.length > 6) reducedName = name.substring(0, 6) + "...";
-          console.log(reducedName);
+          // console.log(reducedName);
           return (
             <Tab
               {...a11yProps(idx)}

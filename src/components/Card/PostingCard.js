@@ -102,7 +102,12 @@ const postingCard = (props) => {
   const [numLikes, setNumLikes] = useState(props.numLikes);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [commentOpen, setCommentOpen] = useState(false);
-  const [commentState, setCommentState] = useState();
+  const [commentState, setCommentState] = useState(
+    {
+      parentPostId: props.postId,
+      description: ""
+    }
+  );
 
   const handleClose = () => {
     setDialogOpen(false);
@@ -146,17 +151,17 @@ const postingCard = (props) => {
     }
   }
 
-  const handleComment = () => {
+  const handleComment = (newComment) => {
     if (userContext.personId) {
       //send comment
-      submitComment();
+      submitComment(newComment);
     } else {
       setDialogOpen(true);
     }
   }
 
-  const submitComment = () => {
-    console.log(props, commentState);
+  const submitComment = (newComment) => {
+    // console.log(props, newComment);
     setCommentOpen(false);
     setCommentState("");
 
@@ -169,7 +174,7 @@ const postingCard = (props) => {
         {
           'ultimateParentOwnerId': props.ownerId,
           'ultimateParentPostId': props.postId,
-          'parentPostId': props.postId,
+          'parentPostId': newComment.parentPostId,
           'ownerId': userContext.personId,
           'ownerType': 'person',
           'ownerName': `${userContext?.firstName} ${userContext?.lastName}`,
@@ -177,14 +182,14 @@ const postingCard = (props) => {
           'visibility': {
             'level': 'public'
           },
-          'description': commentState
+          'description': newComment.description
         }
       )
     }
     fetch(API_URL.post + '?postType=comment', comment)
       .then(resp => resp.json())
       .then((resp) => {
-        console.log(resp);
+        console.log('[PostingCard.js]', resp);
       })
   }
 
@@ -212,6 +217,13 @@ const postingCard = (props) => {
   }
 
   const displayCommentField = () => {
+
+    const handleInput = (input) => {
+      const copy = {...commentState};
+      copy.description = input;
+      setCommentState(copy);
+    }
+
     return (commentOpen &&
       <form className={classes.root} autoComplete="off">
         <Grid container className={classes.smallContainer}>
@@ -223,8 +235,8 @@ const postingCard = (props) => {
               multiline
               fullWidth
               placeholder="Write a comment..."
-              value={commentState}
-              onInput={e => setCommentState(e.target.value)}
+              value={commentState.description}
+              onInput={e => handleInput(e.target.value)}
               InputProps={{
                 maxLength: 1000,
                 classes: {
@@ -233,7 +245,7 @@ const postingCard = (props) => {
                 endAdornment:
                   <InputAdornment position="end">
                     <IconButton
-                      onClick={handleComment}
+                      onClick={() => handleComment(commentState)}
                     >
                       <SendIcon color="primary" />
                     </IconButton>
@@ -320,14 +332,10 @@ const postingCard = (props) => {
   const displayComments = () => {
     // console.log(props.postId);
     return (
-      // <PostingCommentCard
-      //   node={props.postId}
-      //   comments={props.comments}
-      //   ultimateParentPostId={props.postId}
-      // />
       <PostingCommentTree 
         comments={props.comments}
         ultimateParentPostId={props.postId}
+        postingCardHandleComment={handleComment}
       />
     );
   }

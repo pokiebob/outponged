@@ -1,19 +1,19 @@
 import React, { useState } from 'react';
+import { makeStyles } from '@material-ui/core';
 import Button from "@material-ui/core/Button";
-
+import RenderComment from './RenderComment';
 
 const postingCommentTree = (props) => {
+
     const flatComments = props.comments.map(fc => {
-        return {
-            isRoot: fc.parentPostId === fc.postId,
-            postId: fc.postId,
-            parentPostId: fc.parentPostId,
-            description: fc.description,
-            date: fc.date,
-            numVisibleChildren: fc.postId === fc.ultimateParentPostId ? 2 : 0,
-            numImmediateChildren: props.comments.filter(x => x.parentPostId === fc.postId && x.parentPostId != x.postId).length
-        }
-    })
+        return (
+            {
+                ...fc,
+                isRoot: fc.parentPostId === fc.postId,
+                numVisibleChildren: fc.postId === fc.ultimateParentPostId ? 2 : 0,
+                numImmediateChildren: props.comments.filter(x => x.parentPostId === fc.postId && x.parentPostId != x.postId).length
+            });
+    });
     const [nodes, setNodes] = useState(flatComments);
 
     const maxLevel = 2;
@@ -27,6 +27,30 @@ const postingCommentTree = (props) => {
 
     const recurHelper = (postId, level) => {
 
+        const commentStyle = {
+            marginLeft: 60 * (level - 1) + "px",
+        }
+        const buttonStyle = {
+            marginLeft: level === 0 ? "0px" : "60px"
+        }
+
+        const handleComment = (newCommentDescription) => {
+            const newComment = {
+                parentPostId: postId,
+                description: newCommentDescription
+            }
+            // console.log('[PostingCommentTree.js]', newComment);
+            props.postingCardHandleComment(newComment);
+        }
+
+        const postingCommentCard = (item, level) => {
+            //level 0 is the post itself
+            return (level > 0 &&
+                <div style={commentStyle}>
+                    <RenderComment comment={item} level={level} treeHandleComment={handleComment} />
+                </div>
+            );
+        }
 
         if (level > maxLevel) {
             return "";
@@ -34,13 +58,13 @@ const postingCommentTree = (props) => {
 
         const item = nodes.find((c) => c.postId === postId);
         // console.log(postId, item);
-        const children = nodes.filter((c) => c.parentPostId === postId && ! c.isRoot) || [];
+        const children = nodes.filter((c) => c.parentPostId === postId && !c.isRoot) || [];
         const sortByDate = (c) => {
             return c?.sort((a, b) => -a.date.localeCompare(b.date))
         }
 
         const topNChildren = sortByDate(children).slice(0, item.numVisibleChildren);
-        console.log(item.description, topNChildren);
+        // console.log(item.description, topNChildren);
         return (
             <div>
                 {postingCommentCard(item, level)}
@@ -50,37 +74,15 @@ const postingCommentTree = (props) => {
                     </div>
                 ))}
                 {level < 2 && item.numVisibleChildren < item.numImmediateChildren &&
-                    <div>
+                    <div style={buttonStyle}>
                         <Button
+                            size="small"
+                            color="primary"
+                            // style={{ marginLeft: "40px" }}
                             onClick={() => readMore(item.postId)}
-                        >Read More</Button>
+                        >View More Comments</Button>
                     </div>}
             </div>
-        );
-    }
-
-    const postingCommentCard = (node, level) => {
-        const boxStyle = {
-            marginLeft: 40 * (level - 1) + "px",
-            marginBottom: "15px",
-            padding: "9px",
-            borderRadius: "15px",
-            backgroundColor: "aliceblue"
-        };
-        //level 0 is the post itself
-        return (
-            <div>
-                {level > 0 &&
-                    <div style={boxStyle}>
-                        <span>{node?.description}</span>{" "}
-                        <span>
-                            {" "}
-                            (postId: {node?.postId} level: {level})
-                        </span>
-                    </div>}
-
-            </div>
-
         );
     }
 
