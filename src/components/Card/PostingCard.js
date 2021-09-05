@@ -26,8 +26,8 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
   },
   container: {
-    marginTop: "5px",
-    marginLeft: "40px"
+    paddingLeft: "40px",
+    paddingRight: "40px"
   },
   small: {
     width: theme.spacing(5),
@@ -106,7 +106,8 @@ const postingCard = (props) => {
   const [numLikes, setNumLikes] = useState(props.numLikes);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [commentOpen, setCommentOpen] = useState(false);
-  
+  const [commentState, setCommentState] = useState(props.comments);
+
 
   const handleClose = () => {
     setDialogOpen(false);
@@ -187,8 +188,15 @@ const postingCard = (props) => {
     fetch(API_URL.post + '?postType=comment', comment)
       .then(resp => resp.json())
       .then((resp) => {
-        console.log('[PostingCard.js]', resp);
-      })
+        // console.log('[PostingCard.js]', resp);
+        addComment(resp);
+      });
+  }
+
+  const addComment = (comment) => {
+    const copy = [...commentState, comment];
+    console.log('newCommentState', copy);
+    setCommentState(copy);
   }
 
   const displayDialog = () => {
@@ -292,12 +300,16 @@ const postingCard = (props) => {
   const displayComments = () => {
     // console.log(props.postId);
     return (
-      <PostingCommentTree
-        comments={props.comments}
-        ultimateParentPostId={props.postId}
-        postingCardHandleComment={handleComment}
-        rootCommentOpen={commentOpen}
-      />
+      <div key={props.postId}>
+        <div key={commentState}>
+          <PostingCommentTree
+            comments={commentState}
+            ultimateParentPostId={props.postId}
+            postingCardHandleComment={handleComment}
+            rootCommentOpen={commentOpen}
+          />
+        </div>
+      </div>
     );
   }
 
@@ -321,14 +333,14 @@ const postingCard = (props) => {
           </Grid>
         </Grid>
         <Grid container>
-          <Grid xs={10} item>
+          <Grid xs={12} item>
             <Card className={classes.videoWrapper}>
               {displayFile()}
             </Card>
           </Grid>
         </Grid>
         <Grid container>
-          <Grid xs={10} item>
+          <Grid xs={12} item>
             {displayInteractionBar()}
             <div className={classes.description}>{props.description}</div>
             {displayComments()}

@@ -45,7 +45,7 @@ const postingCommentTree = (props) => {
     const recurHelper = (postId, level) => {
 
         const commentStyle = {
-            marginLeft: 60 * (level - 1) + "px",
+            marginLeft: 60 * (level > 1 ? level - 1 : 0) + "px",
         }
         const buttonStyle = {
             marginTop: "10px",

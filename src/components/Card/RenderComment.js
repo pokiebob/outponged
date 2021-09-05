@@ -82,8 +82,11 @@ const useStyles = makeStyles((theme) => ({
     reducedPadding: {
         padding: "0px 0 7px"
     },
-    rootCommentField: {
-        marginLeft: "60px"
+    avatarSmallContainer: {
+        minWidth: "50px"
+    },
+    avatarExtraSmallContainer: {
+        minWidth: "40px"
     }
 }));
 
@@ -173,7 +176,7 @@ const renderComment = ({ comment, level, treeHandleComment, rootCommentOpen }) =
 
     const handleOpenComment = () => {
         setCommentOpen(!commentOpen);
-        console.log("root comment open set to true");
+        // console.log("root comment open set to true");
     }
 
     const displayInteractionBar = () => {
@@ -207,24 +210,22 @@ const renderComment = ({ comment, level, treeHandleComment, rootCommentOpen }) =
     return (
         level === 0 ?
             <Grid container >
-                <Grid item xs={10} className={classes.rootCommentField}>
+                <Grid item xs={12} >
                     {displayCommentField()}
                 </Grid>
             </Grid>
             :
-            <Grid container className=
-                //not first comment
-                {level === 2 && !comment.isFirstChild ? classes.border : {}}
+            <Grid container className={level === 2 && !comment.isFirstChild ? classes.border : {}}
             >
                 <Grid container className={classes.smallContainer}>
                     <Grid container className={
                         //first comment
                         level === 2 && comment.isFirstChild ? classes.border : {}
                     }>
-                        <Grid item >
+                        <Grid item xs={1} className={level === 1 ? classes.avatarSmallContainer : classes.avatarExtraSmallContainer}>
                             <Avatar src={comment.ownerProfilePic} className={level < 2 ? classes.small : classes.extraSmall} />
                         </Grid>
-                        <Grid item xs={10} className={classes.outerCol}>
+                        <Grid item xs={10}>
                             <div>
                                 <span className={classes.name}>{comment.ownerName}</span>
                                 <span className={classes.date}>{date.toLocaleDateString()}</span>

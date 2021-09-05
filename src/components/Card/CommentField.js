@@ -21,6 +21,10 @@ const useStyles = makeStyles((theme) => ({
         width: theme.spacing(3),
         height: theme.spacing(3)
     },
+    border: {
+        // borderLeft: "1px solid lightgray",
+        marginLeft: "10px"
+    },
     outerCol: {
         marginLeft: "20px"
     },
@@ -32,6 +36,12 @@ const useStyles = makeStyles((theme) => ({
     },
     reducedPadding: {
         padding: "0px 0 7px"
+    },
+    fieldActions: {
+        float: 'right'
+    },
+    avatarContainer: {
+        minWidth: "60px"
     }
 }));
 
@@ -43,37 +53,38 @@ const commentField = ({ handleComment, level, parentOwnerName, closeComment }) =
     return (
         <form className={classes.root} autoComplete="off">
             <Grid container className={classes.smallContainer}>
-                <Grid item>
-                    <Avatar src={userContext.pictureUrl} className={level > 0 ? classes.extraSmall : classes.small} />
-                </Grid>
-                <Grid item xs={10} className={classes.outerCol}>
-                    <TextField
-                        multiline
-                        fullWidth
-                        placeholder="Write a comment..."
-                        defaultValue={level === 2 ? "@" + parentOwnerName + " " : ""}
-                        value={commentState}
-                        onInput={e => setCommentState(e.target.value)}
-                        InputProps={{
-                            maxLength: 1000,
-                            classes: {
-                                input: classes.font,
-                            },
-                            endAdornment:
-                                <InputAdornment position="end">
-                                    <IconButton
-                                        onClick={closeComment}
-                                    >
-                                        <CloseIcon />
-                                    </IconButton>
-                                    <IconButton
-                                        onClick={() => handleComment(commentState)}
-                                    >
-                                        <SendIcon color="primary" />
-                                    </IconButton>
-                                </InputAdornment>
-                        }}
-                    />
+                <Grid container className={level === 1 ? classes.border : {}} >
+                    <Grid item className={classes.avatarContainer} sm={1}>
+                        <Avatar src={userContext.pictureUrl} className={level > 0 ? classes.extraSmall : classes.small} />
+                    </Grid>
+                    <Grid item xs={12} sm={10}>
+                        <TextField
+                            multiline
+                            fullWidth
+                            placeholder="Write a comment..."
+                            defaultValue={level === 2 ? "@" + parentOwnerName + " " : ""}
+                            value={commentState}
+                            onInput={e => setCommentState(e.target.value)}
+                            InputProps={{
+                                maxLength: 1000,
+                                classes: {
+                                    input: classes.font,
+                                },
+                            }}
+                        />
+                        <div className={classes.fieldActions}>
+                            <IconButton
+                                onClick={closeComment}
+                            >
+                                <CloseIcon />
+                            </IconButton>
+                            <IconButton
+                                onClick={() => handleComment(commentState)}
+                            >
+                                <SendIcon color="primary" />
+                            </IconButton>
+                        </div>
+                    </Grid>
                 </Grid>
             </Grid>
         </form>

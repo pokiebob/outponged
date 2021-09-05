@@ -147,7 +147,7 @@ const personPage = () => {
     fetch(API_URL.post + "find/?page=pp&ppid=" + getPersonId() + "&upid=" + userContext?.personId)
       .then(resp => resp.json())
       .then((postings) => {
-        console.log('postings', postings);
+        // console.log('postings', postings);
         setPostingState(postings.reverse());
       });
   }
