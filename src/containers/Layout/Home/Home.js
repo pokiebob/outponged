@@ -69,38 +69,31 @@ const home = () => {
     const [dialogOpen, setDialogOpen] = useState(false);
     const [awsUser, setAwsUser] = useState(null);
     const history = useHistory();
-    // const [userContext, setUserContext] = useContext(Context);
     useEffect(() => {
+      const ga = window.gapi && window.gapi.auth2 ?
+        window.gapi.auth2:
+        null;
+
+      console.log(ga);
+      if (!ga) createScript();
+
       const updateUser = async () => {
-        // try {
-        //   const info = localStorage;
-        //   const provider = "CognitoIdentityServiceProvider.7jr2f6rahrfv2mbpuqfogivjob."
-        //   const user = info.getItem(provider + "LastAuthUser");
-        //   const userData = JSON.parse(info.getItem(provider + user + ".userData"));
-        //   console.log('info', info);
-        //   console.log('user', user);
-        //   console.log('userData', userData);
-        //   setAwsUser(userData);
-        // } catch (error) {
-        //   console.log(error);
-        // }
-        // setTimeout(async () => {
         try {
-          await Auth.currentSession()
+          await Auth.currentAuthenticatedUser()
             .then((data) => {
               console.log('data', data);
               if (data) {
-                const payload = data.getIdToken().payload
-                setAwsUser(payload);
+                // const payload = data.getIdToken().payload
+                // setAwsUser(payload);
+                setAwsUser(data);
               } else {
-                console.log('user not received');
+                console.log('user not received, logging in as guest');
                 logInAsGuestUser();
               }
             });
         } catch (error) {
-          console.log(error);
+          console.log('Auth.currentAuthenticatedUser()', error, awsUser);
         }
-        // },100);
       }
       Hub.listen('auth', updateUser) // listen for login/signup events
       updateUser() // check manually the first time because we won't get a Hub event
@@ -115,31 +108,15 @@ const home = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          personId: user.sub,
-          email: user.email,
-          externalId: {
-            awsIdentity: user.sub
-          },
-          role: {
-            player: false,
-            coach: false
-          },
-          links: {
-            persons: {
-            },
-            clubs: {
-            }
-          }
+          email: user.email
         })
       }
 
       fetch(API_URL.person, post)
         .then(resp => resp.json())
         .then((resp) => {
-          // console.log("MONGO response:", resp);
-        })
-        .then(
-          fetch(API_URL.person + user.sub)
+          console.log("MONGO response:", resp);
+          fetch(API_URL.person + resp.personId)
             .then(resp => resp.json())
             .then((personData) => {
               setUserContext(personData);
@@ -151,6 +128,7 @@ const home = () => {
                 history.push('/edit-person-profile/' + personData?.personId);
               }
             })
+        }
         );
     }
 
@@ -271,7 +249,9 @@ const home = () => {
                 component={Link} to={"/home/"}
                 onClick={() => {
                   setUserContext();
+                  isLoggedIn = false;
                   Auth.signOut();
+                  window.location.reload(false);
                 }}>
                 Sign Out
               </MenuItem>
@@ -331,41 +311,50 @@ const home = () => {
       }
     }
 
-    useEffect(() => {
-      // const ga = window.gapi && window.gapi.auth2 ?
-      //   window.gapi.auth2.getAuthInstance() :
-      //   null;
+    const handleLogIn = async () => {
+      // Auth.federatedSignIn({provider: 'Google'});
+      setDialogOpen(false);
+      const ga = window.gapi.auth2.getAuthInstance();
+      if (!ga.isSignedIn.get()) {
+        ga.signIn().then(
+          googleUser => {
+            getAWSCredentials(googleUser);
+          },
+          err => {
+            console.log(err);
+          }
+        );
+      } else {
+        console.log(ga.currentUser.get());
+        await Auth.signOut().then(
+          getAWSCredentials(ga.currentUser.get()));
+      }
 
-      // if (!ga) createScript();
-    }, [])
-
-    const handleLogIn = () => {
-      Auth.federatedSignIn({provider: 'Google'});
-      // const ga = window.gapi.auth2.getAuthInstance();
-      // ga.signIn().then(
-      //   googleUser => {
-      //     getAWSCredentials(googleUser);
-      //   },
-      //   error => {
-      //     console.log(error);
-      //   }
-      // );
     }
 
     const getAWSCredentials = async (googleUser) => {
-      const { id_token, expires_at } = googleUser.getAuthResponse();
-      const profile = googleUser.getBasicProfile();
-      let user = {
-        email: profile.getEmail(),
-        name: profile.getName()
-      };
+      const id_token = googleUser.Zb.id_token;
+      const expires_at = googleUser.Zb.expires_at;
+      const user = {
+        email: googleUser.Rs.Ct,
+        name: googleUser.Rs.Qe
+      }
 
-      const credentials = await Auth.federatedSignIn(
+      // const { id_token, expires_at } = googleUser.getAuthResponse();
+      // const profile = googleUser.getBasicProfile();
+      // let user = {
+      //   email: profile.getEmail(),
+      //   name: profile.getName()
+      // };
+
+      await Auth.federatedSignIn(
         'google',
         { token: id_token, expires_at },
         user
+      ).then((credentials) => {
+        console.log('credentials', credentials)
+      }
       );
-      console.log('credentials', credentials);
     }
 
     const createScript = () => {
