@@ -1,42 +1,40 @@
-import React, { useContext } from "react";
-import { Context } from "../../../Context";
-import { useHistory } from "react-router-dom";
-
-//Material UI
-import { makeStyles } from "@material-ui/core/styles";
+//MUI
 import AppBar from "@material-ui/core/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
-import Typography from "@material-ui/core/Typography";
-import Button from "@material-ui/core/Button";
-import IconButton from "@material-ui/core/IconButton";
-import MenuIcon from "@material-ui/icons/Menu";
+import Avatar from '@material-ui/core/Avatar';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 import Drawer from "@material-ui/core/Drawer";
+import IconButton from "@material-ui/core/IconButton";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
-import AddIcon from '@material-ui/icons/Add';
-import Avatar from '@material-ui/core/Avatar';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-
+import { makeStyles } from "@material-ui/core/styles";
+import Toolbar from "@material-ui/core/Toolbar";
+import Typography from "@material-ui/core/Typography";
 // Icons
+import AddIcon from '@material-ui/icons/Add';
+import MenuIcon from "@material-ui/icons/Menu";
+//
+import { Auth, Hub } from 'aws-amplify';
 import TableTennis from "mdi-material-ui/TableTennis";
-
-import "./Home.css";
-
-// Components
-import { Route, Link, Switch, Redirect } from "react-router-dom";
-import Players from "../Person/Players/Players";
+import React, { useContext, useEffect, useState } from "react";
+import GoogleButton from 'react-google-button';
+import { Link, Route, Switch, useHistory } from "react-router-dom";
+import { API_URL } from "../../../api-url";
+import { Context } from "../../../Context";
+//Routes
 import Clubs from "../Club/Clubs/Clubs";
-import PersonProfile from "../Person/Profile/PersonProfile";
-import EditPersonProfile from "../Person/Profile/EditProfile";
 import ClubProfile from "../Club/Profile/ClubProfile";
+import Players from "../Person/Players/Players";
+import EditPersonProfile from "../Person/Profile/EditProfile";
+import PersonProfile from "../Person/Profile/PersonProfile";
 import Post from "../Post/Post";
 import Feed from "./Feed/Feed";
-
-//Amplify
-import { Auth, Hub } from 'aws-amplify';
-import { API_URL } from "../../../api-url";
-
+import "./Home.css";
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
@@ -64,16 +62,15 @@ const home = () => {
   const [userContext, setUserContext] = useContext(Context);
   // const [personDataState, setPersonDataState] = React.useState();
   const renderAppBar = (classes) => {
-    const [state, setState] = React.useState({
+    const [state, setState] = useState({
       isDrawerOpen: false,
       isMenuOpen: false,
     });
-
-
-    const [awsUser, setAwsUser] = React.useState(null);
+    const [dialogOpen, setDialogOpen] = useState(false);
+    const [awsUser, setAwsUser] = useState(null);
     const history = useHistory();
     // const [userContext, setUserContext] = useContext(Context);
-    React.useEffect(() => {
+    useEffect(() => {
       const updateUser = async () => {
         // try {
         //   const info = localStorage;
@@ -97,6 +94,7 @@ const home = () => {
                 setAwsUser(payload);
               } else {
                 console.log('user not received');
+                logInAsGuestUser();
               }
             });
         } catch (error) {
@@ -182,7 +180,7 @@ const home = () => {
     const renderNavList = () => {
       return (
         <List>
-          <ListItem button component={Link} to="/home/" onClick={toggleDrawer(false)}>
+          <ListItem component={Link} to="/home/" onClick={toggleDrawer(false)}>
             <TableTennis />
             {/* <ListItemText primary={"Home"} href="/home/" /> */}
             Home
@@ -313,7 +311,8 @@ const home = () => {
             >
               <MenuItem
                 onClick={() => {
-                  Auth.federatedSignIn();
+                  // Auth.federatedSignIn();
+                  setDialogOpen(true);
                 }}>
                 Login or Create Account
               </MenuItem>
@@ -326,9 +325,89 @@ const home = () => {
                 Login as Guest User
               </MenuItem>
             </Menu>
+            {displayDialog()}
           </div>
         );
       }
+    }
+
+    useEffect(() => {
+      // const ga = window.gapi && window.gapi.auth2 ?
+      //   window.gapi.auth2.getAuthInstance() :
+      //   null;
+
+      // if (!ga) createScript();
+    }, [])
+
+    const handleLogIn = () => {
+      Auth.federatedSignIn({provider: 'Google'});
+      // const ga = window.gapi.auth2.getAuthInstance();
+      // ga.signIn().then(
+      //   googleUser => {
+      //     getAWSCredentials(googleUser);
+      //   },
+      //   error => {
+      //     console.log(error);
+      //   }
+      // );
+    }
+
+    const getAWSCredentials = async (googleUser) => {
+      const { id_token, expires_at } = googleUser.getAuthResponse();
+      const profile = googleUser.getBasicProfile();
+      let user = {
+        email: profile.getEmail(),
+        name: profile.getName()
+      };
+
+      const credentials = await Auth.federatedSignIn(
+        'google',
+        { token: id_token, expires_at },
+        user
+      );
+      console.log('credentials', credentials);
+    }
+
+    const createScript = () => {
+      // load the Google SDK
+      const script = document.createElement('script');
+      script.src = 'https://apis.google.com/js/platform.js';
+      script.async = true;
+      script.onload = initGapi;
+      document.body.appendChild(script);
+    }
+
+    const initGapi = () => {
+      // init the Google SDK client
+      const g = window.gapi;
+      g.load('auth2', function () {
+        g.auth2.init({
+          client_id: '935856095530-b68opn4gva9dm1rhgtrt9j5lo9io23e3.apps.googleusercontent.com',
+          // authorized scopes
+          scope: 'profile email openid'
+        });
+      });
+    }
+
+    const displayDialog = () => {
+      return (
+        <Dialog
+          open={dialogOpen}
+          onClose={() => setDialogOpen(false)}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">Log In</DialogTitle>
+          <DialogActions>
+            <GoogleButton onClick={handleLogIn} />
+          </DialogActions>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+            </DialogContentText>
+          </DialogContent>
+
+        </Dialog>
+      )
     }
 
     return (
