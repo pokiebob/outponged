@@ -1,1 +1,1 @@
-export const APP_PAPER_ELEVATION = 4;
+export const APP_PAPER_ELEVATION = 2;

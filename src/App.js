@@ -8,7 +8,7 @@ const app = () => {
   return (
     // <BrowserRouter basename="/my-app">
     <BrowserRouter>
-      <div className="App">
+      <div className="App" >
         <Context.Provider value={[userContext, setUserContext]}>
           <Home />
         </Context.Provider>

@@ -3,6 +3,7 @@ import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
+import Card from "@material-ui/core/Card";
 import { makeStyles } from "@material-ui/core/styles";
 import Tab from "@material-ui/core/Tab";
 import Tabs from "@material-ui/core/Tabs";
@@ -13,7 +14,7 @@ import { API_URL } from '../../../../api-url';
 import { APP_PAPER_ELEVATION } from "../../../../app-config";
 import { Context } from "../../../../Context";
 import PostingCard from '../../../../components/Card/PostingCard';
-
+import reducePostings from "../../../../postingReducer";
 
 function a11yProps(index) {
   return {
@@ -29,8 +30,8 @@ const useStyles = makeStyles((theme) => ({
   paper: {
     marginTop: "30px",
     width: "100%",
-    "min-width": "400px",
-    "max-width": "700px"
+    minWidth: 400,
+    maxWidth: 700
   },
   bar: {
     border: "none",
@@ -148,7 +149,7 @@ const personPage = () => {
       .then(resp => resp.json())
       .then((postings) => {
         // console.log('postings', postings);
-        setPostingState(postings.reverse());
+        setPostingState(reducePostings(postings));
       });
   }
 
@@ -375,13 +376,10 @@ const personPage = () => {
 
   const renderPostings = () => {
     return (
-      postingState?.filter(x => x.postType === "post").map((post, idx) => {
-        const comments = postingState?.filter(x => x.ultimateParentPostId === post.postId);
-        // console.log(post.title, comments);
-        const date = new Date(post.date);
+      postingState?.map((post) => {
         return (
-          <Paper className={classes.paper} elevation={APP_PAPER_ELEVATION}>
-            <Grid container className={classes.container}>
+          <Card className={classes.paper} elevation={APP_PAPER_ELEVATION}>
+            <Grid container>
               <PostingCard
                 ownerId={post.ownerId}
                 pictureUrl={post.ownerProfilePic}
@@ -390,14 +388,14 @@ const personPage = () => {
                 fileUrl={post.fileUrl}
                 fileType={post.fileType}
                 description={post.description}
-                date={date.toLocaleDateString()}
+                date={post.date}
                 postId={post.postId}
                 isLiked={post.isLiked}
                 numLikes={post.numLikes}
-                comments={comments}
+                comments={post.comments}
               />
             </Grid>
-          </Paper>
+          </Card>
         );
       }
       )

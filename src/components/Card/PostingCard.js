@@ -1,3 +1,4 @@
+import { CardContent, CardHeader } from "@material-ui/core";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import Card from "@material-ui/core/Card";
@@ -12,6 +13,7 @@ import IconButton from "@material-ui/core/IconButton";
 import { makeStyles } from "@material-ui/core/styles";
 import CommentIcon from '@material-ui/icons/ChatBubbleOutline';
 import ThumbUpIcon from '@material-ui/icons/ThumbUp';
+import MoreVertIcon from "@material-ui/icons/MoreVert";
 import ThumbUpOutlined from '@material-ui/icons/ThumbUpOutlined';
 import React, { useContext, useState } from "react";
 import { API_URL } from "../../api-url";
@@ -42,19 +44,11 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.text.secondary,
   },
   title: {
-    marginTop: "10px",
     fontSize: "18px",
   },
-  videoWrapper: {
-    position: "relative",
-    paddingTop: "56.25%",
-    marginTop: "10px",
-  },
-  videoPlayer: {
-    position: "absolute",
-    top: "0",
-    height: "100%",
-    width: "100%",
+  media: {
+    height: 0,
+    paddingTop: "100%", // 16:9
   },
   description: {
     // color: theme.palette.text.secondary,
@@ -114,7 +108,7 @@ const postingCard = (props) => {
     if (props.fileType.includes("video")) {
       return (
         <CardMedia
-          className={classes.videoPlayer}
+          className={classes.media}
           component="video"
           alt="Title"
           image={props.fileUrl}
@@ -125,7 +119,7 @@ const postingCard = (props) => {
     else {
       return (
         <CardMedia
-          className={classes.videoPlayer}
+          className={classes.media}
           media="picture"
           alt="Title"
           image={props.fileUrl}
@@ -311,28 +305,35 @@ const postingCard = (props) => {
 
   return (
     <div className={classes.root}>
-      <Grid container className={classes.container} spacing={2}>
-        <Grid container>
-          <Grid item >
-            <Avatar src={props.pictureUrl} className={classes.small} />
-          </Grid>
-          <Grid item>
-            <div className={classes.name}>{props.name}</div>
-            <div className={classes.date}>{props.date}</div>
-          </Grid>
-          {/* add role and follow button */}
+      {/* <Grid container spacing={2}> */}
+      <CardHeader
+        avatar={
+          <Avatar aria-label={props.name} className={classes.small} src={props.pictureUrl} />
+        }
+        action={
+          <IconButton aria-label="settings">
+            <MoreVertIcon />
+          </IconButton>
+        }
+        title={props.name}
+        subheader={props.date}
+      >
+        {/* <Grid container>
+              <Grid item >
+                <Avatar src={props.pictureUrl} className={classes.small} />
+              </Grid>
+              <Grid item>
+                <div className={classes.name}>{props.name}</div>
+                <div className={classes.date}>{props.date}</div>
+              </Grid>
 
-        </Grid>
+            </Grid> */}
+      </CardHeader>
+      {displayFile()}
+      <CardContent>
         <Grid container>
           <Grid item>
             <div className={classes.title}>{props.title}</div>
-          </Grid>
-        </Grid>
-        <Grid container>
-          <Grid xs={12} item>
-            <Card className={classes.videoWrapper}>
-              {displayFile()}
-            </Card>
           </Grid>
         </Grid>
         <Grid container>
@@ -342,7 +343,8 @@ const postingCard = (props) => {
             {displayComments()}
           </Grid>
         </Grid>
-      </Grid>
+      </CardContent>
+      {/* </Grid> */}
     </div>
   );
 }
