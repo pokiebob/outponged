@@ -101,8 +101,8 @@ const feed = () => {
     return (
       postingState?.map((post) => {
         return (
-          <Card className={classes.paper} elevation={APP_PAPER_ELEVATION}>
-            <Grid container>
+          <Grid container justify="center">
+            <Card className={classes.paper} elevation={APP_PAPER_ELEVATION}>
               <PostingCard
                 ownerId={post.ownerId}
                 pictureUrl={post.ownerProfilePic}
@@ -117,8 +117,8 @@ const feed = () => {
                 numLikes={post.numLikes}
                 comments={post.comments}
               />
-            </Grid>
-          </Card>
+            </Card>
+          </Grid>
         );
       }
       )
