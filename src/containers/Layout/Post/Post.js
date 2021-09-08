@@ -1,22 +1,21 @@
-import React, { useContext, useEffect, useState } from "react";
-import { Context } from "../../../Context";
-import { makeStyles } from "@material-ui/core/styles";
-import Paper from "@material-ui/core/Paper";
-import Grid from "@material-ui/core/Grid";
+import { CardContent, CardHeader, TextField } from "@material-ui/core";
 import Avatar from "@material-ui/core/Avatar";
-import IconButton from "@material-ui/core/IconButton";
-import CreateIcon from '@material-ui/icons/Create';
-import ReactPlayer from 'react-player';
+import Button from "@material-ui/core/Button";
 import Card from "@material-ui/core/Card";
 import CardActions from "@material-ui/core/CardActions";
 import CardMedia from "@material-ui/core/CardMedia";
-import Button from "@material-ui/core/Button";
-import { aws } from '../../../keys';
+import Grid from "@material-ui/core/Grid";
+import { makeStyles } from "@material-ui/core/styles";
+import PublishIcon from '@material-ui/icons/Publish';
 import S3 from 'aws-s3';
-import { API_URL } from '../../../api-url';
-import { TextField } from "@material-ui/core";
+import React, { useContext, useState } from "react";
 import { useHistory } from "react-router-dom";
+import { API_URL } from '../../../api-url';
 import { APP_PAPER_ELEVATION } from "../../../app-config";
+import { Context } from "../../../Context";
+import Backdrop from '@material-ui/core/Backdrop';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import { aws } from '../../../keys';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -40,7 +39,7 @@ const useStyles = makeStyles((theme) => ({
         width: theme.spacing(5),
         height: theme.spacing(5),
     },
-    editIcon: {
+    fileIcon: {
         width: theme.spacing(5),
         height: theme.spacing(5)
     },
@@ -49,21 +48,9 @@ const useStyles = makeStyles((theme) => ({
         "font-size": "20px",
         // marginLeft: "10px",
     },
-    videoWrapper: {
-        position: "relative",
-        paddingTop: "56.25%",
-        marginTop: "10px",
-    },
-    videoPlayer: {
-        position: "absolute",
-        top: "0",
-        height: "100%",
-        width: "100%"
-    },
-    cardContent: {
-        position: "relative",
-        color: "#ffffff",
-        justifyContent: "flex-end"
+    media: {
+        height: 0,
+        paddingTop: "100%", // 16:9
     },
     form: {
         marginTop: "2px",
@@ -71,7 +58,11 @@ const useStyles = makeStyles((theme) => ({
     createPost: {
         marginTop: "15px",
         whiteSpace: "nowrap"
-    }
+    },
+    backdrop: {
+        zIndex: theme.zIndex.drawer + 1,
+        color: '#fff',
+    },
 }));
 
 
@@ -81,6 +72,7 @@ const post = () => {
     const history = useHistory();
 
     const [file, setFile] = useState();
+    const [loading, setLoading] = useState(false);
 
     // the context modified in Home when user logs in
     const [userContext, setUserContext] = useContext(Context);
@@ -126,13 +118,10 @@ const post = () => {
     const displayFile = () => {
         if (!file) {
             return (
-                <CardMedia
-                    className={classes.videoPlayer}
-                    media="picture"
-                    alt="Title"
-                    image="https://workwiththebest.intraway.com/wp-content/uploads/sites/4/2016/10/upload-1118929_960_720.png"
-                />
-            );
+                <CardContent >
+                    Step 1 <hr></hr>
+                </CardContent>
+            )
         }
         if (file.type.includes("video")) {
             return (
@@ -142,7 +131,7 @@ const post = () => {
                 //     controls="true"
                 // />
                 <CardMedia
-                    className={classes.videoPlayer}
+                    className={classes.media}
                     component="video"
                     alt="Title"
                     image={URL.createObjectURL(file)}
@@ -153,7 +142,7 @@ const post = () => {
         else {
             return (
                 <CardMedia
-                    className={classes.videoPlayer}
+                    className={classes.media}
                     media="picture"
                     alt="Title"
                     image={URL.createObjectURL(file)}
@@ -165,6 +154,7 @@ const post = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         console.log('submitting', postRef.current);
+        setLoading(true);
 
         S3Client
             .uploadFile(file)
@@ -197,6 +187,7 @@ const post = () => {
                     .then(resp => resp.json())
                     .then((resp) => {
                         console.log(resp);
+                        setLoading(false);
                         navigateToPersonProfile(userContext.personId);
                     });
             })
@@ -210,43 +201,35 @@ const post = () => {
     }
 
     const renderPostCard = () => {
+        const date = new Date();
 
         return (
-            <Paper className={classes.paper} elevation={APP_PAPER_ELEVATION}>
-                <Grid className={classes.container} >
-                    {/* <Grid container>
-                        <Grid xs={12} item >
-                            <div className={classes.header}>New Post</div>
-                        </Grid
-                    </Grid> */}
-                    <Grid container spacing={2}>
-                        <Grid item >
-                            <Avatar src={userContext?.pictureUrl} className={classes.small} />
-                        </Grid>
-                        <Grid item >
-                            <div className={classes.name}>{`${userContext?.firstName} ${userContext?.lastName}`}</div>
-                        </Grid>
-                    </Grid>
+            <Card className={classes.paper} elevation={APP_PAPER_ELEVATION}>
+                <CardHeader
+                    avatar={
+                        <Avatar src={userContext?.pictureUrl} className={classes.small} />
+                    }
+                    title={`${userContext?.firstName} ${userContext?.lastName}`}
+                    subheader={date.toLocaleDateString()}
+                />
 
-                    <Grid xs={6} item >
-                        <Card className={classes.videoWrapper}>
-                            {displayFile()}
-                            <CardActions className={classes.cardContent}>
-                                <IconButton
-                                    color="inherit"
-                                    component="label"
-                                >
-                                    <CreateIcon className={classes.editIcon} />
-                                    <input
-                                        hidden
-                                        type="file"
-                                        accept="video/*, image/*"
-                                        onChange={onUpload}
-                                    />
-                                </IconButton>
-                            </CardActions>
-                        </Card>
-                    </Grid>
+                {displayFile()}
+                <CardActions >
+                    <input
+                        hidden
+                        type="file"
+                        id="contained-button-file"
+                        accept="video/*, image/*"
+                        onChange={onUpload}
+                    />
+                    <label htmlFor="contained-button-file">
+                        <Button variant="contained" color="default" component="span" startIcon={<PublishIcon />}>
+                            Upload photo or video
+                        </Button>
+                    </label>
+                </CardActions>
+                <CardContent>
+                    Step 2 <hr/>
                     <form
                         autoComplete="off"
                         onSubmit={handleSubmit}
@@ -260,7 +243,7 @@ const post = () => {
                                     required
                                     className={classes.form}
                                     onInput={e => updatePostRef("title", e.target.value)}
-                                    inputProps={{ maxLength: 70 }}
+                                    inputProps={{ maxLength: 100 }}
                                 />
                             </Grid>
                         </Grid>
@@ -288,11 +271,14 @@ const post = () => {
                                 >
                                     Create Post
                                 </Button>
+                                <Backdrop className={classes.backdrop} open={loading} >
+                                    <CircularProgress color="inherit" />
+                                </Backdrop>
                             </Grid>
                         </Grid>
                     </form>
-                </Grid>
-            </Paper>
+                </CardContent>
+            </Card>
         )
     }
 

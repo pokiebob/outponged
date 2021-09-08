@@ -305,29 +305,18 @@ const postingCard = (props) => {
 
   return (
     <div className={classes.root}>
-      {/* <Grid container spacing={2}> */}
       <CardHeader
         avatar={
           <Avatar aria-label={props.name} className={classes.small} src={props.pictureUrl} />
         }
         action={
-          <IconButton aria-label="settings">
+          <IconButton aria-label="settings" title="editing posts not yet available">
             <MoreVertIcon />
           </IconButton>
         }
         title={props.name}
         subheader={props.date}
       >
-        {/* <Grid container>
-              <Grid item >
-                <Avatar src={props.pictureUrl} className={classes.small} />
-              </Grid>
-              <Grid item>
-                <div className={classes.name}>{props.name}</div>
-                <div className={classes.date}>{props.date}</div>
-              </Grid>
-
-            </Grid> */}
       </CardHeader>
       {displayFile()}
       <CardContent>
@@ -344,7 +333,6 @@ const postingCard = (props) => {
           </Grid>
         </Grid>
       </CardContent>
-      {/* </Grid> */}
     </div>
   );
 }
