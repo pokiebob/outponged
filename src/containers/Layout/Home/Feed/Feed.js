@@ -79,7 +79,7 @@ const feed = () => {
   const [userContext, setUserContext] = useContext(Context);
 
   const initialize = () => {
-    fetch(API_URL.post + "find/?page=pp&ppid=" + userContext?.personId + "&upid=" + userContext?.personId)
+    fetch(API_URL.post + "find/home?upid=" + userContext?.personId)
       .then(resp => resp.json())
       .then((postings) => {
         setPostingState(reducePostings(postings));

@@ -1,5 +1,5 @@
 const reducePostings = (postings) => {
-    const filtered = (postings ||[]).filter(x => x.postType === "post").reverse();
+    const filtered = (postings ||[]).filter(x => x.postType === "post");
     
     return filtered.map((post, idx) => {
         const comments = postings.filter(x => x.ultimateParentPostId === post.postId);

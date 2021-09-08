@@ -145,7 +145,7 @@ const personPage = () => {
     //pp = person profile
     //ppid = person id of profile page owner
     //upid = person id of logged in user
-    fetch(API_URL.post + "find/?page=pp&ppid=" + getPersonId() + "&upid=" + userContext?.personId)
+    fetch(API_URL.post + "find/person/?ppid=" + getPersonId() + "&upid=" + userContext?.personId)
       .then(resp => resp.json())
       .then((postings) => {
         // console.log('postings', postings);
