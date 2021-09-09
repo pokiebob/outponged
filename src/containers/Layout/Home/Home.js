@@ -145,7 +145,7 @@ const home = () => {
       setState({ ...state, isDrawerOpen: open });
     };
 
-    const [anchorEl, setAnchorEl] = React.useState(null);
+    const [anchorEl, setAnchorEl] = useState(null);
 
     const handleClick = (event) => {
       setAnchorEl(event.currentTarget);
@@ -259,6 +259,11 @@ const home = () => {
                 component={Link} to={"/person-profile/" + userContext?.personId}
               >
                 View Profile
+              </MenuItem>
+              <MenuItem
+                component={Link} to={"/edit-person-profile/" + userContext?.personId}
+              >
+                Edit Profile
               </MenuItem>
             </Menu>
           </div>

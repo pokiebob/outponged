@@ -225,7 +225,8 @@ const postingCard = (props) => {
       body: JSON.stringify(
         {
           'personId': userContext.personId,
-          'postId': props.postId
+          'postId': props.postId,
+          'postType': 'post'
         }
       )
     }

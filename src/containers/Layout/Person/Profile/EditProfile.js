@@ -330,6 +330,7 @@ const editProfile = () => {
                             <TextField
                                 id="email"
                                 label="Email"
+                                disabled
                                 defaultValue={origPersonState.email}
                                 value={newPersonState?.email}
                                 error={!ATTRIB.EMAIL.isValid}

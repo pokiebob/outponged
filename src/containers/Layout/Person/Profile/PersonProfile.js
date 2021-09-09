@@ -148,6 +148,7 @@ const personPage = () => {
     fetch(API_URL.post + "find/person/?ppid=" + getPersonId() + "&upid=" + userContext?.personId)
       .then(resp => resp.json())
       .then((postings) => {
+        console.log(postings);
         // console.log('postings', postings);
         setPostingState(reducePostings(postings));
       });

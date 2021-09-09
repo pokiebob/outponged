@@ -1,12 +1,16 @@
+import Button from "@material-ui/core/Button";
 import Card from "@material-ui/core/Card";
 import Grid from "@material-ui/core/Grid";
 import { makeStyles } from "@material-ui/core/styles";
+import FilterListIcon from '@material-ui/icons/FilterList';
 import React, { useContext, useEffect, useState } from "react";
 import { API_URL } from "../../../../api-url";
 import { APP_PAPER_ELEVATION } from "../../../../app-config";
 import PostingCard from "../../../../components/Card/PostingCard";
-import reducePostings from "../../../../postingReducer";
 import { Context } from "../../../../Context";
+import reducePostings from "../../../../postingReducer";
+import Menu from "@material-ui/core/Menu";
+import { MenuItem } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -18,58 +22,6 @@ const useStyles = makeStyles((theme) => ({
     "min-width": "400px",
     "max-width": "700px"
   },
-  bar: {
-    border: "none",
-    boxShadow: "none"
-  },
-  container: {
-    marginTop: "20px",
-    marginBottom: "20px",
-  },
-  stats: {
-    color: theme.palette.text.primary,
-    textAlign: "center",
-    "font-size": "30px",
-  },
-  heading: {
-    color: theme.palette.text.primary,
-    textAlign: "center",
-    "font-size": "30px",
-    marginTop: "15px"
-  },
-  subheading: {
-    color: theme.palette.text.primary,
-    textAlign: "center",
-    "font-size": "15px",
-  },
-  subtext: {
-    color: theme.palette.text.secondary,
-    textAlign: "center",
-    "font-size": "13px",
-  },
-  bio: {
-    color: theme.palette.text.secondary,
-    textAlign: "center",
-    "font-size": "15px",
-    marginTop: "20px",
-    marginBottom: "20px"
-  },
-  usattLabel: {
-    color: theme.palette.text.secondary,
-    textAlign: "center",
-    "font-size": "13px",
-    marginTop: "10px",
-  },
-  large: {
-    width: theme.spacing(15),
-    height: theme.spacing(15),
-    margin: "auto"
-  },
-  name: {
-    "margin-top": "20px",
-    "font-size": "18px",
-    textAlign: "center",
-  }
 }));
 
 const feed = () => {
@@ -77,18 +29,31 @@ const feed = () => {
 
   const [postingState, setPostingState] = useState();
   const [userContext, setUserContext] = useContext(Context);
+  const [filterState, setFilterState] = useState();
+  const [anchorEl, setAnchorEl] = useState(null);
 
-  const initialize = () => {
-    fetch(API_URL.post + "find/home?upid=" + userContext?.personId)
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const initialize = (filter) => {
+    setFilterState(filter);
+    setAnchorEl(false);
+    fetch(API_URL.post + "find/home?upid=" + userContext?.personId + "&filter=" + filter)
       .then(resp => resp.json())
       .then((postings) => {
+        console.log(postings);
         setPostingState(reducePostings(postings));
       });
   }
 
   useEffect(() => {
     // console.log('Context',userContext);
-    initialize();
+    initialize("recent");
   }, [userContext]);
 
   /** API CALL 
@@ -125,10 +90,52 @@ const feed = () => {
     );
   }
 
+  const renderFilters = () => {
+    return (
+      <Menu
+        id="customized-menu"
+        anchorEl={anchorEl}
+        keepMounted
+        open={Boolean(anchorEl)}
+        onClose={handleClose}
+        getContentAnchorEl={null}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'center'
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'center'
+        }}
+      >
+        <MenuItem
+          onClick={() => initialize("recent")}>
+          Recent
+        </MenuItem>
+        <MenuItem
+          onClick={() => initialize("likes")}
+        >
+          Likes
+        </MenuItem>
+      </Menu>
+    )
+  }
 
   return (
-    <div className={classes.root}>
-      <Grid container justify="center" >
+    <div className={classes.root} key={postingState} >
+      <Grid container  >
+        <Grid container justify="center">
+          <Grid item className={classes.paper}>
+            <Button
+              startIcon={<FilterListIcon />}
+              onClick={handleClick}
+            >
+              {filterState}
+            </Button>
+            {renderFilters()}
+            <hr />
+          </Grid>
+        </Grid>
         {renderPostings()}
       </Grid>
     </div>

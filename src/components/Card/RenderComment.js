@@ -138,6 +138,7 @@ const renderComment = ({ comment, level, treeHandleComment, rootCommentOpen }) =
             },
             body: JSON.stringify(
                 {
+                    'postType': "comment",
                     'personId': userContext.personId,
                     'postId': comment.postId
                 }
