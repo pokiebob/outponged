@@ -49,7 +49,11 @@ const commentField = ({ handleComment, level, parentOwnerName, closeComment }) =
     const classes = useStyles();
     const [userContext, setUserContext] = useContext(Context);
     const [commentState, setCommentState] = useState();
+    const [disabled, setDisabled] = useState(true);
 
+    const checkDisabled = (comment) => {
+        setDisabled(comment?.trim() <= 0);
+    }
     return (
         <form className={classes.root} autoComplete="off">
             <Grid container className={classes.smallContainer}>
@@ -64,7 +68,11 @@ const commentField = ({ handleComment, level, parentOwnerName, closeComment }) =
                             placeholder="Write a comment..."
                             defaultValue={level === 2 ? "@" + parentOwnerName + " " : ""}
                             value={commentState}
-                            onInput={e => setCommentState(e.target.value)}
+                            onInput={e => {
+                                checkDisabled(e.target.value);
+                                setCommentState(e.target.value);
+                            }
+                            }
                             InputProps={{
                                 maxLength: 1000,
                                 classes: {
@@ -79,9 +87,10 @@ const commentField = ({ handleComment, level, parentOwnerName, closeComment }) =
                                 <CloseIcon />
                             </IconButton>
                             <IconButton
-                                onClick={() => handleComment(commentState)}
+                                onClick={() => handleComment(commentState.trim())}
+                                disabled={disabled}
                             >
-                                <SendIcon color="primary" />
+                                <SendIcon color={disabled ? "default" : "primary"} />
                             </IconButton>
                         </div>
                     </Grid>
