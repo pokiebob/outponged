@@ -33,6 +33,7 @@ import Players from "../Person/Players/Players";
 import EditPersonProfile from "../Person/Profile/EditProfile";
 import PersonProfile from "../Person/Profile/PersonProfile";
 import Post from "../Post/Post";
+import LogIn from "./LogIn";
 import Feed from "./Feed/Feed";
 import "./Home.css";
 const useStyles = makeStyles((theme) => ({
@@ -52,6 +53,9 @@ const useStyles = makeStyles((theme) => ({
     width: theme.spacing(5),
     height: theme.spacing(5),
   },
+  background: {
+    width: "100%"
+  }
 }));
 
 let isLoggedIn = false;
@@ -60,79 +64,83 @@ const home = () => {
   // const forceUpdate = useForceUpdate();
   const classes = useStyles();
   const [userContext, setUserContext] = useContext(Context);
-  // const [personDataState, setPersonDataState] = React.useState();
-  const renderAppBar = (classes) => {
-    const [state, setState] = useState({
-      isDrawerOpen: false,
-      isMenuOpen: false,
-    });
-    const [dialogOpen, setDialogOpen] = useState(false);
-    const [awsUser, setAwsUser] = useState(null);
-    const history = useHistory();
-    useEffect(() => {
-      const ga = window.gapi && window.gapi.auth2 ?
-        window.gapi.auth2:
-        null;
+  const [awsUser, setAwsUser] = useState(null);
+  const history = useHistory();
+  const [state, setState] = useState({
+    isDrawerOpen: false,
+    isMenuOpen: false,
+  });
+  const [anchorEl, setAnchorEl] = useState(null);
 
-      console.log(ga);
-      if (!ga) createScript();
+  useEffect(() => {
+    const ga = window.gapi && window.gapi.auth2 ?
+      window.gapi.auth2 :
+      null;
 
-      const updateUser = async () => {
-        try {
-          await Auth.currentAuthenticatedUser()
-            .then((data) => {
-              console.log('data', data);
-              if (data) {
-                // const payload = data.getIdToken().payload
-                // setAwsUser(payload);
-                setAwsUser(data);
-              } else {
-                console.log('user not received, logging in as guest');
-                logInAsGuestUser();
-              }
-            });
-        } catch (error) {
-          console.log('Auth.currentAuthenticatedUser()', error, awsUser);
-        }
+    console.log(ga);
+    if (!ga) createScript();
+  });
+
+  useEffect(() => {
+
+    const updateUser = async () => {
+      try {
+        await Auth.currentAuthenticatedUser()
+          .then((data) => {
+            console.log('data', data);
+            if (data) {
+              // const payload = data.getIdToken().payload
+              // setAwsUser(payload);
+              setAwsUser(data);
+            } else {
+              console.log('user not received, logging in as guest');
+              logInAsGuestUser();
+            }
+          });
+      } catch (error) {
+        console.log('Auth.currentAuthenticatedUser()', error, awsUser);
       }
-      Hub.listen('auth', updateUser) // listen for login/signup events
-      updateUser() // check manually the first time because we won't get a Hub event
-      return () => Hub.remove('auth', updateUser) // cleanup
-    }, []);
+    }
+    Hub.listen('auth', updateUser) // listen for login/signup events
+    updateUser() // check manually the first time because we won't get a Hub event
+    return () => Hub.remove('auth', updateUser) // cleanup
+  }, []);
 
-    const persistAndRefresh = (user) => {
-      isLoggedIn = true;
-      const post = {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: user.email
-        })
-      }
-
-      fetch(API_URL.person, post)
-        .then(resp => resp.json())
-        .then((resp) => {
-          console.log("MONGO response:", resp);
-          fetch(API_URL.person + resp.personId)
-            .then(resp => resp.json())
-            .then((personData) => {
-              setUserContext(personData);
-              console.log(personData);
-              return personData;
-            })
-            .then((personData) => {
-              if (!personData.firstName || !personData.lastName || personData?.firstName?.length === 0 || personData?.lastName?.length === 0) {
-                history.push('/edit-person-profile/' + personData?.personId);
-              }
-            })
-        }
-        );
+  const persistAndRefresh = (user) => {
+    isLoggedIn = true;
+    const post = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email: user.email
+      })
     }
 
-    if (awsUser && !isLoggedIn) persistAndRefresh(awsUser);
+    fetch(API_URL.person, post)
+      .then(resp => resp.json())
+      .then((resp) => {
+        console.log("MONGO response:", resp);
+        fetch(API_URL.person + resp.personId)
+          .then(resp => resp.json())
+          .then((personData) => {
+            setUserContext(personData);
+            console.log(personData);
+            return personData;
+          })
+          .then((personData) => {
+            if (!personData.firstName || !personData.lastName || personData?.firstName?.length === 0 || personData?.lastName?.length === 0) {
+              history.push('/edit-person-profile/' + personData?.personId);
+            }
+          })
+      }
+      );
+  }
+
+  if (awsUser && !isLoggedIn) persistAndRefresh(awsUser);
+
+  const renderAppBar = (classes) => {
 
     const toggleDrawer = (open) => (event) => {
       if (
@@ -144,8 +152,6 @@ const home = () => {
 
       setState({ ...state, isDrawerOpen: open });
     };
-
-    const [anchorEl, setAnchorEl] = useState(null);
 
     const handleClick = (event) => {
       setAnchorEl(event.currentTarget);
@@ -200,6 +206,7 @@ const home = () => {
       return (
         <IconButton
           aria-label="Post"
+          title="New Post"
           color="inherit"
           component={Link}
           to="/post/"
@@ -268,57 +275,50 @@ const home = () => {
             </Menu>
           </div>
         )
-      } else {
-        return (
-          <div>
-            <IconButton
-              onClick={handleClick}
-              aria-controls="customized-menu"
-              aria-haspopup="true"
-            >
-              <Avatar className={classes.small} />
-            </IconButton>
-            <Menu
-              id="customized-menu"
-              anchorEl={anchorEl}
-              keepMounted
-              open={Boolean(anchorEl)}
-              onClose={handleClose}
-              getContentAnchorEl={null}
-              anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'center'
-              }}
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'center'
-              }}
-            >
-              <MenuItem
-                onClick={() => {
-                  // Auth.federatedSignIn();
-                  setDialogOpen(true);
-                }}>
-                Login or Create Account
-              </MenuItem>
-              <MenuItem
-                onClick={() => {
-                  logInAsGuestUser();
-                }}
-                component={Link} to={"/home/"}
+      }
+
+      return (
+        <div className={classes.root}>
+          <AppBar position="static" className={classes.appBar}>
+            <Toolbar>
+              <IconButton
+                edge="start"
+                className={classes.menuButton}
+                color="inherit"
+                aria-label="menu"
+                onClick={toggleDrawer(true)}
               >
-                Login as Guest User
-              </MenuItem>
-            </Menu>
-            {displayDialog()}
-          </div>
+                <MenuIcon />
+              </IconButton>
+              <Typography variant="h6" className={classes.title}>
+                OutPonged
+              </Typography>
+              {renderPostButton()}
+              {renderLoginButton()}
+
+            </Toolbar>
+          </AppBar>
+          <Drawer open={state.isDrawerOpen} onClose={toggleDrawer(false)}>
+            {renderNavList()}
+          </Drawer>
+        </div>
+      );
+    };
+
+
+
+
+    const renderPostPage = () => {
+      // console.log('renderPostPage userContext', userContext);
+      if (userContext) {
+        return (
+          <Route path="/post" component={Post} />
         );
       }
     }
 
     const handleLogIn = async () => {
       // Auth.federatedSignIn({provider: 'Google'});
-      setDialogOpen(false);
       const ga = window.gapi.auth2.getAuthInstance();
       if (!ga.isSignedIn.get()) {
         ga.signIn().then(
@@ -383,112 +383,33 @@ const home = () => {
       });
     }
 
-    const displayDialog = () => {
-      return (
-        <Dialog
-          open={dialogOpen}
-          onClose={() => setDialogOpen(false)}
-          aria-labelledby="alert-dialog-title"
-          aria-describedby="alert-dialog-description"
-        >
-          <DialogTitle id="alert-dialog-title">Log In</DialogTitle>
-          <DialogActions>
-            <GoogleButton onClick={handleLogIn} />
-          </DialogActions>
-          <DialogContent>
-            <DialogContentText id="alert-dialog-description">
-            </DialogContentText>
-          </DialogContent>
-
-        </Dialog>
-      )
-    }
-
-    return (
-      <div className={classes.root}>
-        <AppBar position="static" className={classes.appBar}>
-          <Toolbar>
-            <IconButton
-              edge="start"
-              className={classes.menuButton}
-              color="inherit"
-              aria-label="menu"
-              onClick={toggleDrawer(true)}
-            >
-              <MenuIcon />
-            </IconButton>
-            <Typography variant="h6" className={classes.title}>
-              OutPonged
-            </Typography>
-            {renderPostButton()}
-            {renderLoginButton()}
-
-          </Toolbar>
-        </AppBar>
-        <Drawer open={state.isDrawerOpen} onClose={toggleDrawer(false)}>
-          {renderNavList()}
-        </Drawer>
-      </div>
-    );
-  };
-
-
-
-
-  const renderPostPage = () => {
-    // console.log('renderPostPage userContext', userContext);
     if (userContext) {
+
       return (
-        <Route path="/post" component={Post} />
+        <div>
+          {renderAppBar(classes)}
+          <Switch>
+            <Route path="/home" component={Feed} />
+            <Route path="/players" component={Players} />
+            <Route path="/clubs" component={Clubs} />
+            <Route path="/person-profile" component={PersonProfile} />
+            <Route path="/edit-person-profile" component={EditPersonProfile} />
+            <Route path="/club-profile" component={ClubProfile} />
+            {renderPostPage()}
+          </Switch>
+
+        </div>
       );
     } else {
+      // rendering the app bar makes the call to aws and mongo
       return (
-        <Route path="/post" >
-          Please Log In
-        </Route>
+        <div >
+          <LogIn handleLogIn={handleLogIn} />
+        </div>
       );
     }
-    // return (
-    //   <Route path="/post" component={Post} />
-    // );
-  }
-
-  if (userContext) {
-
-    return (
-      <div>
-        {renderAppBar(classes)}
-        <Switch>
-          <Route path="/home" component={Feed} />
-          <Route path="/players" component={Players} />
-          <Route path="/clubs" component={Clubs} />
-          <Route path="/person-profile" component={PersonProfile} />
-          <Route path="/edit-person-profile" component={EditPersonProfile} />
-          <Route path="/club-profile" component={ClubProfile} />
-          {renderPostPage()}
-        </Switch>
-
-      </div>
-    );
-  } else {
-    // rendering the app bar makes the call to aws and mongo
-    return (
-      <div>
-        {renderAppBar(classes)}
-        Please log in... (sorry)
-      </div>
-    );
-  }
-};
+  };
+}
 
 
-
-// const renderDrawer = () => {
-//   <React.Fragment>
-//     <Drawer open={true}></Drawer>
-//   </React.Fragment>;
-// };
-
-// {index % 2 === 0 ? <mdiTableTennis /> : <MailIcon />}
-
-export default home;
+  export default home;

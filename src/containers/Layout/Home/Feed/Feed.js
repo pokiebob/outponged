@@ -2,15 +2,17 @@ import Button from "@material-ui/core/Button";
 import Card from "@material-ui/core/Card";
 import Grid from "@material-ui/core/Grid";
 import { makeStyles } from "@material-ui/core/styles";
-import FilterListIcon from '@material-ui/icons/FilterList';
 import React, { useContext, useEffect, useState } from "react";
 import { API_URL } from "../../../../api-url";
 import { APP_PAPER_ELEVATION } from "../../../../app-config";
 import PostingCard from "../../../../components/Card/PostingCard";
 import { Context } from "../../../../Context";
 import reducePostings from "../../../../postingReducer";
+import ThumbUpAltOutlinedIcon from '@material-ui/icons/ThumbUpAltOutlined';
 import Menu from "@material-ui/core/Menu";
+import RestoreIcon from '@material-ui/icons/Restore';
 import { MenuItem } from "@material-ui/core";
+import Chip from "@material-ui/core/Chip";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -30,6 +32,7 @@ const feed = () => {
   const [postingState, setPostingState] = useState();
   const [userContext, setUserContext] = useContext(Context);
   const [filterState, setFilterState] = useState();
+  const [filterIconState, setFilterIconState] = useState();
   const [anchorEl, setAnchorEl] = useState(null);
 
   const handleClick = (event) => {
@@ -42,6 +45,12 @@ const feed = () => {
 
   const initialize = (filter) => {
     setFilterState(filter);
+    if (filter === "recent") {
+      setFilterIconState(<RestoreIcon />);
+    }
+    else if (filter === "likes") {
+      setFilterIconState(<ThumbUpAltOutlinedIcon />);
+    }
     setAnchorEl(false);
     fetch(API_URL.post + "find/home?upid=" + userContext?.personId + "&filter=" + filter)
       .then(resp => resp.json())
@@ -126,12 +135,13 @@ const feed = () => {
       <Grid container  >
         <Grid container justify="center">
           <Grid item className={classes.paper}>
-            <Button
-              startIcon={<FilterListIcon />}
+            <Chip
+              icon={filterIconState}
               onClick={handleClick}
-            >
-              {filterState}
-            </Button>
+              color="primary"
+              variant="outlined"
+              label={filterState?.toUpperCase()}
+            />
             {renderFilters()}
             <hr />
           </Grid>
