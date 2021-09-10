@@ -71,7 +71,7 @@ const home = () => {
       window.gapi.auth2 :
       null;
 
-    console.log(ga);
+    // console.log(ga);
     if (!ga) createScript();
   });
 
@@ -81,7 +81,7 @@ const home = () => {
       try {
         await Auth.currentAuthenticatedUser()
           .then((data) => {
-            console.log('data', data);
+            // console.log('data', data);
             if (data) {
               // const payload = data.getIdToken().payload
               // setAwsUser(payload);
@@ -115,12 +115,12 @@ const home = () => {
     fetch(API_URL.person, post)
       .then(resp => resp.json())
       .then((resp) => {
-        console.log("MONGO response:", resp);
+        // console.log("MONGO response:", resp);
         fetch(API_URL.person + resp.personId)
           .then(resp => resp.json())
           .then((personData) => {
             setUserContext(personData);
-            console.log(personData);
+            // console.log(personData);
             return personData;
           })
           .then((personData) => {
@@ -161,9 +161,8 @@ const home = () => {
     const renderNavList = () => {
       return (
         <List>
-          <ListItem component={Link} to="/home/" onClick={toggleDrawer(false)}>
+          <ListItem button component={Link} to="/home/" onClick={toggleDrawer(false)}>
             <TableTennis />
-            {/* <ListItemText primary={"Home"} href="/home/" /> */}
             Home
           </ListItem>
 
@@ -328,7 +327,7 @@ const home = () => {
         }
       );
     } else {
-      console.log(ga.currentUser.get());
+      // console.log(ga.currentUser.get());
       await Auth.signOut().then(
         getAWSCredentials(ga.currentUser.get()));
     }
@@ -355,7 +354,7 @@ const home = () => {
       { token: id_token, expires_at },
       user
     ).then((credentials) => {
-      console.log('credentials', credentials)
+      // console.log('credentials', credentials)
     }
     );
   }

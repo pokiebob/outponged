@@ -1,7 +1,6 @@
 import { CardContent, CardHeader } from "@material-ui/core";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
-import Card from "@material-ui/core/Card";
 import CardMedia from "@material-ui/core/CardMedia";
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -12,10 +11,11 @@ import Grid from "@material-ui/core/Grid";
 import IconButton from "@material-ui/core/IconButton";
 import { makeStyles } from "@material-ui/core/styles";
 import CommentIcon from '@material-ui/icons/ChatBubbleOutline';
-import ThumbUpIcon from '@material-ui/icons/ThumbUp';
 import MoreVertIcon from "@material-ui/icons/MoreVert";
+import ThumbUpIcon from '@material-ui/icons/ThumbUp';
 import ThumbUpOutlined from '@material-ui/icons/ThumbUpOutlined';
 import React, { useContext, useState } from "react";
+import { Link } from "react-router-dom";
 import { API_URL } from "../../api-url";
 import { Context } from "../../Context";
 import PostingCommentTree from "./PostingCommentTree";
@@ -308,7 +308,12 @@ const postingCard = (props) => {
     <div className={classes.root}>
       <CardHeader
         avatar={
-          <Avatar aria-label={props.name} className={classes.small} src={props.pictureUrl} />
+          <Avatar
+            component={Link}
+            to={"/person-profile/" + props.ownerId}
+            aria-label={props.name}
+            className={classes.small}
+            src={props.pictureUrl} />
         }
         action={
           <IconButton aria-label="settings" title="editing posts not yet available">

@@ -95,8 +95,8 @@ const postingCommentTree = (props) => {
         return (
             <div>
                 {postingCommentCard(item, level)}
-                {topNChildren.map((child) => (
-                    <div>
+                {topNChildren.map((child, idx) => (
+                    <div key={idx}>
                         {recurHelper(child.postId, level + 1)}
                     </div>
                 ))}

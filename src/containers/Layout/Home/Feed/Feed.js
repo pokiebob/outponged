@@ -55,7 +55,7 @@ const feed = () => {
     fetch(API_URL.post + "find/home?upid=" + userContext?.personId + "&filter=" + filter)
       .then(resp => resp.json())
       .then((postings) => {
-        console.log(postings);
+        // console.log(postings);
         setPostingState(reducePostings(postings));
       });
   }

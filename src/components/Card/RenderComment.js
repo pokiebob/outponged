@@ -9,6 +9,7 @@ import React, { useContext, useState } from 'react';
 import { API_URL } from "../../api-url";
 import { Context } from "../../Context";
 import CommentField from './CommentField';
+import { Link } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
     smallContainer: {
@@ -216,15 +217,16 @@ const renderComment = ({ comment, level, treeHandleComment, rootCommentOpen }) =
                 </Grid>
             </Grid>
             :
-            <Grid container className={level === 2 && !comment.isFirstChild ? classes.border : {}}
+            <Grid container className={level === 2 && !comment.isFirstChild ? classes.border : ""}
             >
                 <Grid container className={classes.smallContainer}>
-                    <Grid container className={
-                        //first comment
-                        level === 2 && comment.isFirstChild ? classes.border : {}
-                    }>
+                    <Grid container className={level === 2 && comment.isFirstChild ? classes.border : ""}>
                         <Grid item xs={1} className={level === 1 ? classes.avatarSmallContainer : classes.avatarExtraSmallContainer}>
-                            <Avatar src={comment.ownerProfilePic} className={level < 2 ? classes.small : classes.extraSmall} />
+                            <Avatar
+                                component={Link}
+                                to={"/person-profile/" + comment.ownerId}
+                                src={comment.ownerProfilePic}
+                                className={level < 2 ? classes.small : classes.extraSmall} />
                         </Grid>
                         <Grid item xs={10}>
                             <div>

@@ -112,7 +112,7 @@ const personPage = () => {
       .then((personData) => {
         // console.log('personData', personData);
         setPersonState(personData);
-        const linkedPersonIds = personData.links.persons
+        const linkedPersonIds = personData?.links.persons
           .map(p => p.personId)
           .filter(x => x !== undefined);
         const linkedPersonIdsUniq = [...new Set(linkedPersonIds)];
@@ -127,7 +127,7 @@ const personPage = () => {
             setLinkedPersonsState(linkedPersonData.filter(x => x !== null));
           });
 
-        const linkedClubIds = personData.links.clubs
+        const linkedClubIds = personData?.links.clubs
           .map(p => p.clubId)
           .filter(x => x !== undefined);
         const linkedClubIdsUniq = [...new Set(linkedClubIds)];
@@ -148,7 +148,7 @@ const personPage = () => {
     fetch(API_URL.post + "find/person/?ppid=" + getPersonId() + "&upid=" + userContext?.personId)
       .then(resp => resp.json())
       .then((postings) => {
-        console.log(postings);
+        // console.log(postings);
         // console.log('postings', postings);
         setPostingState(reducePostings(postings));
       });
@@ -199,14 +199,15 @@ const personPage = () => {
               </div>
             </Grid>
 
-            <Grid xs={11} container item justify="flex-end">
-              <Button onClick={() => {
-                navigateToEditPerson(personState.personId);
-              }}>
-                Edit Profile
-              </Button>
+            {personState.personId === userContext.personId &&
+              <Grid xs={11} container item justify="flex-end">
+                <Button onClick={() => {
+                  navigateToEditPerson(personState.personId);
+                }}>
+                  Edit Profile
+                </Button>
 
-            </Grid>
+              </Grid>}
 
           </Grid>
         </Grid>
@@ -242,7 +243,7 @@ const personPage = () => {
   }
 
   const filterLinkedPersons = (r) => {
-    const linkIds = personState?.links.persons
+    const linkIds = personState?.links?.persons
       .filter(p => p.role === r)
       .map(x => x.personId);
     // console.log('linked person Ids', linkIds);
@@ -250,7 +251,7 @@ const personPage = () => {
   }
 
   const filterLinkedClubs = (r) => {
-    const linkIds = personState?.links.clubs
+    const linkIds = personState?.links?.clubs
       .filter(c => c.role === r)
       .map(x => x.clubId);
     // console.log('linked club Ids', linkIds);
@@ -377,9 +378,9 @@ const personPage = () => {
 
   const renderPostings = () => {
     return (
-      postingState?.map((post) => {
+      postingState?.map((post, idx) => {
         return (
-          <Grid container justify="center">
+          <Grid key={idx} container justify="center">
             <Card className={classes.paper} elevation={APP_PAPER_ELEVATION}>
               <PostingCard
                 ownerId={post.ownerId}
