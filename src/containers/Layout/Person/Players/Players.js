@@ -58,9 +58,8 @@ class Players extends Component {
       players = this.state.players.map((card) => {
         // console.log(card);
         return (
-          <Grid container>
+          <Grid container key={card.personId}>
             <Card
-              key={card.personId}
               fullName={card.fullName}
               pic={card.pictureUrl}
               usattNumber={card.externalId?.usattNumber}

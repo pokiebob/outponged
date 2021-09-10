@@ -17,7 +17,7 @@ class Clubs extends Component {
       .get(API_URL.club)
       .then((response) => {
         const clubs = response.data;
-        const updatedClubs = clubs.map((club, idx) => {
+        const updatedClubs = clubs.map((club) => {
           return {
             ...club,
           };
@@ -41,7 +41,7 @@ class Clubs extends Component {
     let clubs = <p style={{ textAlign: "center" }}>Something went wrong!</p>;
     if (!this.state.error) {
       clubs = this.state.clubs.map((card) => {
-        console.log(card);
+        // console.log(card);
         return (
           // <Link to={'/posts/' + post.id} key={post.id}>
           <Card

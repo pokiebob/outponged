@@ -29,13 +29,12 @@ const useStyles = makeStyles((theme) => ({
 
 const clubCard = (props) => {
   const classes = useStyles();
-  console.log(props);
 
 
   return (
     <div className={classes.root} onClick={props.clicked}>
       <Paper className={classes.paper} elevation={APP_PAPER_ELEVATION}>
-        <Grid container xs={12}>
+        <Grid container >
           <Grid item xs={2}>
             <Avatar src={props.pic} className={classes.medium} />
           </Grid>

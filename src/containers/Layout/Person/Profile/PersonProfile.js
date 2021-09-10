@@ -1,6 +1,7 @@
 import AppBar from "@material-ui/core/AppBar";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
+import { IconButton } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import Card from "@material-ui/core/Card";
@@ -268,19 +269,22 @@ const personPage = () => {
           // console.log(reducedName);
           return (
             <Tab
+              key={idx}
               {...a11yProps(idx)}
-              component={() => (
+              component={React.forwardRef((props, ref) => (
                 <div onClick={() => {
                   setValue(idx);
                   navigateToLinkedPerson(linkedPerson.personId);
                 }
-                }>
+                }
+                  ref={ref}
+                >
                   <Button title={name} >
                     <Avatar src={linkedPersonsState[idx].pictureUrl} />
                   </Button>
                   <div className={classes.subtext}>{reducedName}</div>
                 </div>
-              )}
+              ))}
             />
           )
         }
@@ -298,9 +302,10 @@ const personPage = () => {
           if (name.length > 6) reducedName = name.substring(0, 6) + "...";
           return (
             <Tab
+              key={idx}
               {...a11yProps(idx)}
-              component={() => (
-                <div onClick={() => {
+              component={React.forwardRef((props, ref) => (
+                <div ref={ref} onClick={() => {
                   setValue(idx);
                   navigateToLinkedClub(linkedClub.clubId);
                 }
@@ -310,7 +315,7 @@ const personPage = () => {
                   </Button>
                   <div className={classes.subtext}>{reducedName}</div>
                 </div>
-              )}
+              ))}
             />
           )
         }
@@ -325,7 +330,7 @@ const personPage = () => {
           <div className={classes.heading} >Coaches</div>
         </Grid>
         <Grid container xs={8} item >
-          <AppBar position="static" color="white" className={classes.bar}>
+          <AppBar position="static" color="transparent" className={classes.bar}>
             <Tabs
               value={value}
               onChange={handleChange}
@@ -355,7 +360,7 @@ const personPage = () => {
         </Grid>
 
         <Grid container xs={8} item >
-          <AppBar position="static" color="white" className={classes.bar}>
+          <AppBar position="static" color="transparent" className={classes.bar}>
             <Tabs
               value={value}
               onChange={handleChange}
