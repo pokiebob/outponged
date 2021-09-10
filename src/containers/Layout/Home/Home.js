@@ -27,7 +27,9 @@ import Players from "../Person/Players/Players";
 import EditPersonProfile from "../Person/Profile/EditProfile";
 import PersonProfile from "../Person/Profile/PersonProfile";
 import Post from "../Post/Post";
+import tournaments from "../Tournaments/Tournaments";
 import Feed from "./Feed/Feed";
+import Tournaments from "../Tournaments/Tournaments";
 import "./Home.css";
 import LogIn from "./LogIn";
 const useStyles = makeStyles((theme) => ({
@@ -392,6 +394,7 @@ const home = () => {
           <Route path="/person-profile" component={PersonProfile} />
           <Route path="/edit-person-profile" component={EditPersonProfile} />
           <Route path="/club-profile" component={ClubProfile} />
+          <Route path="/tournaments" component={Tournaments} />
           {renderPostPage()}
         </Switch>
 
