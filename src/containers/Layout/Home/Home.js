@@ -1,11 +1,6 @@
 //MUI
 import AppBar from "@material-ui/core/AppBar";
 import Avatar from '@material-ui/core/Avatar';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
 import Drawer from "@material-ui/core/Drawer";
 import IconButton from "@material-ui/core/IconButton";
 import List from "@material-ui/core/List";
@@ -22,7 +17,6 @@ import MenuIcon from "@material-ui/icons/Menu";
 import { Auth, Hub } from 'aws-amplify';
 import TableTennis from "mdi-material-ui/TableTennis";
 import React, { useContext, useEffect, useState } from "react";
-import GoogleButton from 'react-google-button';
 import { Link, Route, Switch, useHistory } from "react-router-dom";
 import { API_URL } from "../../../api-url";
 import { Context } from "../../../Context";
@@ -33,9 +27,9 @@ import Players from "../Person/Players/Players";
 import EditPersonProfile from "../Person/Profile/EditProfile";
 import PersonProfile from "../Person/Profile/PersonProfile";
 import Post from "../Post/Post";
-import LogIn from "./LogIn";
 import Feed from "./Feed/Feed";
 import "./Home.css";
+import LogIn from "./LogIn";
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
@@ -141,6 +135,9 @@ const home = () => {
   if (awsUser && !isLoggedIn) persistAndRefresh(awsUser);
 
   const renderAppBar = (classes) => {
+
+
+
 
     const toggleDrawer = (open) => (event) => {
       if (
@@ -276,140 +273,140 @@ const home = () => {
           </div>
         )
       }
-
-      return (
-        <div className={classes.root}>
-          <AppBar position="static" className={classes.appBar}>
-            <Toolbar>
-              <IconButton
-                edge="start"
-                className={classes.menuButton}
-                color="inherit"
-                aria-label="menu"
-                onClick={toggleDrawer(true)}
-              >
-                <MenuIcon />
-              </IconButton>
-              <Typography variant="h6" className={classes.title}>
-                OutPonged
-              </Typography>
-              {renderPostButton()}
-              {renderLoginButton()}
-
-            </Toolbar>
-          </AppBar>
-          <Drawer open={state.isDrawerOpen} onClose={toggleDrawer(false)}>
-            {renderNavList()}
-          </Drawer>
-        </div>
-      );
-    };
-
-
-
-
-    const renderPostPage = () => {
-      // console.log('renderPostPage userContext', userContext);
-      if (userContext) {
-        return (
-          <Route path="/post" component={Post} />
-        );
-      }
     }
 
-    const handleLogIn = async () => {
-      // Auth.federatedSignIn({provider: 'Google'});
-      const ga = window.gapi.auth2.getAuthInstance();
-      if (!ga.isSignedIn.get()) {
-        ga.signIn().then(
-          googleUser => {
-            getAWSCredentials(googleUser);
-          },
-          err => {
-            console.log(err);
-          }
-        );
-      } else {
-        console.log(ga.currentUser.get());
-        await Auth.signOut().then(
-          getAWSCredentials(ga.currentUser.get()));
-      }
+    return (
+      <div className={classes.root}>
+        <AppBar position="static" className={classes.appBar}>
+          <Toolbar>
+            <IconButton
+              edge="start"
+              className={classes.menuButton}
+              color="inherit"
+              aria-label="menu"
+              onClick={toggleDrawer(true)}
+            >
+              <MenuIcon />
+            </IconButton>
+            <Typography variant="h6" className={classes.title}>
+              OutPonged
+            </Typography>
+            {renderPostButton()}
+            {renderLoginButton()}
 
-    }
+          </Toolbar>
+        </AppBar>
+        <Drawer open={state.isDrawerOpen} onClose={toggleDrawer(false)}>
+          {renderNavList()}
+        </Drawer>
+      </div>
+    );
+  };
 
-    const getAWSCredentials = async (googleUser) => {
-      const id_token = googleUser.Zb.id_token;
-      const expires_at = googleUser.Zb.expires_at;
-      const user = {
-        email: googleUser.Rs.Ct,
-        name: googleUser.Rs.Qe
-      }
 
-      // const { id_token, expires_at } = googleUser.getAuthResponse();
-      // const profile = googleUser.getBasicProfile();
-      // let user = {
-      //   email: profile.getEmail(),
-      //   name: profile.getName()
-      // };
 
-      await Auth.federatedSignIn(
-        'google',
-        { token: id_token, expires_at },
-        user
-      ).then((credentials) => {
-        console.log('credentials', credentials)
-      }
-      );
-    }
 
-    const createScript = () => {
-      // load the Google SDK
-      const script = document.createElement('script');
-      script.src = 'https://apis.google.com/js/platform.js';
-      script.async = true;
-      script.onload = initGapi;
-      document.body.appendChild(script);
-    }
-
-    const initGapi = () => {
-      // init the Google SDK client
-      const g = window.gapi;
-      g.load('auth2', function () {
-        g.auth2.init({
-          client_id: '935856095530-b68opn4gva9dm1rhgtrt9j5lo9io23e3.apps.googleusercontent.com',
-          // authorized scopes
-          scope: 'profile email openid'
-        });
-      });
-    }
-
+  const renderPostPage = () => {
+    // console.log('renderPostPage userContext', userContext);
     if (userContext) {
-
       return (
-        <div>
-          {renderAppBar(classes)}
-          <Switch>
-            <Route path="/home" component={Feed} />
-            <Route path="/players" component={Players} />
-            <Route path="/clubs" component={Clubs} />
-            <Route path="/person-profile" component={PersonProfile} />
-            <Route path="/edit-person-profile" component={EditPersonProfile} />
-            <Route path="/club-profile" component={ClubProfile} />
-            {renderPostPage()}
-          </Switch>
+        <Route path="/post" component={Post} />
+      );
+    }
+  }
 
-        </div>
+  const handleLogIn = async () => {
+    // Auth.federatedSignIn({provider: 'Google'});
+    const ga = window.gapi.auth2.getAuthInstance();
+    if (!ga.isSignedIn.get()) {
+      ga.signIn().then(
+        googleUser => {
+          getAWSCredentials(googleUser);
+        },
+        err => {
+          console.log(err);
+        }
       );
     } else {
-      // rendering the app bar makes the call to aws and mongo
-      return (
-        <div >
-          <LogIn handleLogIn={handleLogIn} />
-        </div>
-      );
+      console.log(ga.currentUser.get());
+      await Auth.signOut().then(
+        getAWSCredentials(ga.currentUser.get()));
     }
-  };
+
+  }
+
+  const getAWSCredentials = async (googleUser) => {
+    const id_token = googleUser.Zb.id_token;
+    const expires_at = googleUser.Zb.expires_at;
+    const user = {
+      email: googleUser.Rs.Ct,
+      name: googleUser.Rs.Qe
+    }
+
+    // const { id_token, expires_at } = googleUser.getAuthResponse();
+    // const profile = googleUser.getBasicProfile();
+    // let user = {
+    //   email: profile.getEmail(),
+    //   name: profile.getName()
+    // };
+
+    await Auth.federatedSignIn(
+      'google',
+      { token: id_token, expires_at },
+      user
+    ).then((credentials) => {
+      console.log('credentials', credentials)
+    }
+    );
+  }
+
+  const createScript = () => {
+    // load the Google SDK
+    const script = document.createElement('script');
+    script.src = 'https://apis.google.com/js/platform.js';
+    script.async = true;
+    script.onload = initGapi;
+    document.body.appendChild(script);
+  }
+
+  const initGapi = () => {
+    // init the Google SDK client
+    const g = window.gapi;
+    g.load('auth2', function () {
+      g.auth2.init({
+        client_id: '935856095530-b68opn4gva9dm1rhgtrt9j5lo9io23e3.apps.googleusercontent.com',
+        // authorized scopes
+        scope: 'profile email openid'
+      });
+    });
+  }
+
+  if (userContext) {
+
+    return (
+      <div>
+        {renderAppBar(classes)}
+        <Switch>
+          <Route path="/home" component={Feed} />
+          <Route path="/players" component={Players} />
+          <Route path="/clubs" component={Clubs} />
+          <Route path="/person-profile" component={PersonProfile} />
+          <Route path="/edit-person-profile" component={EditPersonProfile} />
+          <Route path="/club-profile" component={ClubProfile} />
+          {renderPostPage()}
+        </Switch>
+
+      </div>
+    );
+  } else {
+    // rendering the app bar makes the call to aws and mongo
+    return (
+      <div >
+        <LogIn handleLogIn={handleLogIn} />
+      </div>
+    );
+  }
 }
 
 
-  export default home;
+export default home;
