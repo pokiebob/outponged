@@ -153,6 +153,7 @@ const postingCard = (props) => {
   const submitComment = (newComment) => {
     // console.log(props, newComment);
     setCommentOpen(false);
+    console.log(userContext);
 
     const comment = {
       method: 'POST',

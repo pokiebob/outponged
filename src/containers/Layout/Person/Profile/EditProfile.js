@@ -1,18 +1,19 @@
-import React, { useState, useEffect } from "react";
-import { makeStyles } from "@material-ui/core/styles";
-import Paper from "@material-ui/core/Paper";
-import Grid from "@material-ui/core/Grid";
 import Avatar from "@material-ui/core/Avatar";
-import PropTypes from "prop-types";
 import Button from "@material-ui/core/Button";
-import { useHistory } from "react-router-dom";
+import Grid from "@material-ui/core/Grid";
+import Paper from "@material-ui/core/Paper";
+import { makeStyles } from "@material-ui/core/styles";
 import TextField from '@material-ui/core/TextField';
-import MaskedInput from 'react-text-mask';
-import { aws } from '../../../../keys';
-import { API_URL } from '../../../../api-url';
-
 // import ReactS3 from 'react-s3';
 import S3 from 'aws-s3';
+import PropTypes from "prop-types";
+import React, { useContext, useEffect, useState } from "react";
+import { useHistory } from "react-router-dom";
+import MaskedInput from 'react-text-mask';
+import { API_URL } from '../../../../api-url';
+import { Context } from '../../../../Context';
+import { aws } from '../../../../keys';
+
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -70,12 +71,6 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-const getPersonId = () => {
-    var location = window.location.pathname;
-    return location.substring(20, location.length);
-    // return "5094b946-8b3b-4a8c-bfd9-6de41373c8da";
-};
-
 
 function TextMaskCustom(props) {
     const { inputRef, ...other } = props;
@@ -103,6 +98,7 @@ TextMaskCustom.propTypes = {
 const editProfile = () => {
     const history = useHistory();
 
+    const [userContext, setUserContext] = useContext(Context);
     const [origPersonState, setOrigPersonState] = useState(undefined);
     const [newPersonState, setNewPersonState] = useState();
     const classes = useStyles();
@@ -115,6 +111,11 @@ const editProfile = () => {
                 setNewPersonState({ ...personData });
             });
     }
+
+    const getPersonId = () => {
+        return userContext.personId;
+        // return "5094b946-8b3b-4a8c-bfd9-6de41373c8da";
+    };
 
     const ATTRIB = {
         FIRST_NAME: {
@@ -131,7 +132,7 @@ const editProfile = () => {
             propName: 'bio',
             isValid: true,
             validate: (bio) => bio.length < 200
-    
+
         },
         EMAIL: {
             propName: 'email',
@@ -172,7 +173,9 @@ const editProfile = () => {
 
         fetch(API_URL.person + getPersonId(), patch)
             .then(resp => resp.json())
-            .then(() => {
+            .then((resp) => {
+                // console.log(resp);
+                setUserContext(resp);
                 // console.log(resp);
                 setOrigPersonState({ ...newPersonState });
             })
@@ -190,7 +193,7 @@ const editProfile = () => {
         , []);
 
     const navigateToPersonProfile = (personId) => {
-        history.push("/person-profile" + personId);
+        history.push("/person-profile/" + personId);
     }
 
     /**
@@ -241,6 +244,7 @@ const editProfile = () => {
                         .then(resp => resp.json())
                         .then((resp) => {
                             // console.log(resp);
+                            setUserContext(resp);
                             setOrigPersonState({ ...newPersonState });
                         });
                 })
@@ -282,7 +286,7 @@ const editProfile = () => {
                         <label htmlFor="contained-button-file">
                             <Button color="primary" component="span" className={classes.photoButton}>
                                 Change Photo
-                                </Button>
+                            </Button>
                         </label>
 
 
