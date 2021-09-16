@@ -1,18 +1,20 @@
+import { TextField } from '@material-ui/core';
 import AppBar from '@material-ui/core/AppBar';
 import Avatar from '@material-ui/core/Avatar';
 import Drawer from "@material-ui/core/Drawer";
+import Grid from "@material-ui/core/Grid";
 import IconButton from '@material-ui/core/IconButton';
-import InputBase from '@material-ui/core/InputBase';
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import { makeStyles } from '@material-ui/core/styles';
+import { styled, makeStyles } from '@material-ui/core/styles';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import AddIcon from '@material-ui/icons/Add';
 import MenuIcon from '@material-ui/icons/Menu';
 import SearchIcon from '@material-ui/icons/Search';
+import Autocomplete from "@material-ui/lab/Autocomplete";
 import { Auth, Hub } from 'aws-amplify';
 import TableTennis from "mdi-material-ui/TableTennis";
 import React, { useContext, useEffect, useState } from 'react';
@@ -37,7 +39,7 @@ const useStyles = makeStyles((theme) => ({
         flexGrow: 1,
     },
     menuButton: {
-        marginRight: theme.spacing(2),
+        paddingRight: theme.spacing(2),
     },
     appBar: {
         background: '#ba0018'
@@ -57,33 +59,15 @@ const useStyles = makeStyles((theme) => ({
         },
         marginRight: theme.spacing(2),
         marginLeft: 0,
+        // minWidth: 150,
         width: '100%',
         [theme.breakpoints.up('sm')]: {
             marginLeft: theme.spacing(3),
             width: 'auto',
         },
     },
-    searchIcon: {
-        padding: theme.spacing(0, 2),
-        height: '100%',
-        position: 'absolute',
-        pointerEvents: 'none',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
     inputRoot: {
         color: 'inherit',
-    },
-    inputInput: {
-        padding: theme.spacing(1, 1, 1, 0),
-        // vertical padding + font size from searchIcon
-        paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
-        transition: theme.transitions.create('width'),
-        width: '100%',
-        [theme.breakpoints.up('md')]: {
-            width: '20ch',
-        },
     },
     sectionDesktop: {
         display: 'none',
@@ -103,9 +87,6 @@ const home = () => {
     const classes = useStyles();
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
-
-    const isMenuOpen = Boolean(anchorEl);
-    const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
     const [userContext, setUserContext] = useContext(Context);
     const [awsUser, setAwsUser] = useState(null);
@@ -263,14 +244,14 @@ const home = () => {
 
         const toggleDrawer = (open) => (event) => {
             if (
-              event.type === "keydown" &&
-              (event.key === "Tab" || event.key === "Shift")
+                event.type === "keydown" &&
+                (event.key === "Tab" || event.key === "Shift")
             ) {
-              return;
+                return;
             }
-      
+
             setState({ ...state, isDrawerOpen: open });
-          };
+        };
 
         const handleClick = (event) => {
             setAnchorEl(event.currentTarget);
@@ -328,6 +309,101 @@ const home = () => {
             );
             // }
 
+        }
+
+        const renderSearchBar = () => {
+            /**
+            ***********************************************
+            * Styles for custom OutPonged search input
+            ***********************************************
+            */
+            const top100Films = [
+                { title: "The Shawshank Redemption", year: 1994 },
+                { title: "The Godfather", year: 1972 },
+                { title: "The Godfather: Part II", year: 1974 },
+                { title: "The Dark Knight", year: 2008 },
+                { title: "12 Angry Men", year: 1957 },
+                { title: "Schindler's List", year: 1993 }
+            ];
+            const useSearchTextInputStyles = makeStyles((theme) => ({
+                root: {
+                    "& .MuiFilledInput-root": {
+                        backgroundColor: "rgba(255, 255, 255, -.85)",
+                        color: "white",
+                        // width: 265,
+                        paddingTop: 0
+                    },
+                    "& .MuiFilledInput-root:hover": {
+                        backgroundColor: "rgba(255, 255, 255, 0.01)",
+                        // Reset on touch devices, it doesn't add specificity
+                        "@media (hover: none)": {
+                            backgroundColor: "rgb(232, 241, 250)"
+                        }
+                    },
+                    "& .MuiFilledInput-root.Mui-focused": {
+                        backgroundColor: "rgba(255, 255, 255, 0.01)",
+                        color: "white"
+                    }
+                },
+                searchIcon: {
+                    paddingLeft: 3,
+                    paddingTop: 6,
+                },
+            }));
+
+            const StyledTextField = styled(TextField)(({ theme }) => ({
+                color: 'inherit',
+                '& .MuiInputBase-input': {
+                    padding: theme.spacing(1, 1, 1, 0),
+                    // vertical padding + font size from searchIcon
+                    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
+                    transition: theme.transitions.create('width'),
+                    width: '100%',
+                    [theme.breakpoints.up('md')]: {
+                        width: '20ch',
+                    },
+                },
+            }));
+
+            /**
+             ****************************************************
+             * Outponged Custom search input
+             ****************************************************
+             */
+            const OutPongedSearchInputWithIcon = (params) => {
+                const searchClasses = useSearchTextInputStyles();
+                return (
+                    <div>
+                        <Grid container spacing={1} alignItems="flex-end">
+                            <Grid item>
+                                <SearchIcon className={searchClasses.searchIcon} />
+                            </Grid>
+                            <Grid item>
+                                <StyledTextField
+                                    {...params}
+                                    placeholder="Search for people"
+                                    variant="filled"
+                                    className={searchClasses.root}
+                                    size="small"
+                                    InputProps={{ ...params.InputProps, disableUnderline: true }}
+                                />
+                            </Grid>
+                        </Grid>
+                    </div>
+                );
+            }
+            return (
+                <div className={classes.search}>
+                    <Autocomplete
+                        id="combo-box-demo"
+                        forcePopupIcon={false}
+                        options={top100Films}
+                        getOptionLabel={(option) => option.title}
+                        style={{ width: 300 }}
+                        renderInput={OutPongedSearchInputWithIcon} // {SearchInput} //
+                    />
+                </div>
+            )
         }
 
         const renderLoginButton = () => {
@@ -406,19 +482,7 @@ const home = () => {
                         <Typography className={classes.title} variant="h6" noWrap>
                             OutPonged
                         </Typography>
-                        <div className={classes.search}>
-                            <div className={classes.searchIcon}>
-                                <SearchIcon />
-                            </div>
-                            <InputBase
-                                placeholder="Search…"
-                                classes={{
-                                    root: classes.inputRoot,
-                                    input: classes.inputInput,
-                                }}
-                                inputProps={{ 'aria-label': 'search' }}
-                            />
-                        </div>
+                        {renderSearchBar()}
                         <div className={classes.grow} />
                         <div className={classes.sectionDesktop}>
                             {renderPostButton()}
