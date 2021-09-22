@@ -278,6 +278,7 @@ const personPage = () => {
                 }
                 }
                   ref={ref}
+                  {...props}
                 >
                   <Button title={name} >
                     <Avatar src={linkedPersonsState[idx].pictureUrl} />
@@ -305,7 +306,7 @@ const personPage = () => {
               key={idx}
               {...a11yProps(idx)}
               component={React.forwardRef((props, ref) => (
-                <div ref={ref} onClick={() => {
+                <div {...props} ref={ref} onClick={() => {
                   setValue(idx);
                   navigateToLinkedClub(linkedClub.clubId);
                 }

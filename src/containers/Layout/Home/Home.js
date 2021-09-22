@@ -1,6 +1,7 @@
 import { TextField } from '@material-ui/core';
 import AppBar from '@material-ui/core/AppBar';
 import Avatar from '@material-ui/core/Avatar';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import Drawer from "@material-ui/core/Drawer";
 import Grid from "@material-ui/core/Grid";
 import IconButton from '@material-ui/core/IconButton';
@@ -8,7 +9,7 @@ import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import { styled, makeStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import AddIcon from '@material-ui/icons/Add';
@@ -31,7 +32,6 @@ import Tournaments from "../Tournaments/Tournaments";
 import Feed from "./Feed/Feed";
 import LogIn from "./LogIn";
 
-
 let isLoggedIn = false;
 
 const useStyles = makeStyles((theme) => ({
@@ -39,7 +39,7 @@ const useStyles = makeStyles((theme) => ({
         flexGrow: 1,
     },
     menuButton: {
-        paddingRight: theme.spacing(2),
+        marginRight: theme.spacing(2),
     },
     appBar: {
         background: '#ba0018'
@@ -57,7 +57,7 @@ const useStyles = makeStyles((theme) => ({
         '&:hover': {
             backgroundColor: 'rgba(255, 255, 255, 0.25)'
         },
-        marginRight: theme.spacing(2),
+        marginRight: theme.spacing(1),
         marginLeft: 0,
         // minWidth: 150,
         width: '100%',
@@ -81,13 +81,58 @@ const useStyles = makeStyles((theme) => ({
             display: 'none',
         },
     },
+    small: {
+        width: theme.spacing(5),
+        height: theme.spacing(5)
+    },
+    extraSmall: {
+        width: theme.spacing(3),
+        height: theme.spacing(3)
+    },
 }));
+
+/**
+            ***********************************************
+            * Styles for custom OutPonged search input
+            ***********************************************
+            */
+const useSearchTextInputStyles = makeStyles((theme) => ({
+    root: {
+        "& .MuiFilledInput-root": {
+            backgroundColor: "rgba(255, 255, 255, -.85)",
+            color: "white",
+            width: "30ch",
+            paddingTop: 0
+        },
+        "& .MuiFilledInput-root:hover": {
+            backgroundColor: "rgba(255, 255, 255, 0.01)",
+            // Reset on touch devices, it doesn't add specificity
+            "@media (hover: none)": {
+                backgroundColor: "rgb(232, 241, 250)"
+            }
+        },
+        "& .MuiFilledInput-root.Mui-focused": {
+            backgroundColor: "rgba(255, 255, 255, 0.01)",
+            color: "white"
+        }
+    },
+    searchBar: {
+        flexWrap: "nowrap"
+    },
+    searchIcon: {
+        paddingLeft: 3,
+        paddingTop: 6,
+    },
+}));
+
 
 const home = () => {
     const classes = useStyles();
-    const [anchorEl, setAnchorEl] = React.useState(null);
-    const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
-
+    const searchClasses = useSearchTextInputStyles();
+    const [anchorEl, setAnchorEl] = useState(null);
+    const [searchOpen, setSearchOpen] = useState(false);
+    const [searchOptions, setSearchOptions] = useState([]);
+    const searchLoading = searchOpen && searchOptions.length === 0;
     const [userContext, setUserContext] = useContext(Context);
     const [awsUser, setAwsUser] = useState(null);
     const history = useHistory();
@@ -97,15 +142,39 @@ const home = () => {
     });
 
     useEffect(() => {
+        let active = true;
+
+        if (!searchLoading) {
+            return undefined;
+        }
+
+        fetch(API_URL.person)
+            .then((resp) => resp.json())
+            .then((users) => {
+                // console.log('users', users);
+                if (active) {
+                    setSearchOptions([...users]);
+                }
+            })
+
+        return () => {
+            active = false;
+        };
+    }, [searchLoading]);
+
+    useEffect(() => {
+        if (!searchOpen) {
+            setSearchOptions([]);
+        }
+    }, [searchOpen]);
+
+    useEffect(() => {
         const ga = window.gapi && window.gapi.auth2 ?
             window.gapi.auth2 :
             null;
 
         // console.log(ga);
         if (!ga) createScript();
-    });
-
-    useEffect(() => {
 
         const updateUser = async () => {
             try {
@@ -257,11 +326,15 @@ const home = () => {
             setAnchorEl(event.currentTarget);
         };
 
+        const navigateToUserProfile = (personId) => {
+            history.push('/person-profile/' + personId);
+        }
 
         const handleClose = () => {
             setAnchorEl(null);
             // handleMobileMenuClose();
         };
+
 
         const renderNavList = () => {
             return (
@@ -312,95 +385,57 @@ const home = () => {
         }
 
         const renderSearchBar = () => {
-            /**
-            ***********************************************
-            * Styles for custom OutPonged search input
-            ***********************************************
-            */
-            const top100Films = [
-                { title: "The Shawshank Redemption", year: 1994 },
-                { title: "The Godfather", year: 1972 },
-                { title: "The Godfather: Part II", year: 1974 },
-                { title: "The Dark Knight", year: 2008 },
-                { title: "12 Angry Men", year: 1957 },
-                { title: "Schindler's List", year: 1993 }
-            ];
-            const useSearchTextInputStyles = makeStyles((theme) => ({
-                root: {
-                    "& .MuiFilledInput-root": {
-                        backgroundColor: "rgba(255, 255, 255, -.85)",
-                        color: "white",
-                        // width: 265,
-                        paddingTop: 0
-                    },
-                    "& .MuiFilledInput-root:hover": {
-                        backgroundColor: "rgba(255, 255, 255, 0.01)",
-                        // Reset on touch devices, it doesn't add specificity
-                        "@media (hover: none)": {
-                            backgroundColor: "rgb(232, 241, 250)"
-                        }
-                    },
-                    "& .MuiFilledInput-root.Mui-focused": {
-                        backgroundColor: "rgba(255, 255, 255, 0.01)",
-                        color: "white"
-                    }
-                },
-                searchIcon: {
-                    paddingLeft: 3,
-                    paddingTop: 6,
-                },
-            }));
 
-            const StyledTextField = styled(TextField)(({ theme }) => ({
-                color: 'inherit',
-                '& .MuiInputBase-input': {
-                    padding: theme.spacing(1, 1, 1, 0),
-                    // vertical padding + font size from searchIcon
-                    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-                    transition: theme.transitions.create('width'),
-                    width: '100%',
-                    [theme.breakpoints.up('md')]: {
-                        width: '20ch',
-                    },
-                },
-            }));
-
-            /**
-             ****************************************************
-             * Outponged Custom search input
-             ****************************************************
-             */
-            const OutPongedSearchInputWithIcon = (params) => {
-                const searchClasses = useSearchTextInputStyles();
-                return (
-                    <div>
-                        <Grid container spacing={1} alignItems="flex-end">
-                            <Grid item>
-                                <SearchIcon className={searchClasses.searchIcon} />
-                            </Grid>
-                            <Grid item>
-                                <StyledTextField
-                                    {...params}
-                                    placeholder="Search for people"
-                                    variant="filled"
-                                    className={searchClasses.root}
-                                    size="small"
-                                    InputProps={{ ...params.InputProps, disableUnderline: true }}
-                                />
-                            </Grid>
-                        </Grid>
-                    </div>
-                );
-            }
             return (
                 <div className={classes.search}>
                     <Autocomplete
-                        id="combo-box-demo"
+                        id="asynchronous-demo"
                         forcePopupIcon={false}
-                        options={top100Films}
-                        getOptionLabel={(option) => option.title}
-                        style={{ width: 300 }}
-                        renderInput={OutPongedSearchInputWithIcon} // {SearchInput} //
+                        options={searchOptions}
+                        // isOptionEqualToValue={(option, value) => option.personId === value.personId}
+                        loading={searchLoading}
+                        open={searchOpen}
+                        onOpen={() => setSearchOpen(true)}
+                        onClose={() => setSearchOpen(false)}
+                        getOptionLabel={(user) => `${user.firstName} ${user.lastName}`}
+                        renderOption={(user) => {
+                            return (
+                                <Grid container onClick={() => navigateToUserProfile(user.personId)}>
+                                        <Avatar src={user.pictureUrl} className={classes.menuButton} />
+                                    {`${user.firstName} ${user.lastName}`}
+                                </Grid>
+                            );
+                        }}
+                        sx={{ width: 300 }}
+                        renderInput={(params) => (
+                            <Grid container className={searchClasses.searchBar} alignItems="flex-end">
+                                <Grid item>
+                                    <SearchIcon className={searchClasses.searchIcon} />
+                                </Grid>
+                                <Grid item>
+                                    <TextField
+                                        {...params}
+                                        placeholder="Search for users..."
+                                        variant="filled"
+                                        className={searchClasses.root}
+                                        size="small"
+                                        InputProps={
+                                            {
+                                                ...params.InputProps,
+                                                disableUnderline: true,
+                                                endAdornment: (
+                                                    <React.Fragment>
+                                                        {searchLoading ? <CircularProgress color="inherit" size={20} /> : null}
+                                                        {params.InputProps.endAdornment}
+                                                    </React.Fragment>
+                                                ),
+                                            }
+                                        }
+                                    />
+                                </Grid>
+                            </Grid>
+                        )
+                        } // {SearchInput} //
                     />
                 </div>
             )
