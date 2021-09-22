@@ -19,7 +19,7 @@ import Autocomplete from "@material-ui/lab/Autocomplete";
 import { Auth, Hub } from 'aws-amplify';
 import TableTennis from "mdi-material-ui/TableTennis";
 import React, { useContext, useEffect, useState } from 'react';
-import { Link, Route, Switch, useHistory } from "react-router-dom";
+import { Link, Route, Switch, useHistory, useLocation } from "react-router-dom";
 import { API_URL } from "../../../api-url";
 import { Context } from "../../../Context";
 import Clubs from "../Club/Clubs/Clubs";
@@ -136,6 +136,7 @@ const home = () => {
     const [userContext, setUserContext] = useContext(Context);
     const [awsUser, setAwsUser] = useState(null);
     const history = useHistory();
+    const location = useLocation();
     const [state, setState] = useState({
         isDrawerOpen: false,
         isMenuOpen: false,
@@ -189,7 +190,13 @@ const home = () => {
                             console.log('user not received, logging in as guest');
                             logInAsGuestUser();
                         }
-                    });
+                    })
+                    .then(() => {
+                        // reroute to /home/ (temporary)
+                        if (location.pathname === '/') {
+                            history.push('/home/');
+                        }
+                    })
             } catch (error) {
                 console.log('Auth.currentAuthenticatedUser()', error, awsUser);
             }
