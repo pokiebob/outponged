@@ -1,18 +1,17 @@
-import Button from "@material-ui/core/Button";
+import { MenuItem } from "@material-ui/core";
 import Card from "@material-ui/core/Card";
+import Chip from "@material-ui/core/Chip";
 import Grid from "@material-ui/core/Grid";
+import Menu from "@material-ui/core/Menu";
 import { makeStyles } from "@material-ui/core/styles";
+import RestoreIcon from '@material-ui/icons/Restore';
+import ThumbUpAltOutlinedIcon from '@material-ui/icons/ThumbUpAltOutlined';
 import React, { useContext, useEffect, useState } from "react";
 import { API_URL } from "../../../../api-url";
 import { APP_PAPER_ELEVATION } from "../../../../app-config";
 import PostingCard from "../../../../components/Card/PostingCard";
 import { Context } from "../../../../Context";
 import reducePostings from "../../../../postingReducer";
-import ThumbUpAltOutlinedIcon from '@material-ui/icons/ThumbUpAltOutlined';
-import Menu from "@material-ui/core/Menu";
-import RestoreIcon from '@material-ui/icons/Restore';
-import { MenuItem } from "@material-ui/core";
-import Chip from "@material-ui/core/Chip";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -24,6 +23,9 @@ const useStyles = makeStyles((theme) => ({
     "min-width": "400px",
     "max-width": "700px"
   },
+  filter: {
+    marginLeft: "16px",
+  }
 }));
 
 const feed = () => {
@@ -136,6 +138,7 @@ const feed = () => {
         <Grid container justify="center">
           <Grid item className={classes.paper}>
             <Chip
+              className={classes.filter}
               icon={filterIconState}
               onClick={handleClick}
               color="primary"

@@ -1,20 +1,22 @@
 import AppBar from "@material-ui/core/AppBar";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
-import { IconButton } from "@material-ui/core";
+import Card from "@material-ui/core/Card";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
-import Card from "@material-ui/core/Card";
 import { makeStyles } from "@material-ui/core/styles";
 import Tab from "@material-ui/core/Tab";
 import Tabs from "@material-ui/core/Tabs";
-import React, { useEffect, useState, useContext } from "react";
+// import Chip from "@material-ui/core/Chip";
+import CheckIcon from '@material-ui/icons/Check';
+import PersonIcon from "@material-ui/icons/Person";
+import React, { useContext, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { forkJoin } from 'rxjs';
 import { API_URL } from '../../../../api-url';
 import { APP_PAPER_ELEVATION } from "../../../../app-config";
-import { Context } from "../../../../Context";
 import PostingCard from '../../../../components/Card/PostingCard';
+import { Context } from "../../../../Context";
 import reducePostings from "../../../../postingReducer";
 
 function a11yProps(index) {
@@ -76,6 +78,12 @@ const useStyles = makeStyles((theme) => ({
     "font-size": "13px",
     marginTop: "10px",
   },
+  followingButton: {
+    marginTop: "10px",
+  },
+  label: {
+    flexDirection: "column"
+  },
   large: {
     width: theme.spacing(15),
     height: theme.spacing(15),
@@ -101,10 +109,15 @@ const personPage = () => {
   const [linkedClubsState, setLinkedClubsState] = useState(undefined);
   const [postingState, setPostingState] = useState();
   const [value, setValue] = useState(0); //used by app bars
+  const [followingState, setFollowingState] = useState();
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
-  };
+  }
+
+  const handleFollow = () => {
+    setFollowingState(!followingState);
+  }
 
   const initialize = () => {
     // console.log('initializing');
@@ -153,6 +166,8 @@ const personPage = () => {
         // console.log('postings', postings);
         setPostingState(reducePostings(postings));
       });
+
+    setFollowingState(false);
   }
 
   useEffect(() => {
@@ -173,12 +188,25 @@ const personPage = () => {
     // console.log('[renderProfileCard] personState', personState);
     return (
       <Paper className={classes.paper} elevation={APP_PAPER_ELEVATION}>
-        <Grid container className={classes.container}>
+        <Grid container className={classes.container} >
           <Grid item xs={12} sm={4} >
             <Avatar src={personState.pictureUrl} className={classes.large} />
             <div className={classes.name}> {`${personState.firstName} ${personState.lastName}`} </div>
-            <Grid xs={12} item >
-              <div className={classes.usattLabel}>USATT #{personState.usattNumber}</div>
+            <Grid xs={12} container justify="center" >
+              {/* <div className={classes.usattLabel}>USATT #{personState.usattNumber}</div> */}
+              <Button
+                className={classes.followingButton}
+                variant="contained"
+                color={followingState ? "gray" : "primary"}
+                size="small"
+                onClick={handleFollow}
+                startIcon={<PersonIcon />}
+              >
+                {followingState ?
+                  <CheckIcon /> :
+                  "Follow"}
+              </Button>
+
             </Grid>
           </Grid>
           <Grid container sm={8} xs={12} item >
@@ -236,7 +264,6 @@ const personPage = () => {
   }
   const navigateToEditPerson = (personId) => {
     history.push('/edit-person-profile/' + personId);
-
   }
 
   const navigateToLinkedClub = (clubId) => {
