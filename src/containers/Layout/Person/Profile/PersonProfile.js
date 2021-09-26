@@ -109,23 +109,73 @@ const personPage = () => {
   const [linkedClubsState, setLinkedClubsState] = useState(undefined);
   const [postingState, setPostingState] = useState();
   const [value, setValue] = useState(0); //used by app bars
-  const [followingState, setFollowingState] = useState();
+  const [followingStatus, setFollowingStatus] = useState();
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
   }
 
   const handleFollow = () => {
-    setFollowingState(!followingState);
+    if (userContext.personId) {
+      if (followingStatus) {
+        unSubmitFollow();
+      } else {
+        submitFollow();
+      }
+    }
   }
 
-  const initialize = () => {
+  const submitFollow = () => {
+    const follow = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(
+        {
+          'followerId': userContext.personId,
+          'followedId': personState.personId,
+        }
+      )
+    }
+    fetch(API_URL.follow, follow)
+      .then(resp => resp.json())
+      .then((resp) => {
+        console.log(resp);
+        setFollowingStatus(true);
+      });
+  }
+
+  const unSubmitFollow = () => {
+    const unFollow = {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(
+        {
+          'followerId': userContext.personId,
+          'followedId': personState.personId,
+        }
+      )
+    }
+    fetch(API_URL.follow, unFollow)
+      .then(resp => resp.json())
+      .then((resp) => {
+        console.log(resp);
+        setFollowingStatus(false);
+      })
+  }
+
+  const initialize = async () => {
     // console.log('initializing');
-    fetch(API_URL.person + getPersonId())
+
+    fetch(API_URL.person + getPersonId() + "/?page=pp" + "&upid=" + userContext.personId)
       .then(resp => resp.json())
       .then((personData) => {
         // console.log('personData', personData);
         setPersonState(personData);
+        setFollowingStatus(personData.isFollowed);
         const linkedPersonIds = personData?.links.persons
           .map(p => p.personId)
           .filter(x => x !== undefined);
@@ -133,7 +183,7 @@ const personPage = () => {
 
         // console.log('linkedPersonIds', linkedPersonIds);
         // console.log('linkedPersonIdsUniq', linkedPersonIdsUniq);
-        const linkedPersonsFetches = linkedPersonIdsUniq.map(id => fetch(API_URL.person + id)
+        const linkedPersonsFetches = linkedPersonIdsUniq.map(id => fetch(API_URL.person + id + "/?page=pp" + "&upid=" + userContext.personId)
           .then(x => x.json()));
 
         forkJoin(linkedPersonsFetches)
@@ -167,7 +217,6 @@ const personPage = () => {
         setPostingState(reducePostings(postings));
       });
 
-    setFollowingState(false);
   }
 
   useEffect(() => {
@@ -192,22 +241,25 @@ const personPage = () => {
           <Grid item xs={12} sm={4} >
             <Avatar src={personState.pictureUrl} className={classes.large} />
             <div className={classes.name}> {`${personState.firstName} ${personState.lastName}`} </div>
-            <Grid xs={12} container justify="center" >
+            
+            {userContext.personId != personState.personId &&
+            <Grid container justify="center" >
               {/* <div className={classes.usattLabel}>USATT #{personState.usattNumber}</div> */}
               <Button
                 className={classes.followingButton}
                 variant="contained"
-                color={followingState ? "gray" : "primary"}
+                color={followingStatus ? "inherit" : "primary"}
                 size="small"
                 onClick={handleFollow}
                 startIcon={<PersonIcon />}
               >
-                {followingState ?
+                {followingStatus ?
                   <CheckIcon /> :
                   "Follow"}
               </Button>
 
             </Grid>
+            }
           </Grid>
           <Grid container sm={8} xs={12} item >
             <Grid xs={4} item >
@@ -215,11 +267,11 @@ const personPage = () => {
               <div className={classes.subtext}>Rating</div>
             </Grid>
             <Grid xs={4} item >
-              <div className={classes.stats}>-</div>
+              <div className={classes.stats}>{personState.numFollowers}</div>
               <div className={classes.subtext}>Followers</div>
             </Grid>
             <Grid xs={4} item >
-              <div className={classes.stats}>-</div>
+              <div className={classes.stats}>{personState.numFollowing}</div>
               <div className={classes.subtext}>Following</div>
             </Grid>
             <Grid xs={12} sm={10} item>

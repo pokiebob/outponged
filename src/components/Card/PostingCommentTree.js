@@ -71,6 +71,7 @@ const postingCommentTree = (props) => {
         }
         // console.log('nodes', nodes);
         const item = nodes.find((c) => c.postId === postId);
+        if (! item) return undefined;
         // console.log(postId, item);
         const children = nodes.filter((c) => c.parentPostId === postId && !c.isRoot) || [];
         const sortByDate = (c) => {

@@ -236,26 +236,27 @@ const home = () => {
     }
 
     const getAWSCredentials = async (googleUser) => {
-        const id_token = googleUser.Zb.id_token;
-        const expires_at = googleUser.Zb.expires_at;
-        const user = {
-            email: googleUser.Rs.Ct,
-            name: googleUser.Rs.Qe
-        }
+        // const id_token = googleUser.Zb.id_token;
+        // const expires_at = googleUser.Zb.expires_at;
+        // const user = {
+        //     email: googleUser.Rs.Ct,
+        //     name: googleUser.Rs.Qe
+        // }
+        console.log('ga.currentUser.get()', googleUser);
 
-        // const { id_token, expires_at } = googleUser.getAuthResponse();
-        // const profile = googleUser.getBasicProfile();
-        // let user = {
-        //   email: profile.getEmail(),
-        //   name: profile.getName()
-        // };
+        const { id_token, expires_at } = googleUser.getAuthResponse();
+        const profile = googleUser.getBasicProfile();
+        let user = {
+          email: profile.getEmail(),
+          name: profile.getName()
+        };
 
         await Auth.federatedSignIn(
             'google',
             { token: id_token, expires_at },
             user
         ).then((credentials) => {
-            // console.log('credentials', credentials)
+            console.log('credentials', credentials)
         }
         );
     }
@@ -298,7 +299,7 @@ const home = () => {
             .then(resp => resp.json())
             .then((resp) => {
                 // console.log("MONGO response:", resp);
-                fetch(API_URL.person + resp.personId)
+                fetch(API_URL.person + resp.personId + '/?page=home')
                     .then(resp => resp.json())
                     .then((personData) => {
                         setUserContext(personData);

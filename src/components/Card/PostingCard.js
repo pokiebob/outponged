@@ -141,6 +141,51 @@ const postingCard = (props) => {
     }
   }
 
+  const submitLike = () => {
+    const like = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(
+        {
+          'personId': userContext.personId,
+          'postId': props.postId,
+          'postType': 'post'
+        }
+      )
+    }
+    fetch(API_URL.postingLike, like)
+      .then(resp => resp.json())
+      .then((resp) => {
+        console.log(resp);
+        setLikeStatus(true);
+        setNumLikes(numLikes + 1);
+      })
+  }
+
+  const unSubmitLike = () => {
+    const unLike = {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(
+        {
+          'personId': userContext.personId,
+          'postId': props.postId
+        }
+      )
+    }
+    fetch(API_URL.postingLike, unLike)
+      .then(resp => resp.json())
+      .then((resp) => {
+        console.log(resp);
+        setLikeStatus(false);
+        setNumLikes(numLikes - 1);
+      })
+  }
+
   const handleComment = (newComment) => {
     if (userContext.personId) {
       //send comment
@@ -198,10 +243,10 @@ const postingCard = (props) => {
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title">Please Log In</DialogTitle>
+        <DialogTitle id="alert-dialog-title">Please Edit Your Profile</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            You must log in to OutPonged in order to continue. Log in or make an account by clicking the button on the top right of your screen.
+            You must edit your OutPonged profile in order to continue. Fill out necessarily details by clicking your avatar on the top right.
           </DialogContentText>
         </DialogContent>
         <DialogActions>
@@ -215,51 +260,6 @@ const postingCard = (props) => {
 
   const handleOpenComment = () => {
     setCommentOpen(!commentOpen)
-  }
-
-  const submitLike = () => {
-    const like = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(
-        {
-          'personId': userContext.personId,
-          'postId': props.postId,
-          'postType': 'post'
-        }
-      )
-    }
-    fetch(API_URL.postingLike, like)
-      .then(resp => resp.json())
-      .then((resp) => {
-        console.log(resp);
-        setLikeStatus(true);
-        setNumLikes(numLikes + 1);
-      })
-  }
-
-  const unSubmitLike = () => {
-    const unLike = {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(
-        {
-          'personId': userContext.personId,
-          'postId': props.postId
-        }
-      )
-    }
-    fetch(API_URL.postingLike, unLike)
-      .then(resp => resp.json())
-      .then((resp) => {
-        console.log(resp);
-        setLikeStatus(false);
-        setNumLikes(numLikes - 1);
-      })
   }
 
   const displayInteractionBar = () => {
