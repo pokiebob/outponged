@@ -167,7 +167,7 @@ const editProfile = () => {
             body: JSON.stringify(diff)
         }
 
-        fetch(API_URL.person + getPersonId(), patch)
+        fetch(API_URL.person + userContext.personId, patch)
             .then(resp => resp.json())
             .then((resp) => {
                 // console.log(resp);
@@ -176,7 +176,7 @@ const editProfile = () => {
                 setOrigPersonState({ ...newPersonState });
             })
             .then(() => {
-                navigateToPersonProfile(getPersonId())
+                navigateToPersonProfile(userContext.personId)
             });
 
     }
