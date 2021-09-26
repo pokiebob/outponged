@@ -76,7 +76,7 @@ const post = () => {
 
     // the context modified in Home when user logs in
     const [userContext, setUserContext] = useContext(Context);
-    console.log(userContext);
+    // console.log(userContext);
 
     // const personId = user?.attributes?.sub;
     // console.log("personId", personId);
@@ -124,7 +124,7 @@ const post = () => {
             )
         }
         if (file.type.includes("video")) {
-            console.log(URL.createObjectURL(file));
+            // console.log(URL.createObjectURL(file));
             return (
                 // <ReactPlayer
                 //     url={URL.createObjectURL(file)}

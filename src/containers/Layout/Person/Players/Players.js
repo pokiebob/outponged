@@ -74,6 +74,9 @@ class Players extends Component {
 
     return (
       <Grid container spacing={2} className="Players">
+        <div style={{marginTop: 30}}>
+          This is sample data...
+        </div>
         {players}
       </Grid>
     );

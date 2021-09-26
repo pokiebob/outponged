@@ -22,6 +22,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { Link, Route, Switch, useHistory, useLocation } from "react-router-dom";
 import { API_URL } from "../../../api-url";
 import { Context } from "../../../Context";
+import ComingSoon from "./ComingSoon";
 import Clubs from "../Club/Clubs/Clubs";
 import ClubProfile from "../Club/Profile/ClubProfile";
 import Players from "../Person/Players/Players";
@@ -550,7 +551,12 @@ const home = () => {
                 <Switch>
                     <Route path="/home" component={Feed} />
                     <Route path="/players" component={Players} />
-                    <Route path="/clubs" component={Clubs} />
+                    <Route path="/clubs"  >
+                        <ComingSoon page="Clubs" />
+                    </Route>
+                    <Route path="/coaches">
+                        <ComingSoon page="Coaches" />
+                    </Route>
                     <Route path="/person-profile" component={PersonProfile} />
                     <Route path="/edit-person-profile" component={EditPersonProfile} />
                     <Route path="/club-profile" component={ClubProfile} />
