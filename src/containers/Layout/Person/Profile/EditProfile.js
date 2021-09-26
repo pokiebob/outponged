@@ -103,19 +103,15 @@ const editProfile = () => {
     const [newPersonState, setNewPersonState] = useState();
     const classes = useStyles();
     const initialize = () => {
+        console.log(userContext);
         console.log('initializing');
-        fetch(API_URL.person + getPersonId())
+        fetch(API_URL.person + userContext.personId + "/?page=home")
             .then(resp => resp.json())
             .then((personData) => {
                 setOrigPersonState(personData);
                 setNewPersonState({ ...personData });
             });
     }
-
-    const getPersonId = () => {
-        return userContext.personId;
-        // return "5094b946-8b3b-4a8c-bfd9-6de41373c8da";
-    };
 
     const ATTRIB = {
         FIRST_NAME: {
