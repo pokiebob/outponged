@@ -119,11 +119,12 @@ const post = () => {
         if (!file) {
             return (
                 <CardContent >
-                    Step 1 <hr></hr>
+                    Step 1 <hr/>
                 </CardContent>
             )
         }
         if (file.type.includes("video")) {
+            console.log(URL.createObjectURL(file));
             return (
                 // <ReactPlayer
                 //     url={URL.createObjectURL(file)}
@@ -131,11 +132,10 @@ const post = () => {
                 //     controls="true"
                 // />
                 <CardMedia
-                    className={classes.media}
+                    // className={classes.media}
                     component="video"
-                    alt="Title"
-                    image={URL.createObjectURL(file)}
-                    controls="true"
+                    src={URL.createObjectURL(file)}
+                    controls={true}
                 />
             );
         }

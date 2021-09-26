@@ -108,11 +108,10 @@ const postingCard = (props) => {
     if (props.fileType.includes("video")) {
       return (
         <CardMedia
-          className={classes.media}
+          // className={classes.media}
           component="video"
-          alt="Title"
-          image={props.fileUrl}
-          controls="true"
+          src={props.fileUrl}
+          controls={true}
         />
       );
     }

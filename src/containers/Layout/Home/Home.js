@@ -532,6 +532,7 @@ const home = () => {
                             {renderLoginButton()}
                         </div>
                         <div className={classes.sectionMobile}>
+                            {renderPostButton()}
                             {renderLoginButton()}
                         </div>
                     </Toolbar>
