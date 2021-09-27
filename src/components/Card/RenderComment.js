@@ -97,7 +97,7 @@ const renderComment = ({ comment, level, treeHandleComment, rootCommentOpen }) =
     // console.log(comment);
     const classes = useStyles();
     const [likeStatus, setLikeStatus] = useState(comment.isLiked);
-    const [numLikes, setNumLikes] = useState(comment.numLikes);
+    const [numLikes, setNumLikes] = useState(comment.numLikes ? comment.numLikes : 0);
     const [commentOpen, setCommentOpen] = useState(comment.isRoot && rootCommentOpen ? true : false);
     const [userContext, setUserContext] = useContext(Context);
 
