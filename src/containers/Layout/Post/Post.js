@@ -5,7 +5,7 @@ import Card from "@material-ui/core/Card";
 import CardActions from "@material-ui/core/CardActions";
 import CardMedia from "@material-ui/core/CardMedia";
 import Grid from "@material-ui/core/Grid";
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles, useTheme } from "@material-ui/core/styles";
 import PublishIcon from '@material-ui/icons/Publish';
 import S3 from 'aws-s3';
 import React, { useContext, useState } from "react";
@@ -16,6 +16,13 @@ import { Context } from "../../../Context";
 import Backdrop from '@material-ui/core/Backdrop';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { aws } from '../../../keys';
+import Box from "@material-ui/core/Box";
+import OutlinedInput from "@material-ui/core/OutlinedInput";
+import InputLabel from "@material-ui/core/InputLabel";
+import MenuItem from "@material-ui/core/MenuItem";
+import FormControl from "@material-ui/core/FormControl";
+import Select from "@material-ui/core/Select";
+import Chip from "@material-ui/core/Chip";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -52,8 +59,12 @@ const useStyles = makeStyles((theme) => ({
         height: 0,
         paddingTop: "100%", // 16:9
     },
-    form: {
-        marginTop: "2px",
+    tags: {
+        width: "100%",
+        marginTop: "10px",
+    },
+    tagLabel: {
+        left: "10px"
     },
     createPost: {
         marginTop: "15px",
@@ -119,7 +130,7 @@ const post = () => {
         if (!file) {
             return (
                 <CardContent >
-                    Step 1 <hr/>
+                    Step 1 <hr />
                 </CardContent>
             )
         }
@@ -200,8 +211,44 @@ const post = () => {
         history.push("/person-profile/" + personId);
     }
 
+    const renderTags = () => {
+        
+    }
+
     const renderPostCard = () => {
         const date = new Date();
+        const [tagName, setTagName] = React.useState([]);
+
+        const handleTagsChange = (event) => {
+            const {
+                target: { value }
+            } = event;
+            setTagName(
+                // On autofill we get a the stringified value.
+                typeof value === "string" ? value.split(",") : value
+            );
+        };
+
+        const tags = ["Training", "News", "Tournament"];
+        const ITEM_HEIGHT = 48;
+        const ITEM_PADDING_TOP = 8;
+        const MenuProps = {
+            PaperProps: {
+                style: {
+                    maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+                    width: 250
+                }
+            }
+        };
+        function getStyles(name, tagName, theme) {
+            return {
+                fontWeight:
+                    tagName.indexOf(name) === -1
+                        ? theme.typography.fontWeightRegular
+                        : theme.typography.fontWeightMedium
+            };
+        }
+        const theme = useTheme();
 
         return (
             <Card className={classes.paper} elevation={APP_PAPER_ELEVATION}>
@@ -229,7 +276,7 @@ const post = () => {
                     </label>
                 </CardActions>
                 <CardContent>
-                    Step 2 <hr/>
+                    Step 2 <hr />
                     <form
                         autoComplete="off"
                         onSubmit={handleSubmit}
@@ -241,7 +288,6 @@ const post = () => {
                                     label="Title"
                                     fullWidth
                                     required
-                                    className={classes.form}
                                     onInput={e => updatePostRef("title", e.target.value)}
                                     inputProps={{ maxLength: 100 }}
                                 />
@@ -255,10 +301,42 @@ const post = () => {
                                     multiline
                                     rowsMax={10}
                                     fullWidth
-                                    className={classes.form}
                                     inputProps={{ maxLength: 1000 }}
                                     onInput={e => updatePostRef("description", e.target.value)}
                                 />
+                            </Grid>
+                        </Grid>
+                        <Grid container>
+                            <Grid item xs={10}>
+                                <FormControl className={classes.tags}>
+                                    <InputLabel className={classes.tagLabel} id="demo-multiple-chip-label">Tags (Optional)</InputLabel>
+                                    <Select
+                                        labelId="demo-multiple-chip-label"
+                                        id="demo-multiple-chip"
+                                        multiple
+                                        value={tagName}
+                                        onChange={handleTagsChange}
+                                        input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
+                                        renderValue={(selected) => (
+                                            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+                                                {selected.map((value) => (
+                                                    <Chip key={value} label={value} />
+                                                ))}
+                                            </Box>
+                                        )}
+                                        MenuProps={MenuProps}
+                                    >
+                                        {tags.map((name) => (
+                                            <MenuItem
+                                                key={name}
+                                                value={name}
+                                                style={getStyles(name, tagName, theme)}
+                                            >
+                                                {name}
+                                            </MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
                             </Grid>
                         </Grid>
                         <Grid container>
@@ -269,7 +347,7 @@ const post = () => {
                                     className={classes.createPost}
                                     type="submit"
                                 >
-                                    Create Post
+                                    Next
                                 </Button>
                                 <Backdrop className={classes.backdrop} open={loading} >
                                     <CircularProgress color="inherit" />
