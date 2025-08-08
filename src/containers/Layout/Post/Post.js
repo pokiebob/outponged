@@ -179,7 +179,7 @@ const post = () => {
 
       const resp = await fetch(API_URL.post + "?postType=post", post);
       const json = await resp.json();
-      console.log(json);
+    //   console.log(json);
       setLoading(false);
       navigateToPersonProfile(userContext.personId);
     } catch (err) {

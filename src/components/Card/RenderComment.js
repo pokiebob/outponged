@@ -148,7 +148,7 @@ const renderComment = ({ comment, level, treeHandleComment, rootCommentOpen }) =
         fetch(API_URL.postingLike, like)
             .then(resp => resp.json())
             .then((resp) => {
-                console.log(resp);
+                // console.log(resp);
                 setLikeStatus(true);
                 setNumLikes(numLikes + 1);
             })
@@ -170,7 +170,7 @@ const renderComment = ({ comment, level, treeHandleComment, rootCommentOpen }) =
         fetch(API_URL.postingLike, unLike)
             .then(resp => resp.json())
             .then((resp) => {
-                console.log(resp);
+                // console.log(resp);
                 setLikeStatus(false);
                 setNumLikes(numLikes - 1);
             })

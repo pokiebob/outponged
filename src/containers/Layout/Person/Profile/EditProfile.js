@@ -116,8 +116,8 @@ const editProfile = () => {
   const classes = useStyles();
 
  const initialize = async (isMounted) => {
-  console.log(userContext);
-  console.log("initializing");
+//   console.log(userContext);
+//   console.log("initializing");
 
   try {
     const resp = await fetch(
@@ -191,7 +191,7 @@ const editProfile = () => {
 
     const diff = {};
     difKeys.forEach((x) => (diff[x] = newPersonState[x]));
-    console.log("diff", diff);
+    // console.log("diff", diff);
 
     const patch = {
       method: "PATCH",

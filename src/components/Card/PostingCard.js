@@ -157,7 +157,7 @@ const postingCard = (props) => {
     fetch(API_URL.postingLike, like)
       .then(resp => resp.json())
       .then((resp) => {
-        console.log(resp);
+        // console.log(resp);
         setLikeStatus(true);
         setNumLikes(numLikes + 1);
       })
@@ -179,7 +179,7 @@ const postingCard = (props) => {
     fetch(API_URL.postingLike, unLike)
       .then(resp => resp.json())
       .then((resp) => {
-        console.log(resp);
+        // console.log(resp);
         setLikeStatus(false);
         setNumLikes(numLikes - 1);
       })
@@ -197,7 +197,7 @@ const postingCard = (props) => {
   const submitComment = (newComment) => {
     // console.log(props, newComment);
     setCommentOpen(false);
-    console.log(userContext);
+    // console.log(userContext);
 
     const comment = {
       method: 'POST',
@@ -230,7 +230,7 @@ const postingCard = (props) => {
 
   const addComment = (comment) => {
     const copy = [...commentState, comment];
-    console.log('newCommentState', copy);
+    // console.log('newCommentState', copy);
     setCommentState(copy);
   }
 

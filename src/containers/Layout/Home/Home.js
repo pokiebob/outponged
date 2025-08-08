@@ -47,7 +47,7 @@ awsconfig.oauth.redirectSignOut = `${window.location.origin}/`;
 
 Amplify.configure(awsconfig);
 
-console.log("[CONFIG]", Amplify.configure());
+// console.log("[CONFIG]", Amplify.configure());
 
 const useStyles = makeStyles((theme) => ({
   grow: { flexGrow: 1 },
@@ -154,11 +154,11 @@ const home = () => {
     const updateUser = async () => {
       try {
         const user = await Auth.currentAuthenticatedUser();
-        console.log("[AUTH] Cognito session found:", user);
+        // console.log("[AUTH] Cognito session found:", user);
         setAwsUser(user);
         if (location.pathname === "/") history.push("/home/");
       } catch (error) {
-        console.log("[AUTH] No Cognito session found", error);
+        // console.log("[AUTH] No Cognito session found", error);
       }
     };
     Hub.listen("auth", updateUser);
@@ -167,23 +167,23 @@ const home = () => {
   }, []);
 
   useEffect(() => {
-    console.log("[STATE] awsUser changed:", awsUser);
+    // console.log("[STATE] awsUser changed:", awsUser);
   }, [awsUser]);
 
   const handleLogIn = async () => {
     const currentUser = await Auth.currentAuthenticatedUser().catch(() => null);
-    console.log("[handleLogIn] currentUser:", currentUser);
+    // console.log("[handleLogIn] currentUser:", currentUser);
     if (!currentUser) {
-      console.log("[handleLogIn] no session → federated sign-in");
+    //   console.log("[handleLogIn] no session → federated sign-in");
       await Auth.federatedSignIn();
     } else {
-      console.log("[handleLogIn] already signed in");
+    //   console.log("[handleLogIn] already signed in");
     }
   };
 
   const persistAndRefresh = (user) => {
     const email = user?.attributes?.email || user.email || null;
-    console.log("[persistAndRefresh] extracted email:", email);
+    // console.log("[persistAndRefresh] extracted email:", email);
 
     if (!email) {
       console.error(
@@ -214,7 +214,7 @@ const home = () => {
   };
 
   useEffect(() => {
-    console.log("[STATE] userContext changed:", userContext);
+    // console.log("[STATE] userContext changed:", userContext);
   }, [userContext]);
 
   // if (awsUser && !isLoggedIn) persistAndRefresh(awsUser);

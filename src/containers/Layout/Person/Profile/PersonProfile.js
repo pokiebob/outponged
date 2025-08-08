@@ -139,7 +139,7 @@ const personPage = () => {
     fetch(API_URL.follow, follow)
       .then((resp) => resp.json())
       .then((resp) => {
-        console.log(resp);
+        // console.log(resp);
         setFollowingStatus(true);
       });
   };
@@ -158,7 +158,7 @@ const personPage = () => {
     fetch(API_URL.follow, unFollow)
       .then((resp) => resp.json())
       .then((resp) => {
-        console.log(resp);
+        // console.log(resp);
         setFollowingStatus(false);
       });
   };

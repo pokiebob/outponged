@@ -121,14 +121,14 @@ const clubPage = () => {
         fetch(API_URL.club + getClubId())
             .then(resp => resp.json())
             .then((clubData) => {
-                console.log('clubData', clubData);
+                // console.log('clubData', clubData);
                 setClubState(clubData);
-                console.log('clubState', clubState);
+                // console.log('clubState', clubState);
             });
     }
 
     useEffect(() => {
-        console.log('useEffect');
+        // console.log('useEffect');
         initialize();
         // Register a listener to trap url changes
         return history.listen((location) => {
@@ -180,7 +180,7 @@ const clubPage = () => {
         return linkedClubsState.filter(lp => linkIds.includes(lp.personId));
     }
     const renderPersonList = (role) => {
-        console.log(linkedClubsState);
+        // console.log(linkedClubsState);
         return (linkedClubsState?.length > 0 &&
             filterLinkedPersons(role)
                 .map((linkedPerson, idx) => {
