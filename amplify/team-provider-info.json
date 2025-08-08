@@ -1,19 +1,38 @@
 {
-  "dev": {
+  "master": {
     "awscloudformation": {
-      "AuthRoleName": "amplify-outponged-dev-155205-authRole",
-      "UnauthRoleArn": "arn:aws:iam::223397706154:role/amplify-outponged-dev-155205-unauthRole",
-      "AuthRoleArn": "arn:aws:iam::223397706154:role/amplify-outponged-dev-155205-authRole",
+      "AuthRoleName": "amplify-outponged-master-42025-authRole",
+      "UnauthRoleArn": "arn:aws:iam::223397706154:role/amplify-outponged-master-42025-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::223397706154:role/amplify-outponged-master-42025-authRole",
       "Region": "us-east-1",
-      "DeploymentBucketName": "amplify-outponged-dev-155205-deployment",
-      "UnauthRoleName": "amplify-outponged-dev-155205-unauthRole",
-      "StackName": "amplify-outponged-dev-155205",
-      "StackId": "arn:aws:cloudformation:us-east-1:223397706154:stack/amplify-outponged-dev-155205/be213d80-9323-11eb-9c68-0e918a040795",
-      "AmplifyAppId": "d20u29gnt74tik"
+      "DeploymentBucketName": "amplify-outponged-master-42025-deployment",
+      "UnauthRoleName": "amplify-outponged-master-42025-unauthRole",
+      "StackName": "amplify-outponged-master-42025",
+      "StackId": "arn:aws:cloudformation:us-east-1:223397706154:stack/amplify-outponged-master-42025/844a3a00-5078-11f0-b58a-0affdc8be2f5",
+      "AmplifyAppId": "d32mcqbbrak3ir"
     },
     "categories": {
+      "function": {
+        "S3Trigger6b1f09a7": {
+          "deploymentBucketName": "amplify-outponged-master-42025-deployment",
+          "s3Key": "amplify-builds/S3Trigger6b1f09a7-346c5a50654d59395239-build.zip"
+        }
+      },
       "auth": {
-        "outpongede279a9e0": {}
+        "outponged0373b563": {
+          "userPoolId": "us-east-1_lQPn2VgLX",
+          "userPoolName": "outpongede279a9e0_userpool_e279a9e0-dev",
+          "webClientId": "7jr2f6rahrfv2mbpuqfogivjob",
+          "nativeClientId": "7jr2f6rahrfv2mbpuqfogivjob",
+          "identityPoolId": "us-east-1:ea001739-6af5-48b5-80e9-d6177214edc7",
+          "identityPoolName": "outpongede279a9e0_identitypool_e279a9e0__dev",
+          "allowUnauthenticatedIdentities": false,
+          "authRoleArn": "arn:aws:iam::223397706154:role/service-role/outponged-amplify-dev-auth-role",
+          "authRoleName": "outponged-amplify-dev-auth-role",
+          "unauthRoleArn": "arn:aws:iam::223397706154:role/service-role/outponged-amplify-dev-unauth-role",
+          "unauthRoleName": "outponged-amplify-dev-unauth-role",
+          "googleClientId": "935856095530-b68opn4gva9dm1rhgtrt9j5lo9io23e3.apps.googleusercontent.com"
+        }
       }
     }
   }

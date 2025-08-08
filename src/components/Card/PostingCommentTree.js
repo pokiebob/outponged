@@ -88,7 +88,7 @@ const postingCommentTree = (props) => {
             props.postingCardHandleComment(newComment);
         }
 
-        const topNChildren = sortByDate(children).slice(0, item.numVisibleChildren);
+        const topNChildren = sortByDate(children).slice(0, item.numVisibleChildren).reverse();
         if (topNChildren.length > 0) {
             topNChildren[0].isFirstChild = true;
         }

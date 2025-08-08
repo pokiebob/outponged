@@ -10,19 +10,33 @@ const awsmobile = {
     "oauth": {
         "domain": "outponged-auth-dev.auth.us-east-1.amazoncognito.com",
         "scope": [
-            "phone",
+            "aws.cognito.signin.user.admin",
             "email",
             "openid",
-            "profile",
-            "aws.cognito.signin.user.admin"
+            "phone",
+            "profile"
         ],
-        // "redirectSignIn": "http://localhost:3000/",
-        // "redirectSignOut": "http://localhost:3000/",
-        "redirectSignIn": "https://outponged.com/",
-        "redirectSignOut": "https://outponged.com/",
+        "redirectSignIn": "http://localhost:3000/,https://outponged.com/",
+        "redirectSignOut": "http://localhost:3000/,https://outponged.com/",
         "responseType": "code"
     },
-    "federationTarget": "COGNITO_USER_POOLS"
+    "federationTarget": "COGNITO_USER_AND_IDENTITY_POOLS",
+    "aws_cognito_username_attributes": [],
+    "aws_cognito_social_providers": [
+        "GOOGLE"
+    ],
+    "aws_cognito_signup_attributes": [
+        "EMAIL"
+    ],
+    "aws_cognito_mfa_configuration": "OFF",
+    "aws_cognito_mfa_types": [],
+    "aws_cognito_password_protection_settings": {
+        "passwordPolicyMinLength": 8,
+        "passwordPolicyCharacters": []
+    },
+    "aws_cognito_verification_mechanisms": [
+        "EMAIL"
+    ]
 };
 
 

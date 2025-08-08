@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>GIS Test</title>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script>
+    function handleCredentialResponse(response) {
+      console.log("ID Token:", response.credential);
+    }
+
+    window.onload = function () {
+      window.google.accounts.id.initialize({
+        client_id: "935856095530-elusaeu5ak1d0b1guundvia4otik03tj.apps.googleusercontent.com",
+        callback: handleCredentialResponse
+      });
+      window.google.accounts.id.renderButton(
+        document.getElementById("buttonDiv"),
+        { theme: "outline", size: "large" }
+      );
+    };
+  </script>
+</head>
+<body>
+  <div id="buttonDiv"></div>
+</body>
+</html>

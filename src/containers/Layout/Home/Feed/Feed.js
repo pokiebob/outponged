@@ -77,7 +77,7 @@ const feed = () => {
     return (
       postingState?.map((post) => {
         return (
-          <Grid container key={post.postId} justify="center">
+          <Grid container key={post.postId} justifyContent="center">
             <Card className={classes.paper} elevation={APP_PAPER_ELEVATION}>
               <PostingCard
                 ownerId={post.ownerId}
@@ -135,7 +135,7 @@ const feed = () => {
   return (
     <div className={classes.root} key={postingState} >
       <Grid container  >
-        <Grid container justify="center">
+        <Grid container justifyContent="center">
           <Grid item className={classes.paper}>
             <Chip
               className={classes.filter}

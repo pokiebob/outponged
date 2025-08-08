@@ -249,7 +249,7 @@ const clubPage = () => {
     const renderProfile = () => {
         return (
             <div className={classes.root}>
-                <Grid container justify="center" >
+                <Grid container justifyContent="center" >
                     {renderProfileCard()}
 
                     <Paper className={classes.paper}>
