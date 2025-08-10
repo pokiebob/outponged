@@ -84,6 +84,7 @@ const useStyles = makeStyles((theme) => ({
   },
   followingButton: {
     marginTop: "10px",
+    marginBottom: "10px",
   },
   label: {
     flexDirection: "column",
@@ -92,10 +93,20 @@ const useStyles = makeStyles((theme) => ({
     width: theme.spacing(15),
     height: theme.spacing(15),
     margin: "auto",
+    [theme.breakpoints.down("xs")]: {
+      width: theme.spacing(10), // ~80px
+      height: theme.spacing(10),
+    },
+  },
+  avatarIcon: {
+    fontSize: theme.spacing(8), // default for desktop avatar
+    [theme.breakpoints.down("xs")]: {
+      fontSize: theme.spacing(5), // smaller for mobile avatar
+    },
   },
   name: {
     marginTop: "10px",
-    marginBottom: "10px",
+    // marginBottom: "10px",
     fontSize: "18px",
     textAlign: "center",
   },
@@ -144,9 +155,12 @@ const personPage = () => {
     };
     fetch(API_URL.follow, follow)
       .then((resp) => resp.json())
-      .then((resp) => {
-        // console.log(resp);
+      .then(() => {
         setFollowingStatus(true);
+        setPersonState((prev) => ({
+          ...prev,
+          numFollowers: (prev.numFollowers || 0) + 1, // increment
+        }));
       });
   };
 
@@ -163,9 +177,12 @@ const personPage = () => {
     };
     fetch(API_URL.follow, unFollow)
       .then((resp) => resp.json())
-      .then((resp) => {
-        // console.log(resp);
+      .then(() => {
         setFollowingStatus(false);
+        setPersonState((prev) => ({
+          ...prev,
+          numFollowers: Math.max((prev.numFollowers || 0) - 1, 0), // decrement but not below 0
+        }));
       });
   };
 
@@ -178,7 +195,7 @@ const personPage = () => {
         "&upid=" +
         (userContext?.personId || "")
     );
-  
+
     let personData;
     if (personResp.ok) {
       personData = await personResp.json();
@@ -191,11 +208,11 @@ const personPage = () => {
       );
       return;
     }
-  
+
     if (!isMountedRef.current) return;
     setPersonState(personData);
     setFollowingStatus(personData.isFollowed);
-  
+
     // Postings
     setLoadingPosts(true);
     const postResp = await fetch(
@@ -205,10 +222,10 @@ const personPage = () => {
         "&upid=" +
         (userContext?.personId || "")
     );
-  
+
     if (postResp.ok) {
       const postings = await postResp.json();
-  
+
       const resolvedPosts = await Promise.all(
         postings.map(async (post) => {
           if (post.fileUrl && !post.fileUrl.startsWith("http")) {
@@ -234,7 +251,7 @@ const personPage = () => {
           return post;
         })
       );
-  
+
       if (isMountedRef.current) {
         setPostingState(reducePostings(resolvedPosts));
         setLoadingPosts(false);
@@ -249,17 +266,19 @@ const personPage = () => {
       setLoadingPosts(false);
     }
   };
-  
 
   useEffect(() => {
     const isMountedRef = { current: true };
 
-    initialize(isMountedRef);
+    if (userContext) {
+      initialize(isMountedRef); // only run after context is loaded
+    }
 
     const unlisten = history.listen((location) => {
       if (
         isMountedRef.current &&
-        location.pathname.includes("person-profile")
+        location.pathname.includes("person-profile") &&
+        userContext
       ) {
         initialize(isMountedRef);
       }
@@ -267,9 +286,9 @@ const personPage = () => {
 
     return () => {
       isMountedRef.current = false;
-      unlisten(); // cleanup history listener
+      unlisten();
     };
-  }, []);
+  }, [userContext]); // <-- now depends on userContext
 
   const classes = useStyles();
 
@@ -288,7 +307,9 @@ const personPage = () => {
               className={classes.large}
             >
               {(!personState.pictureUrl ||
-                !personState.pictureUrl.startsWith("http")) && <PersonIcon />}
+                !personState.pictureUrl.startsWith("http")) && (
+                <PersonIcon className={classes.avatarIcon} />
+              )}
             </Avatar>
 
             <div className={classes.name}>
