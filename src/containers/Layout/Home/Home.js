@@ -44,7 +44,6 @@ import awsconfig from "../../../aws-exports";
 awsconfig.oauth.redirectSignIn = `${window.location.origin}/`;
 awsconfig.oauth.redirectSignOut = `${window.location.origin}/`;
 
-
 Amplify.configure(awsconfig);
 
 // console.log("[CONFIG]", Amplify.configure());
@@ -64,10 +63,14 @@ const useStyles = makeStyles((theme) => ({
     "&:hover": { backgroundColor: "rgba(255, 255, 255, 0.25)" },
     marginRight: theme.spacing(1),
     marginLeft: 0,
-    width: "100%",
+    // width: "100%",
+    minWidth: 0,
+    flexGrow: 1,
     [theme.breakpoints.up("sm")]: {
       marginLeft: theme.spacing(3),
-      width: "auto",
+      width: "320px",
+      maxWidth: "100%",
+      flexGrow: 0,
     },
   },
   inputRoot: { color: "inherit" },
@@ -100,8 +103,13 @@ const useSearchTextInputStyles = makeStyles((theme) => ({
     "& .MuiFilledInput-root": {
       backgroundColor: "rgba(255, 255, 255, -.85)",
       color: "white",
-      width: "30ch",
+      width: "100%",
+      maxWidth: "100%",
       paddingTop: 0,
+      fontSize: "0.9rem",
+      [theme.breakpoints.down("xs")]: {
+        fontSize: "0.8rem", // even smaller on very small devices
+      },
     },
     "& .MuiFilledInput-root:hover": {
       backgroundColor: "rgba(255, 255, 255, 0.01)",
@@ -110,6 +118,16 @@ const useSearchTextInputStyles = makeStyles((theme) => ({
     "& .MuiFilledInput-root.Mui-focused": {
       backgroundColor: "rgba(255, 255, 255, 0.01)",
       color: "white",
+    },
+    "& .MuiInputBase-input": {
+      fontSize: "inherit",
+      [theme.breakpoints.down("xs")]: {
+        fontSize: "0.8rem",
+      },
+    },
+    "& .MuiInputBase-input::placeholder": {
+      fontSize: "inherit",
+      opacity: 0.8,
     },
   },
   searchBar: { flexWrap: "nowrap" },
@@ -174,10 +192,10 @@ const home = () => {
     const currentUser = await Auth.currentAuthenticatedUser().catch(() => null);
     // console.log("[handleLogIn] currentUser:", currentUser);
     if (!currentUser) {
-    //   console.log("[handleLogIn] no session → federated sign-in");
+      //   console.log("[handleLogIn] no session → federated sign-in");
       await Auth.federatedSignIn();
     } else {
-    //   console.log("[handleLogIn] already signed in");
+      //   console.log("[handleLogIn] already signed in");
     }
   };
 
@@ -341,7 +359,7 @@ const home = () => {
                 : "Guest User"}
             </Grid>
           )}
-          sx={{ width: 300 }}
+          //   sx={{ width: 300 }}
           renderInput={(params) => (
             <Grid
               container
@@ -351,7 +369,7 @@ const home = () => {
               <Grid item>
                 <SearchIcon className={searchClasses.searchIcon} />
               </Grid>
-              <Grid item>
+              <Grid item style={{ flex: 1 }}>
                 <TextField
                   {...params}
                   placeholder="Search for users..."

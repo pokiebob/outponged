@@ -18,13 +18,15 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
     justify: "center",
     "& .MuiTextField-root": {
-      margin: theme.spacing(1),
-      width: "50ch",
+      margin: theme.spacing(1, 0),
+      width: "90%",
     },
   },
   paper: {
-    marginTop: "30px",
-    width: 800,
+    marginTop: theme.spacing(4),
+    width: "100%",
+    maxWidth: 800,
+    padding: theme.spacing(2),
   },
   bar: {
     border: "none",
@@ -115,36 +117,34 @@ const editProfile = () => {
   const [newPersonState, setNewPersonState] = useState();
   const classes = useStyles();
 
- const initialize = async (isMounted) => {
-//   console.log(userContext);
-//   console.log("initializing");
+  const initialize = async (isMounted) => {
+    //   console.log(userContext);
+    //   console.log("initializing");
 
-  try {
-    const resp = await fetch(
-      API_URL.person + userContext.personId + "/?page=home"
-    );
-
-    if (!resp.ok) {
-      const text = await resp.text(); // possibly an HTML error page
-      console.warn(
-        `Failed to fetch profile (status: ${resp.status}):`,
-        text.slice(0, 200) // print first 200 chars for debugging
+    try {
+      const resp = await fetch(
+        API_URL.person + userContext.personId + "/?page=home"
       );
-      return;
+
+      if (!resp.ok) {
+        const text = await resp.text(); // possibly an HTML error page
+        console.warn(
+          `Failed to fetch profile (status: ${resp.status}):`,
+          text.slice(0, 200) // print first 200 chars for debugging
+        );
+        return;
+      }
+
+      const personData = await resp.json();
+
+      if (isMounted) {
+        setOrigPersonState(personData);
+        setNewPersonState({ ...personData });
+      }
+    } catch (err) {
+      console.error("Error during profile initialization:", err);
     }
-
-    const personData = await resp.json();
-
-    if (isMounted) {
-      setOrigPersonState(personData);
-      setNewPersonState({ ...personData });
-    }
-
-  } catch (err) {
-    console.error("Error during profile initialization:", err);
-  }
-};
-
+  };
 
   const ATTRIB = {
     FIRST_NAME: {
@@ -346,7 +346,7 @@ const editProfile = () => {
               </div>
             </Grid>
           </Grid>
-          <Grid container xs={8} item>
+          <Grid item xs={12} sm={8}>
             <form
               className={classes.root}
               noValidate
