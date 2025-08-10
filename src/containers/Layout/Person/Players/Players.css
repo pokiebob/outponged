@@ -5,3 +5,22 @@
   width: 80%;
   margin: auto;
 }
+
+@media (max-width: 400px) {
+  .Players {
+    width: 100%;
+    padding: 0 8px; /* small gutter so cards don't touch the edges */
+  }
+
+  /* Ensure cards shrink to fit mobile width */
+  .Players .MuiPaper-root {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 auto !important;
+  }
+
+  /* Prevent the horizontal scroll */
+  body, html {
+    overflow-x: hidden;
+  }
+}

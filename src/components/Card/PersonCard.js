@@ -10,7 +10,7 @@ import { APP_PAPER_ELEVATION } from "../../app-config";
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
-    "padding-top": "1rem",
+    paddingTop: "1rem",
   },
   paper: {
     padding: theme.spacing(2),
@@ -20,12 +20,17 @@ const useStyles = makeStyles((theme) => ({
   medium: {
     width: theme.spacing(10),
     height: theme.spacing(10),
-    margin: "auto"
+    margin: "auto",
+    [theme.breakpoints.down("xs")]: {
+      width: theme.spacing(6),  // smaller avatar size for mobile
+      height: theme.spacing(6),
+    },
   },
   col: {
-    marginLeft: "15px"
-  }
+    marginLeft: "15px",
+  },
 }));
+
 
 const personCard = (props) => {
   const classes = useStyles();
