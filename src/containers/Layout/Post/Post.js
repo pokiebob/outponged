@@ -27,10 +27,17 @@ const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
     justify: "center",
+    overflowX: "hidden",
   },
   paper: {
-    marginTop: "30px",
-    width: 800,
+    marginTop: theme.spacing(4),
+    width: "100%",
+    maxWidth: 800,
+    [theme.breakpoints.down("xs")]: {
+      maxWidth: "100%",
+      marginLeft: theme.spacing(1),
+      marginRight: theme.spacing(1),
+    },
   },
   bar: {
     border: "none",
@@ -152,34 +159,34 @@ const post = () => {
     try {
       const fileKey = `${Date.now()}_${file.name}`;
 
-      // Upload the file
+      // Upload to Amplify Storage (adjust level if needed)
       await Storage.put(fileKey, file, {
         contentType: file.type,
+        level: "public", // or 'protected'/'private' based on your security needs
       });
 
-      // Retrieve a usable (public or signed) URL
-      const fileUrl = await Storage.get(fileKey); // if public access allowed
-
-      // Build the post object
-      const post = {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ownerId: userContext.personId,
-          ownerType: "person",
-          ownerName: `${userContext?.firstName} ${userContext?.lastName}`,
-          ownerProfilePic: userContext.pictureUrl,
-          visibility: { level: "public" },
-          fileUrl,
-          fileType: file.type,
-          title: postRef.current.title,
-          description: postRef.current.description,
-        }),
+      // Instead of storing a signed URL, store the fileKey only
+      const postData = {
+        ownerId: userContext.personId,
+        ownerType: "person",
+        ownerName: `${userContext?.firstName} ${userContext?.lastName}`,
+        ownerProfilePic: userContext.pictureUrl,
+        visibility: { level: "public" },
+        fileUrl: fileKey, // <-- Store the key
+        fileType: file.type,
+        title: postRef.current.title,
+        description: postRef.current.description,
       };
 
-      const resp = await fetch(API_URL.post + "?postType=post", post);
+      const resp = await fetch(API_URL.post + "?postType=post", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(postData),
+      });
+
       const json = await resp.json();
-    //   console.log(json);
+      // console.log(json);
+
       setLoading(false);
       navigateToPersonProfile(userContext.personId);
     } catch (err) {
@@ -188,6 +195,7 @@ const post = () => {
       setLoading(false);
     }
   };
+
   const navigateToPersonProfile = (personId) => {
     history.push("/person-profile/" + personId);
   };
@@ -335,7 +343,7 @@ const post = () => {
                   className={classes.createPost}
                   type="submit"
                 >
-                  Next
+                  Post
                 </Button>
                 <Backdrop className={classes.backdrop} open={loading}>
                   <CircularProgress color="inherit" />
