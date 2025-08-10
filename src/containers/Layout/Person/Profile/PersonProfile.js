@@ -94,8 +94,9 @@ const useStyles = makeStyles((theme) => ({
     margin: "auto",
   },
   name: {
-    "margin-top": "20px",
-    "font-size": "18px",
+    marginTop: "10px",
+    marginBottom: "10px",
+    fontSize: "18px",
     textAlign: "center",
   },
 }));
@@ -169,15 +170,15 @@ const personPage = () => {
   };
 
   const initialize = async (isMountedRef) => {
-    // Main profile fetch (unchanged)
+    // Main profile fetch
     const personResp = await fetch(
       API_URL.person +
         getPersonId() +
         "/?page=pp" +
         "&upid=" +
-        userContext.personId
+        (userContext?.personId || "")
     );
-
+  
     let personData;
     if (personResp.ok) {
       personData = await personResp.json();
@@ -190,34 +191,41 @@ const personPage = () => {
       );
       return;
     }
-
+  
     if (!isMountedRef.current) return;
     setPersonState(personData);
     setFollowingStatus(personData.isFollowed);
-
-    // linked persons & linked clubs code (unchanged)...
-
+  
     // Postings
-    setLoadingPosts(true); // start loading
+    setLoadingPosts(true);
     const postResp = await fetch(
       API_URL.post +
         "find/person/?ppid=" +
         getPersonId() +
         "&upid=" +
-        userContext?.personId
+        (userContext?.personId || "")
     );
-
+  
     if (postResp.ok) {
       const postings = await postResp.json();
-
+  
       const resolvedPosts = await Promise.all(
         postings.map(async (post) => {
           if (post.fileUrl && !post.fileUrl.startsWith("http")) {
             try {
-              const signedUrl = await Storage.get(post.fileUrl, {
-                level: "public",
-              });
-              return { ...post, fileUrl: signedUrl };
+              if (userContext?.personId) {
+                // Logged in → signed URL
+                const signedUrl = await Storage.get(post.fileUrl, {
+                  level: "public",
+                });
+                return { ...post, fileUrl: signedUrl };
+              } else {
+                // Guest → construct direct public URL
+                const bucket = "outponged-post"; // TODO: replace with your bucket
+                const region = "us-east-1"; // adjust if needed
+                const publicUrl = `https://${bucket}.s3.${region}.amazonaws.com/public/${post.fileUrl}`;
+                return { ...post, fileUrl: publicUrl };
+              }
             } catch (err) {
               console.error("Error fetching file from S3:", err);
               return post;
@@ -226,10 +234,10 @@ const personPage = () => {
           return post;
         })
       );
-
+  
       if (isMountedRef.current) {
         setPostingState(reducePostings(resolvedPosts));
-        setLoadingPosts(false); // stop loading
+        setLoadingPosts(false);
       }
     } else {
       const text = await postResp.text();
@@ -238,9 +246,10 @@ const personPage = () => {
         postResp.status,
         text.slice(0, 200)
       );
-      setLoadingPosts(false); // stop loading even on error
+      setLoadingPosts(false);
     }
   };
+  
 
   useEffect(() => {
     const isMountedRef = { current: true };

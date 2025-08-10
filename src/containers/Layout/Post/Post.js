@@ -162,7 +162,7 @@ const post = () => {
       // Upload to Amplify Storage (adjust level if needed)
       await Storage.put(fileKey, file, {
         contentType: file.type,
-        level: "public", // or 'protected'/'private' based on your security needs
+        level: "public",
       });
 
       // Instead of storing a signed URL, store the fileKey only

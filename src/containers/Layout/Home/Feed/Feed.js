@@ -51,23 +51,29 @@ const feed = () => {
       filter === "likes" ? <ThumbUpAltOutlinedIcon /> : <RestoreIcon />
     );
     setAnchorEl(false);
-    setLoadingPosts(true); // start loading
-
+    setLoadingPosts(true);
+  
     try {
       const resp = await fetch(
-        `${API_URL.post}find/home?upid=${userContext?.personId}&filter=${filter}`
+        `${API_URL.post}find/home?upid=${userContext?.personId || ""}&filter=${filter}`
       );
       const postings = await resp.json();
-
-      // Resolve URLs for all posts
+  
       const resolvedPosts = await Promise.all(
         postings.map(async (post) => {
           if (post.fileUrl && !post.fileUrl.startsWith("http")) {
             try {
-              const signedUrl = await Storage.get(post.fileUrl, {
-                level: "public",
-              });
-              return { ...post, fileUrl: signedUrl };
+              if (userContext?.personId) {
+                // Logged in → use Amplify Storage.get()
+                const signedUrl = await Storage.get(post.fileUrl, { level: "public" });
+                return { ...post, fileUrl: signedUrl };
+              } else {
+                // Guest → construct direct public S3 URL
+                const bucket = "outponged-post";
+                const region = "us-east-1";
+                const publicUrl = `https://${bucket}.s3.${region}.amazonaws.com/public/${post.fileUrl}`;
+                return { ...post, fileUrl: publicUrl };
+              }
             } catch (err) {
               console.error("Error fetching file from S3:", err);
               return post;
@@ -76,17 +82,18 @@ const feed = () => {
           return post;
         })
       );
-
+  
       setPostingState(reducePostings(resolvedPosts));
     } catch (err) {
       console.error("Error loading feed:", err);
     } finally {
-      setLoadingPosts(false); // stop loading
+      setLoadingPosts(false);
     }
   };
+  
 
   useEffect(() => {
-    if (userContext) initialize("recent");
+    initialize("recent");
   }, [userContext]);
 
   const renderPostings = () => {
