@@ -270,15 +270,12 @@ const personPage = () => {
   useEffect(() => {
     const isMountedRef = { current: true };
 
-    if (userContext) {
-      initialize(isMountedRef); // only run after context is loaded
-    }
+    initialize(isMountedRef); // always run, logged in or not
 
     const unlisten = history.listen((location) => {
       if (
         isMountedRef.current &&
-        location.pathname.includes("person-profile") &&
-        userContext
+        location.pathname.includes("person-profile")
       ) {
         initialize(isMountedRef);
       }
@@ -288,7 +285,7 @@ const personPage = () => {
       isMountedRef.current = false;
       unlisten();
     };
-  }, [userContext]); // <-- now depends on userContext
+  }, [userContext]); // still depend on userContext for refetch after login
 
   const classes = useStyles();
 
