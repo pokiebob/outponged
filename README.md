@@ -39,36 +39,16 @@ OutPonged UI (React + Material-UI)
 
 ## Local Development
 
-### 1. Clone the Repository
 ```bash
 git clone https://github.com/yourusername/outponged.git
 cd outponged
 ```
 
-### 2. Install Dependencies
 ```bash
 npm install
-```
-
-### 3. Environment Setup
-Create a `.env` file in the root directory:
-```env
-REACT_APP_API_URL=https://your-backend-url/api
-REACT_APP_AWS_REGION=us-east-1
-REACT_APP_USER_POOL_ID=your_cognito_user_pool_id
-REACT_APP_CLIENT_ID=your_cognito_app_client_id
-REACT_APP_S3_BUCKET=your_bucket_name
-```
-
-If using the legacy `setenv` script:
-```bash
-source setenv
-```
-
-### 4. Start Development Server
-```bash
 npm start
 ```
+
 This will launch the app on http://localhost:3000.
 
 ## AWS Amplify Hosting
@@ -81,11 +61,6 @@ npm install -g @aws-amplify/cli
 ### Initialize Amplify
 ```bash
 amplify init
-```
-
-### Deploy
-```bash
-amplify publish
 ```
 
 Live site: https://www.outponged.com
@@ -110,16 +85,4 @@ Live site: https://www.outponged.com
 
 - **Home Screen Improvements**  
   - Add a general community feed displaying public posts from all users.
-
-## Project Structure
-
-```
-src/
-  components/        # Reusable UI components
-  pages/             # Page-level components (Home, Players, Clubs, etc.)
-  api-url.js         # API endpoint definitions
-  Context.js         # React Context for global state
-  app-config.js      # App constants
-  App.js             # Root component
-```
 
