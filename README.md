@@ -1,7 +1,7 @@
 # OutPonged
 
 OutPonged is a social networking platform for table tennis players, clubs, coaches, and enthusiasts.  
-It connects the global table tennis community through player profiles, club listings, tournaments, and a social media–style feed.
+It connects the global table tennis community through player profiles, club listings, coaches, tournaments through an instagram-style feed.
 
 ## Features
 
