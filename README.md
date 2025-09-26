@@ -30,6 +30,47 @@ OutPonged UI (React + Material-UI)
 - **Media**: AWS S3 buckets for user-uploaded images
 - **Auth**: AWS Cognito for secure login with Google OAuth
 
+```mermaid
+flowchart LR
+    subgraph OutPonged Frontend
+        browser[Web Browser - React App MaterialUI Router Context]
+    end
+
+    subgraph OutPonged Backend
+        api[OutPonged REST API - NodeJS Express]
+        db[(MongoDB Atlas Profiles Clubs Posts)]
+    end
+
+    subgraph ThirdParty[Third Party Services]
+        google[(Google OAuth GAPI)]
+        amplify[(AWS Amplify Auth Cognito)]
+        s3[(AWS S3 Media Storage)]
+    end
+
+    %% Authentication Flow
+    browser -- Login with Google --> google
+    google -- ID Token --> browser
+    browser -- Send Google Token --> amplify
+    amplify -- AWS Credentials Session --> browser
+
+    %% Profile Flow
+    browser -- POST /person email --> api
+    api -- Insert or Query Profile --> db
+    db -- Profile Data --> api
+    api -- Profile JSON --> browser
+
+    %% Search Flow
+    browser -- GET /person list --> api
+    api -- Query Users --> db
+    db -- User List --> api
+    api -- Suggestions JSON --> browser
+
+    %% Media Flow
+    browser -- Upload Fetch Images --> s3
+
+```
+
+
 ## Prerequisites
 
 - **Node.js** >= 14.x
