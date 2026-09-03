@@ -1,5 +1,6 @@
 import { MenuItem } from "@mui/material";
 import Card from "@mui/material/Card";
+import Box from "@mui/material/Box";
 import Chip from "@mui/material/Chip";
 import Grid from "@mui/material/Grid";
 import Menu from "@mui/material/Menu";
@@ -161,12 +162,13 @@ const feed = () => {
   );
 
   return (
-    <div className={classes.root}>
+    <Box className={classes.root} sx={{ pt: 3 }}>
       <Grid container>
         <Grid container justifyContent="center">
-          <Grid item className={classes.paper}>
+          <Grid item className={classes.paper} sx={{ mt: 0 }}>
             <Chip
               className={classes.filter}
+              sx={{ ml: 2 }}
               icon={filterIconState}
               onClick={handleClick}
               color="primary"
@@ -179,7 +181,7 @@ const feed = () => {
         </Grid>
         {renderPostings()}
       </Grid>
-    </div>
+    </Box>
   );
 };
 

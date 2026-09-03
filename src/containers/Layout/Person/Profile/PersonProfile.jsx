@@ -1,6 +1,7 @@
 import AppBar from "@mui/material/AppBar";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
+import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
@@ -301,6 +302,7 @@ const personPage = () => {
                   : undefined
               }
               className={classes.large}
+              sx={{ mb: 1.5 }}
             >
               {(!personState.pictureUrl ||
                 !personState.pictureUrl.startsWith("http")) && (
@@ -308,17 +310,18 @@ const personPage = () => {
               )}
             </Avatar>
 
-            <div className={classes.name}>
+            <Box className={classes.name} sx={{ mt: 0, mb: 1.5 }}>
               {personState.firstName && personState.lastName
                 ? `${personState.firstName} ${personState.lastName}`
                 : "Guest User"}
-            </div>
+            </Box>
 
             {userContext.personId != personState.personId && (
               <Grid container justifyContent="center">
                 {/* <div className={classes.usattLabel}>USATT #{personState.usattNumber}</div> */}
                 <Button
                   className={classes.followingButton}
+                  sx={{ mt: 0.5, mb: 1 }}
                   variant="contained"
                   color={followingStatus ? "inherit" : "primary"}
                   size="small"

@@ -5,6 +5,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import Drawer from "@mui/material/Drawer";
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
+import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
@@ -33,8 +34,6 @@ import Post from "../Post/Post";
 import Tournaments from "../Tournaments/Tournaments";
 import Feed from "./Feed/Feed";
 import { Redirect } from "react-router-dom";
-
-import LogIn from "./LogIn";
 
 let isLoggedIn = false;
 
@@ -452,7 +451,11 @@ const home = () => {
 
     return (
       <div className={classes.grow}>
-        <AppBar position="static" className={classes.appBar}>
+        <AppBar
+          position="static"
+          className={classes.appBar}
+          sx={{ backgroundColor: "#ba0018" }}
+        >
           <Toolbar>
             <IconButton
               edge="start"
@@ -493,8 +496,28 @@ const home = () => {
     );
   };
 
-  const renderPostPage = () =>
-    userContext ? <Route path="/post" component={Post} /> : null;
+  const renderSignedOutPost = () => (
+    <Box
+      sx={{
+        maxWidth: 520,
+        mx: "auto",
+        mt: 4,
+        px: 3,
+        py: 4,
+        textAlign: "center",
+      }}
+    >
+      <Typography variant="h6" gutterBottom>
+        Log in to create a post
+      </Typography>
+      <Typography color="text.secondary" sx={{ mb: 2 }}>
+        Posting is available to signed-in OutPonged members.
+      </Typography>
+      <Button variant="contained" onClick={handleLogIn}>
+        Log In
+      </Button>
+    </Box>
+  );
 
   // if (userContext) {
   return (
@@ -511,7 +534,7 @@ const home = () => {
         <Route path="/tournaments/" component={Tournaments} />
         <Route
           path="/post"
-          render={() => (userContext ? <Post /> : <CircularProgress />)}
+          render={() => (userContext ? <Post /> : renderSignedOutPost())}
         />
         <Redirect exact from="/" to="/home/" />
       </Switch>
