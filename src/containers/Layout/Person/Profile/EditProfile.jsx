@@ -9,6 +9,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import MaskedInput from "react-text-mask";
 import { API_URL } from "../../../../api-url";
+import { authenticatedFetch } from "../../../../api-client";
 import { Context } from "../../../../Context";
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { fetchAuthSession } from "aws-amplify/auth";
@@ -122,7 +123,7 @@ const editProfile = () => {
     //   console.log("initializing");
 
     try {
-      const resp = await fetch(
+      const resp = await authenticatedFetch(
         API_URL.person + userContext.personId + "/?page=home"
       );
 
@@ -201,7 +202,7 @@ const editProfile = () => {
       body: JSON.stringify(diff),
     };
 
-    fetch(API_URL.person + userContext.personId, patch)
+    authenticatedFetch(API_URL.person + userContext.personId, patch)
       .then((resp) => resp.json())
       .then((resp) => {
         // console.log(resp);
@@ -211,7 +212,8 @@ const editProfile = () => {
       })
       .then(() => {
         navigateToPersonProfile(userContext.personId);
-      });
+      })
+      .catch((error) => console.error("Profile update failed:", error.message));
   };
 
   useEffect(() => {
@@ -285,12 +287,13 @@ const editProfile = () => {
         body: JSON.stringify({ pictureUrl: url }),
       };
 
-      fetch(API_URL.person + userContext.personId, patch)
+      authenticatedFetch(API_URL.person + userContext.personId, patch)
         .then((resp) => resp.json())
         .then((resp) => {
           setUserContext(resp);
           setOrigPersonState({ ...newPersonState });
-        });
+        })
+        .catch((error) => console.error("Profile photo update failed:", error.message));
     } catch (err) {
       console.error("Upload failed", err);
       alert("Upload failed: " + err.message);

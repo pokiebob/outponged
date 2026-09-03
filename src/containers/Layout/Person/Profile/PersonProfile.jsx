@@ -14,6 +14,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { forkJoin } from "rxjs";
 import { API_URL } from "../../../../api-url";
+import { authenticatedFetch } from "../../../../api-client";
 import { APP_PAPER_ELEVATION } from "../../../../app-config";
 import PostingCard from "../../../../components/Card/PostingCard";
 import { Context } from "../../../../Context";
@@ -153,7 +154,7 @@ const personPage = () => {
         followedId: personState.personId,
       }),
     };
-    fetch(API_URL.follow, follow)
+    authenticatedFetch(API_URL.follow, follow)
       .then((resp) => resp.json())
       .then(() => {
         setFollowingStatus(true);
@@ -161,7 +162,8 @@ const personPage = () => {
           ...prev,
           numFollowers: (prev.numFollowers || 0) + 1, // increment
         }));
-      });
+      })
+      .catch((error) => console.error("Follow update failed:", error.message));
   };
 
   const unSubmitFollow = () => {
@@ -175,7 +177,7 @@ const personPage = () => {
         followedId: personState.personId,
       }),
     };
-    fetch(API_URL.follow, unFollow)
+    authenticatedFetch(API_URL.follow, unFollow)
       .then((resp) => resp.json())
       .then(() => {
         setFollowingStatus(false);
@@ -183,7 +185,8 @@ const personPage = () => {
           ...prev,
           numFollowers: Math.max((prev.numFollowers || 0) - 1, 0), // decrement but not below 0
         }));
-      });
+      })
+      .catch((error) => console.error("Follow removal failed:", error.message));
   };
 
   const initialize = async (isMountedRef) => {

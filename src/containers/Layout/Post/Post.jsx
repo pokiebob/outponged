@@ -11,6 +11,7 @@ import PublishIcon from "@mui/icons-material/Publish";
 import React, { useContext, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { API_URL } from "../../../api-url";
+import { authenticatedFetch } from "../../../api-client";
 import { APP_PAPER_ELEVATION } from "../../../app-config";
 import { Context } from "../../../Context";
 import Backdrop from "@mui/material/Backdrop";
@@ -182,7 +183,7 @@ const post = () => {
         description: postRef.current.description,
       };
 
-      const resp = await fetch(API_URL.post + "?postType=post", {
+      const resp = await authenticatedFetch(API_URL.post + "?postType=post", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(postData),

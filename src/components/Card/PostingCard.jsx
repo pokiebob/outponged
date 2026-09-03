@@ -17,6 +17,7 @@ import ThumbUpOutlined from "@mui/icons-material/ThumbUpOutlined";
 import React, { useContext, useState } from "react";
 import { Link } from "react-router-dom";
 import { API_URL } from "../../api-url";
+import { authenticatedFetch } from "../../api-client";
 import { Context } from "../../Context";
 import PostingCommentTree from "./PostingCommentTree";
 const useStyles = makeStyles((theme) => ({
@@ -158,13 +159,14 @@ const postingCard = (props) => {
         postType: "post",
       }),
     };
-    fetch(API_URL.postingLike, like)
+    authenticatedFetch(API_URL.postingLike, like)
       .then((resp) => resp.json())
       .then((resp) => {
         // console.log(resp);
         setLikeStatus(true);
         setNumLikes(numLikes + 1);
-      });
+      })
+      .catch((error) => console.error("Like update failed:", error.message));
   };
 
   const unSubmitLike = () => {
@@ -178,13 +180,14 @@ const postingCard = (props) => {
         postId: props.postId,
       }),
     };
-    fetch(API_URL.postingLike, unLike)
+    authenticatedFetch(API_URL.postingLike, unLike)
       .then((resp) => resp.json())
       .then((resp) => {
         // console.log(resp);
         setLikeStatus(false);
         setNumLikes(numLikes - 1);
-      });
+      })
+      .catch((error) => console.error("Like removal failed:", error.message));
   };
 
   const handleComment = (newComment) => {
@@ -220,12 +223,13 @@ const postingCard = (props) => {
         description: newComment.description,
       }),
     };
-    fetch(API_URL.post + "?postType=comment", comment)
+    authenticatedFetch(API_URL.post + "?postType=comment", comment)
       .then((resp) => resp.json())
       .then((resp) => {
         // console.log('[PostingCard.js]', resp);
         addComment(resp);
-      });
+      })
+      .catch((error) => console.error("Comment submission failed:", error.message));
   };
 
   const addComment = (comment) => {
