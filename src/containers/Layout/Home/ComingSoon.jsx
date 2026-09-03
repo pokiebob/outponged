@@ -1,9 +1,9 @@
-import Avatar from '@material-ui/core/Avatar';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import Grid from '@material-ui/core/Grid';
-import Paper from '@material-ui/core/Paper';
-import { makeStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
+import Avatar from '@mui/material/Avatar';
+import CssBaseline from '@mui/material/CssBaseline';
+import Grid from '@mui/material/Grid';
+import Paper from '@mui/material/Paper';
+import { makeStyles } from '../../../makeStyles';
+import Typography from '@mui/material/Typography';
 import React from 'react';
 
 const useStyles = makeStyles((theme) => ({
@@ -13,7 +13,7 @@ const useStyles = makeStyles((theme) => ({
     image: {
         backgroundImage: 'url(https://global-uploads.webflow.com/5b44edefca321a1e2d0c2aa6/5fc5965e2b09e400cc962362_Dimensions-Sports-Ping-Pong-Paddle-Table-Tennis-Racket-Dimensions.svg)',
         backgroundColor:
-            theme.palette.type === 'light' ? theme.palette.grey[50] : theme.palette.grey[900],
+            theme.palette.mode === 'light' ? theme.palette.grey[50] : theme.palette.grey[900],
         backgroundSize: 'cover',
         backgroundPosition: 'center',
     },

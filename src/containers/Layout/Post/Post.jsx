@@ -1,27 +1,28 @@
-import { CardContent, CardHeader, TextField } from "@material-ui/core";
-import Avatar from "@material-ui/core/Avatar";
-import Button from "@material-ui/core/Button";
-import Card from "@material-ui/core/Card";
-import CardActions from "@material-ui/core/CardActions";
-import CardMedia from "@material-ui/core/CardMedia";
-import Grid from "@material-ui/core/Grid";
-import { makeStyles, useTheme } from "@material-ui/core/styles";
-import PublishIcon from "@material-ui/icons/Publish";
+import { CardContent, CardHeader, TextField } from "@mui/material";
+import Avatar from "@mui/material/Avatar";
+import Button from "@mui/material/Button";
+import Card from "@mui/material/Card";
+import CardActions from "@mui/material/CardActions";
+import CardMedia from "@mui/material/CardMedia";
+import Grid from "@mui/material/Grid";
+import { useTheme } from "@mui/material/styles";
+import { makeStyles } from "../../../makeStyles";
+import PublishIcon from "@mui/icons-material/Publish";
 import React, { useContext, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { API_URL } from "../../../api-url";
 import { APP_PAPER_ELEVATION } from "../../../app-config";
 import { Context } from "../../../Context";
-import Backdrop from "@material-ui/core/Backdrop";
-import CircularProgress from "@material-ui/core/CircularProgress";
-import Box from "@material-ui/core/Box";
-import OutlinedInput from "@material-ui/core/OutlinedInput";
-import InputLabel from "@material-ui/core/InputLabel";
-import MenuItem from "@material-ui/core/MenuItem";
-import FormControl from "@material-ui/core/FormControl";
-import Select from "@material-ui/core/Select";
-import Chip from "@material-ui/core/Chip";
-import { Storage } from "aws-amplify";
+import Backdrop from "@mui/material/Backdrop";
+import CircularProgress from "@mui/material/CircularProgress";
+import Box from "@mui/material/Box";
+import OutlinedInput from "@mui/material/OutlinedInput";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import Select from "@mui/material/Select";
+import Chip from "@mui/material/Chip";
+import { uploadData } from "aws-amplify/storage";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -33,7 +34,7 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(4),
     width: "100%",
     maxWidth: 800,
-    [theme.breakpoints.down("xs")]: {
+    [theme.breakpoints.down("sm")]: {
       maxWidth: "100%",
       marginLeft: theme.spacing(1),
       marginRight: theme.spacing(1),
@@ -58,7 +59,7 @@ const useStyles = makeStyles((theme) => ({
   },
   name: {
     marginTop: "10px",
-    "font-size": "20px",
+    fontSize: "20px",
     // marginLeft: "10px",
   },
   media: {
@@ -160,10 +161,13 @@ const post = () => {
       const fileKey = `${Date.now()}_${file.name}`;
 
       // Upload to Amplify Storage (adjust level if needed)
-      await Storage.put(fileKey, file, {
-        contentType: file.type,
-        level: "public",
-      });
+      await uploadData({
+        path: `public/${fileKey}`,
+        data: file,
+        options: {
+          contentType: file.type,
+        },
+      }).result;
 
       // Instead of storing a signed URL, store the fileKey only
       const postData = {

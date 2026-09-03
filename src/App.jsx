@@ -1,21 +1,9 @@
-import React, { Component } from "react";
+import React from "react";
 import { BrowserRouter } from "react-router-dom";
 import { Context } from "./Context";
 import Home from "./containers/Layout/Home/Home";
-import { Amplify, Storage } from 'aws-amplify';
-import awsconfig from './aws-exports';
 
-Amplify.configure({
-  ...awsconfig,
-  Storage: {
-    AWSS3: {
-      bucket: 'outponged-post',
-      region: 'us-east-1',
-    },
-  },
-});
-
-const app = () => {
+const App = () => {
   const [userContext, setUserContext] = React.useState("");
   return (
     // <BrowserRouter basename="/my-app">
@@ -29,4 +17,4 @@ const app = () => {
   );
 }
 
-export default app;
+export default App;

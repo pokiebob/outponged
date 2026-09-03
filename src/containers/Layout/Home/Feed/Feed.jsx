@@ -1,19 +1,19 @@
-import { MenuItem } from "@material-ui/core";
-import Card from "@material-ui/core/Card";
-import Chip from "@material-ui/core/Chip";
-import Grid from "@material-ui/core/Grid";
-import Menu from "@material-ui/core/Menu";
-import CircularProgress from "@material-ui/core/CircularProgress"; // ✅ spinner import
-import { makeStyles } from "@material-ui/core/styles";
-import RestoreIcon from "@material-ui/icons/Restore";
-import ThumbUpAltOutlinedIcon from "@material-ui/icons/ThumbUpAltOutlined";
+import { MenuItem } from "@mui/material";
+import Card from "@mui/material/Card";
+import Chip from "@mui/material/Chip";
+import Grid from "@mui/material/Grid";
+import Menu from "@mui/material/Menu";
+import CircularProgress from "@mui/material/CircularProgress";
+import { makeStyles } from "../../../../makeStyles";
+import RestoreIcon from "@mui/icons-material/Restore";
+import ThumbUpAltOutlinedIcon from "@mui/icons-material/ThumbUpAltOutlined";
 import React, { useContext, useEffect, useState } from "react";
 import { API_URL } from "../../../../api-url";
 import { APP_PAPER_ELEVATION } from "../../../../app-config";
 import PostingCard from "../../../../components/Card/PostingCard";
 import { Context } from "../../../../Context";
 import reducePostings from "../../../../postingReducer";
-import { Storage } from "aws-amplify";
+import { getUrl } from "aws-amplify/storage";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -24,7 +24,7 @@ const useStyles = makeStyles((theme) => ({
     marginTop: "30px",
     width: "100%",
     maxWidth: 700,
-    [theme.breakpoints.down("xs")]: {
+    [theme.breakpoints.down("sm")]: {
       maxWidth: "100%", // allow full shrink
     },
   },
@@ -64,9 +64,10 @@ const feed = () => {
           if (post.fileUrl && !post.fileUrl.startsWith("http")) {
             try {
               if (userContext?.personId) {
-                // Logged in → use Amplify Storage.get()
-                const signedUrl = await Storage.get(post.fileUrl, { level: "public" });
-                return { ...post, fileUrl: signedUrl };
+                const { url } = await getUrl({
+                  path: `public/${post.fileUrl}`,
+                });
+                return { ...post, fileUrl: url.toString() };
               } else {
                 // Guest → construct direct public S3 URL
                 const bucket = "outponged-post";
@@ -151,7 +152,6 @@ const feed = () => {
       keepMounted
       open={Boolean(anchorEl)}
       onClose={handleClose}
-      getContentAnchorEl={null}
       anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
       transformOrigin={{ vertical: "top", horizontal: "center" }}
     >

@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { makeStyles } from "@material-ui/core/styles";
-import Paper from "@material-ui/core/Paper";
-import Grid from "@material-ui/core/Grid";
-import Avatar from "@material-ui/core/Avatar";
-import AppBar from "@material-ui/core/AppBar";
-import Tabs from "@material-ui/core/Tabs";
-import Tab from "@material-ui/core/Tab";
+import { makeStyles } from "../../../../makeStyles";
+import Paper from "@mui/material/Paper";
+import Grid from "@mui/material/Grid";
+import Avatar from "@mui/material/Avatar";
+import AppBar from "@mui/material/AppBar";
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
 import PropTypes from "prop-types";
-import Button from "@material-ui/core/Button";
-import Box from "@material-ui/core/Box";
-import Typography from "@material-ui/core/Typography";
+import Button from "@mui/material/Button";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
 import { useHistory } from "react-router-dom";
 import { forkJoin } from 'rxjs';
 import { API_URL } from '../../../../api-url';
@@ -67,24 +67,24 @@ const useStyles = makeStyles((theme) => ({
     heading: {
         color: theme.palette.text.primary,
         textAlign: "center",
-        "font-size": "30px",
+        fontSize: "30px",
     },
 
 
     subheading: {
         color: theme.palette.text.primary,
         textAlign: "center",
-        "font-size": "15px",
+        fontSize: "15px",
     },
     subtext: {
         color: theme.palette.text.secondary,
         textAlign: "center",
-        "font-size": "13px",
+        fontSize: "13px",
     },
     address: {
         color: theme.palette.text.secondary,
         textAlign: "center",
-        "font-size": "13px",
+        fontSize: "13px",
         marginTop: "30px",
     },
     large: {
@@ -93,8 +93,8 @@ const useStyles = makeStyles((theme) => ({
         margin: "auto"
     },
     name: {
-        "margin-top": "20px",
-        "font-size": "18px",
+        marginTop: "20px",
+        fontSize: "18px",
         textAlign: "center",
     }
 }));
@@ -209,7 +209,7 @@ const clubPage = () => {
 
     const renderPersonsBar = (role) => {
         return (clubState && linkedClubsState &&
-            <AppBar position="static" color="white" className={classes.bar}>
+            <AppBar position="static" color="transparent" className={classes.bar}>
                 <Tabs
                     value={value}
                     onChange={handleChange}

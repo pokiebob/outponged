@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import axios from "../../../../axios";
-import Grid from "@material-ui/core/Grid";
+import Grid from "@mui/material/Grid";
 import Card from "../../../../components/Card/PersonCard";
 import "./Players.css";
 import { API_URL } from "../../../../api-url";

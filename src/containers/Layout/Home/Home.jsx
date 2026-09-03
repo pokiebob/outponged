@@ -1,24 +1,24 @@
-import { TextField } from "@material-ui/core";
-import AppBar from "@material-ui/core/AppBar";
-import Avatar from "@material-ui/core/Avatar";
-import CircularProgress from "@material-ui/core/CircularProgress";
-import Drawer from "@material-ui/core/Drawer";
-import Grid from "@material-ui/core/Grid";
-import Button from "@material-ui/core/Button";
-import IconButton from "@material-ui/core/IconButton";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import Menu from "@material-ui/core/Menu";
-import MenuItem from "@material-ui/core/MenuItem";
-import { makeStyles } from "@material-ui/core/styles";
-import Toolbar from "@material-ui/core/Toolbar";
-import Typography from "@material-ui/core/Typography";
-import AddIcon from "@material-ui/icons/Add";
-import MenuIcon from "@material-ui/icons/Menu";
-import SearchIcon from "@material-ui/icons/Search";
-import Autocomplete from "@material-ui/lab/Autocomplete";
-import { Auth, Hub } from "aws-amplify";
-import TableTennis from "mdi-material-ui/TableTennis";
+import { TextField } from "@mui/material";
+import AppBar from "@mui/material/AppBar";
+import Avatar from "@mui/material/Avatar";
+import CircularProgress from "@mui/material/CircularProgress";
+import Drawer from "@mui/material/Drawer";
+import Grid from "@mui/material/Grid";
+import Button from "@mui/material/Button";
+import IconButton from "@mui/material/IconButton";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import { makeStyles } from "../../../makeStyles";
+import Toolbar from "@mui/material/Toolbar";
+import Typography from "@mui/material/Typography";
+import AddIcon from "@mui/icons-material/Add";
+import MenuIcon from "@mui/icons-material/Menu";
+import SearchIcon from "@mui/icons-material/Search";
+import Autocomplete from "@mui/material/Autocomplete";
+import { fetchUserAttributes, getCurrentUser, signInWithRedirect, signOut } from "aws-amplify/auth";
+import { Hub } from "aws-amplify/utils";
 import React, { useContext, useEffect, useState } from "react";
 import { Link, Route, Switch, useHistory, useLocation } from "react-router-dom";
 import { API_URL } from "../../../api-url";
@@ -37,16 +37,6 @@ import { Redirect } from "react-router-dom";
 import LogIn from "./LogIn";
 
 let isLoggedIn = false;
-
-import { Amplify } from "aws-amplify";
-import awsconfig from "../../../aws-exports";
-
-awsconfig.oauth.redirectSignIn = `${window.location.origin}/`;
-awsconfig.oauth.redirectSignOut = `${window.location.origin}/`;
-
-Amplify.configure(awsconfig);
-
-// console.log("[CONFIG]", Amplify.configure());
 
 const useStyles = makeStyles((theme) => ({
   grow: { flexGrow: 1 },
@@ -107,7 +97,7 @@ const useSearchTextInputStyles = makeStyles((theme) => ({
       maxWidth: "100%",
       paddingTop: 0,
       fontSize: "0.9rem",
-      [theme.breakpoints.down("xs")]: {
+      [theme.breakpoints.down("sm")]: {
         fontSize: "0.8rem", // even smaller on very small devices
       },
     },
@@ -121,7 +111,7 @@ const useSearchTextInputStyles = makeStyles((theme) => ({
     },
     "& .MuiInputBase-input": {
       fontSize: "inherit",
-      [theme.breakpoints.down("xs")]: {
+      [theme.breakpoints.down("sm")]: {
         fontSize: "0.8rem",
       },
     },
@@ -171,17 +161,18 @@ const home = () => {
   useEffect(() => {
     const updateUser = async () => {
       try {
-        const user = await Auth.currentAuthenticatedUser();
+        const user = await getCurrentUser();
+        const attributes = await fetchUserAttributes();
         // console.log("[AUTH] Cognito session found:", user);
-        setAwsUser(user);
+        setAwsUser({ ...user, attributes });
         if (location.pathname === "/") history.push("/home/");
       } catch (error) {
         // console.log("[AUTH] No Cognito session found", error);
       }
     };
-    Hub.listen("auth", updateUser);
+    const stopListening = Hub.listen("auth", updateUser);
     updateUser();
-    return () => Hub.remove("auth", updateUser);
+    return stopListening;
   }, []);
 
   useEffect(() => {
@@ -189,11 +180,11 @@ const home = () => {
   }, [awsUser]);
 
   const handleLogIn = async () => {
-    const currentUser = await Auth.currentAuthenticatedUser().catch(() => null);
+    const currentUser = await getCurrentUser().catch(() => null);
     // console.log("[handleLogIn] currentUser:", currentUser);
     if (!currentUser) {
       //   console.log("[handleLogIn] no session → federated sign-in");
-      await Auth.federatedSignIn();
+      await signInWithRedirect();
     } else {
       //   console.log("[handleLogIn] already signed in");
     }
@@ -348,8 +339,9 @@ const home = () => {
               ? `${user.firstName} ${user.lastName}`
               : "Guest User"
           }
-          renderOption={(user) => (
+          renderOption={(props, user) => (
             <Grid
+              {...props}
               container
               onClick={() => navigateToUserProfile(user.personId)}
             >
@@ -413,7 +405,6 @@ const home = () => {
               keepMounted
               open={Boolean(anchorEl)}
               onClose={handleClose}
-              getContentAnchorEl={null}
               anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
               transformOrigin={{ vertical: "top", horizontal: "center" }}
               disablePortal
@@ -429,7 +420,7 @@ const home = () => {
                 onClick={() => {
                   setUserContext();
                   isLoggedIn = false;
-                  Auth.signOut();
+                  signOut();
                   window.location.reload(false);
                 }}
               >

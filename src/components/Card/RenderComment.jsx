@@ -1,10 +1,10 @@
-import Avatar from "@material-ui/core/Avatar";
-import Grid from "@material-ui/core/Grid";
-import IconButton from "@material-ui/core/IconButton";
-import { makeStyles } from "@material-ui/core/styles";
-import CommentIcon from '@material-ui/icons/ChatBubbleOutline';
-import ThumbUpIcon from '@material-ui/icons/ThumbUp';
-import ThumbUpOutlined from '@material-ui/icons/ThumbUpOutlined';
+import Avatar from "@mui/material/Avatar";
+import Grid from "@mui/material/Grid";
+import IconButton from "@mui/material/IconButton";
+import { makeStyles } from "../../makeStyles";
+import CommentIcon from '@mui/icons-material/ChatBubbleOutline';
+import ThumbUpIcon from '@mui/icons-material/ThumbUp';
+import ThumbUpOutlined from '@mui/icons-material/ThumbUpOutlined';
 import React, { useContext, useState } from 'react';
 import { API_URL } from "../../api-url";
 import { Context } from "../../Context";
@@ -31,18 +31,18 @@ const useStyles = makeStyles((theme) => ({
         borderLeft: "1px solid lightgray",
     },
     name: {
-        "font-size": "13px",
+        fontSize: "13px",
         fontWeight: "bold"
         // marginTop: "5px"
     },
     date: {
         // marginTop: "5px",
-        "font-size": "12px",
+        fontSize: "12px",
         marginLeft: "10px",
         color: theme.palette.text.secondary,
     },
     description: {
-        "font-size": "14px",
+        fontSize: "14px",
         marginTop: "5px"
     },
     iconContainer: {

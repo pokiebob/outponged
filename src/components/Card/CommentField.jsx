@@ -1,13 +1,13 @@
 import React, { useState, useContext } from "react";
-import { makeStyles } from "@material-ui/core/styles";
-import Grid from "@material-ui/core/Grid";
-import Avatar from "@material-ui/core/Avatar";
-import { IconButton } from "@material-ui/core";
-import { InputAdornment } from "@material-ui/core";
-import SendIcon from "@material-ui/icons/Send";
-import { TextField } from "@material-ui/core";
+import { makeStyles } from "../../makeStyles";
+import Grid from "@mui/material/Grid";
+import Avatar from "@mui/material/Avatar";
+import { IconButton } from "@mui/material";
+import { InputAdornment } from "@mui/material";
+import SendIcon from "@mui/icons-material/Send";
+import { TextField } from "@mui/material";
 import { Context } from "../../Context";
-import CloseIcon from "@material-ui/icons/Close";
+import CloseIcon from "@mui/icons-material/Close";
 
 const useStyles = makeStyles((theme) => ({
   smallContainer: {

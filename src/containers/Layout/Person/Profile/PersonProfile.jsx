@@ -1,15 +1,14 @@
-import AppBar from "@material-ui/core/AppBar";
-import Avatar from "@material-ui/core/Avatar";
-import Button from "@material-ui/core/Button";
-import Card from "@material-ui/core/Card";
-import Grid from "@material-ui/core/Grid";
-import Paper from "@material-ui/core/Paper";
-import { makeStyles } from "@material-ui/core/styles";
-import Tab from "@material-ui/core/Tab";
-import Tabs from "@material-ui/core/Tabs";
-// import Chip from "@material-ui/core/Chip";
-import CheckIcon from "@material-ui/icons/Check";
-import PersonIcon from "@material-ui/icons/Person";
+import AppBar from "@mui/material/AppBar";
+import Avatar from "@mui/material/Avatar";
+import Button from "@mui/material/Button";
+import Card from "@mui/material/Card";
+import Grid from "@mui/material/Grid";
+import Paper from "@mui/material/Paper";
+import { makeStyles } from "../../../../makeStyles";
+import Tab from "@mui/material/Tab";
+import Tabs from "@mui/material/Tabs";
+import CheckIcon from "@mui/icons-material/Check";
+import PersonIcon from "@mui/icons-material/Person";
 import React, { useContext, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { forkJoin } from "rxjs";
@@ -18,8 +17,8 @@ import { APP_PAPER_ELEVATION } from "../../../../app-config";
 import PostingCard from "../../../../components/Card/PostingCard";
 import { Context } from "../../../../Context";
 import reducePostings from "../../../../postingReducer";
-import CircularProgress from "@material-ui/core/CircularProgress";
-import { Storage } from "aws-amplify";
+import CircularProgress from "@mui/material/CircularProgress";
+import { getUrl } from "aws-amplify/storage";
 
 function a11yProps(index) {
   return {
@@ -36,7 +35,7 @@ const useStyles = makeStyles((theme) => ({
     marginTop: "30px",
     width: "100%",
     maxWidth: 700,
-    [theme.breakpoints.down("xs")]: {
+    [theme.breakpoints.down("sm")]: {
       maxWidth: "100%",
     },
   },
@@ -51,35 +50,35 @@ const useStyles = makeStyles((theme) => ({
   stats: {
     color: theme.palette.text.primary,
     textAlign: "center",
-    "font-size": "30px",
+    fontSize: "30px",
   },
   heading: {
     color: theme.palette.text.primary,
     textAlign: "center",
-    "font-size": "30px",
+    fontSize: "30px",
     marginTop: "15px",
   },
   subheading: {
     color: theme.palette.text.primary,
     textAlign: "center",
-    "font-size": "15px",
+    fontSize: "15px",
   },
   subtext: {
     color: theme.palette.text.secondary,
     textAlign: "center",
-    "font-size": "13px",
+    fontSize: "13px",
   },
   bio: {
     color: theme.palette.text.secondary,
     textAlign: "center",
-    "font-size": "15px",
+    fontSize: "15px",
     marginTop: "20px",
     marginBottom: "20px",
   },
   usattLabel: {
     color: theme.palette.text.secondary,
     textAlign: "center",
-    "font-size": "13px",
+    fontSize: "13px",
     marginTop: "10px",
   },
   followingButton: {
@@ -93,14 +92,14 @@ const useStyles = makeStyles((theme) => ({
     width: theme.spacing(15),
     height: theme.spacing(15),
     margin: "auto",
-    [theme.breakpoints.down("xs")]: {
+    [theme.breakpoints.down("sm")]: {
       width: theme.spacing(10), // ~80px
       height: theme.spacing(10),
     },
   },
   avatarIcon: {
     fontSize: theme.spacing(8), // default for desktop avatar
-    [theme.breakpoints.down("xs")]: {
+    [theme.breakpoints.down("sm")]: {
       fontSize: theme.spacing(5), // smaller for mobile avatar
     },
   },
@@ -232,10 +231,10 @@ const personPage = () => {
             try {
               if (userContext?.personId) {
                 // Logged in → signed URL
-                const signedUrl = await Storage.get(post.fileUrl, {
-                  level: "public",
+                const { url } = await getUrl({
+                  path: `public/${post.fileUrl}`,
                 });
-                return { ...post, fileUrl: signedUrl };
+                return { ...post, fileUrl: url.toString() };
               } else {
                 // Guest → construct direct public URL
                 const bucket = "outponged-post"; // TODO: replace with your bucket

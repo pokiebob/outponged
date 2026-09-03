@@ -1,16 +1,16 @@
 import React from "react";
 
-import { makeStyles } from "@material-ui/core/styles";
-import Grid from "@material-ui/core/Grid";
-import Paper from "@material-ui/core/Paper";
-import Typography from "@material-ui/core/Typography";
-import Avatar from "@material-ui/core/Avatar";
+import { makeStyles } from "../../makeStyles";
+import Grid from "@mui/material/Grid";
+import Paper from "@mui/material/Paper";
+import Typography from "@mui/material/Typography";
+import Avatar from "@mui/material/Avatar";
 import { APP_PAPER_ELEVATION } from "../../app-config";
 
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
-    "padding-top": "1rem",
+    paddingTop: "1rem",
   },
   paper: {
     padding: theme.spacing(2),

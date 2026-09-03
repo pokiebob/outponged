@@ -24,7 +24,7 @@ OutPonged UI (React + Material-UI)
         ↓
    AWS S3 (media storage)
 
-- **Frontend**: React (Material-UI components, AWS Amplify for auth/storage)
+- **Frontend**: React 18, Material UI 5, Vite, and AWS Amplify for auth/storage
 - **Backend**: Node.js + Express API (REST endpoints for players, clubs, posts)
 - **Database**: MongoDB Atlas for persistent storage
 - **Media**: AWS S3 buckets for user-uploaded images
@@ -73,8 +73,8 @@ flowchart LR
 
 ## Prerequisites
 
-- **Node.js** >= 14.x
-- **npm** >= 6.x
+- **Node.js** >= 20.19.0
+- **npm** >= 10.x
 - AWS Account with Amplify, S3, and Cognito configured
 - MongoDB Atlas account and connection string
 
@@ -126,4 +126,3 @@ Live site: https://www.outponged.com
 
 - **Home Screen Improvements**  
   - Add a general community feed displaying public posts from all users.
-

@@ -1,17 +1,17 @@
-import Avatar from "@material-ui/core/Avatar";
-import Button from "@material-ui/core/Button";
-import Grid from "@material-ui/core/Grid";
-import Paper from "@material-ui/core/Paper";
-import { makeStyles } from "@material-ui/core/styles";
-import TextField from "@material-ui/core/TextField";
+import Avatar from "@mui/material/Avatar";
+import Button from "@mui/material/Button";
+import Grid from "@mui/material/Grid";
+import Paper from "@mui/material/Paper";
+import { makeStyles } from "../../../../makeStyles";
+import TextField from "@mui/material/TextField";
 import PropTypes from "prop-types";
 import React, { useContext, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import MaskedInput from "react-text-mask";
 import { API_URL } from "../../../../api-url";
 import { Context } from "../../../../Context";
-import { Storage, Auth } from "aws-amplify";
-import AWS from "aws-sdk";
+import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { fetchAuthSession } from "aws-amplify/auth";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -46,17 +46,17 @@ const useStyles = makeStyles((theme) => ({
   subheading: {
     color: theme.palette.text.primary,
     textAlign: "center",
-    "font-size": "15px",
+    fontSize: "15px",
   },
   subtext: {
     color: theme.palette.text.secondary,
     textAlign: "center",
-    "font-size": "13px",
+    fontSize: "13px",
   },
   usattLabel: {
     color: theme.palette.text.secondary,
     textAlign: "center",
-    "font-size": "13px",
+    fontSize: "13px",
     marginTop: "30px",
   },
   large: {
@@ -65,8 +65,8 @@ const useStyles = makeStyles((theme) => ({
     margin: "auto",
   },
   name: {
-    "margin-top": "20px",
-    "font-size": "18px",
+    marginTop: "20px",
+    fontSize: "18px",
     textAlign: "center",
   },
 }));
@@ -255,11 +255,9 @@ const editProfile = () => {
     }`;
 
     try {
-      // Get current credentials from Amplify Auth
-      const credentials = await Auth.currentCredentials();
-
-      const s3 = new AWS.S3({
-        credentials: Auth.essentialCredentials(credentials),
+      const { credentials } = await fetchAuthSession();
+      const s3 = new S3Client({
+        credentials,
         region: "us-east-1",
       });
 
@@ -272,10 +270,10 @@ const editProfile = () => {
       };
 
       // Upload to S3
-      await s3.putObject(params).promise();
+      await s3.send(new PutObjectCommand(params));
 
       // Construct the public URL
-      const url = `https://${params.Bucket}.s3.${s3.config.region}.amazonaws.com/${filename}`;
+      const url = `https://${params.Bucket}.s3.us-east-1.amazonaws.com/${filename}`;
       updateNewPersonState(ATTRIB.PICTURE_URL, url);
 
       // Save to backend
