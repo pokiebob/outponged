@@ -23,6 +23,7 @@ import { Hub } from "aws-amplify/utils";
 import React, { useContext, useEffect, useState } from "react";
 import { Link, Route, Switch, useHistory, useLocation } from "react-router-dom";
 import { API_URL } from "../../../api-url";
+import { authenticatedFetch } from "../../../api-client";
 import { Context } from "../../../Context";
 import ComingSoon from "./ComingSoon";
 import Clubs from "../Club/Clubs/Clubs";
@@ -207,10 +208,10 @@ const home = () => {
       body: JSON.stringify({ email }),
     };
 
-    fetch(API_URL.person, post)
+    authenticatedFetch(API_URL.person, post)
       .then((resp) => resp.json())
       .then((resp) => {
-        fetch(API_URL.person + resp.personId + "/?page=home")
+        authenticatedFetch(API_URL.person + resp.personId + "/?page=home")
           .then((resp) => resp.json())
           .then((personData) => {
             setUserContext(personData);
@@ -218,7 +219,8 @@ const home = () => {
               history.push("/edit-person-profile/" + personData?.personId);
             }
           });
-      });
+      })
+      .catch((error) => console.error("Profile sign-in failed:", error.message));
   };
 
   useEffect(() => {

@@ -7,6 +7,7 @@ import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbUpOutlined from '@mui/icons-material/ThumbUpOutlined';
 import React, { useContext, useState } from 'react';
 import { API_URL } from "../../api-url";
+import { authenticatedFetch } from "../../api-client";
 import { Context } from "../../Context";
 import CommentField from './CommentField';
 import { Link } from "react-router-dom";
@@ -145,13 +146,14 @@ const renderComment = ({ comment, level, treeHandleComment, rootCommentOpen }) =
                 }
             )
         }
-        fetch(API_URL.postingLike, like)
+        authenticatedFetch(API_URL.postingLike, like)
             .then(resp => resp.json())
             .then((resp) => {
                 // console.log(resp);
                 setLikeStatus(true);
                 setNumLikes(numLikes + 1);
             })
+            .catch((error) => console.error("Comment like failed:", error.message));
     }
 
     const unSubmitLike = () => {
@@ -167,13 +169,14 @@ const renderComment = ({ comment, level, treeHandleComment, rootCommentOpen }) =
                 }
             )
         }
-        fetch(API_URL.postingLike, unLike)
+        authenticatedFetch(API_URL.postingLike, unLike)
             .then(resp => resp.json())
             .then((resp) => {
                 // console.log(resp);
                 setLikeStatus(false);
                 setNumLikes(numLikes - 1);
             })
+            .catch((error) => console.error("Comment unlike failed:", error.message));
     }
 
     const handleOpenComment = () => {
