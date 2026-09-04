@@ -190,22 +190,11 @@ const home = () => {
     }
   };
 
-  const persistAndRefresh = (user) => {
-    const email = user?.attributes?.email || user.email || null;
-    // console.log("[persistAndRefresh] extracted email:", email);
-
-    if (!email) {
-      console.error(
-        "[persistAndRefresh] Could not find email in user object:",
-        user
-      );
-      return;
-    }
-
+  const persistAndRefresh = () => {
     const post = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email }),
+      body: JSON.stringify({}),
     };
 
     authenticatedFetch(API_URL.person, post)
