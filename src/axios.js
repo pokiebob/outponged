@@ -1,11 +1,6 @@
 import axios from 'axios';
 
-const instance = axios.create({
-    baseURL: 'https://jsonplaceholder.typicode.com'
-});
-
-instance.defaults.headers.common['Authorization'] = 'AUTH TOKEN FROM INSTANCE';
-
-// instance.interceptors.request...
-
-export default instance;
+// Public list endpoints must not receive a placeholder Authorization header.
+// The API treats any supplied bearer token as real authentication material and
+// correctly rejects malformed values, which previously broke Players and Clubs.
+export default axios.create();
